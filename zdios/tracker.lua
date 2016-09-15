@@ -5,6 +5,7 @@ local barAnchor = oUF_karmaPlayer
 local throttleCount = 0
 local mediaPath = "Interface\\AddOns\\oUF_Karma\\media\\"
 barHeight = 20
+barWidth = oUF_karmaPlayer:GetWidth()
 barOffset = 28
 playerFrameOffset = 15
 
@@ -44,23 +45,45 @@ local backdrop_tab = {
         },
 }
 
+-- Returns a font object
+local function getFont(frame, name, size, outline)
+    local font = frame:CreateFontString(nil, "OVERLAY")
+    font:SetFont(name, size, outline)
+    font:SetShadowColor(0, 0, 0, 0.8)
+    font:SetShadowOffset(1, -1)
+    return font
+end
+
+
 -- Creates a new bar frame
 local function createBar()
-    bar = CreateFrame("StatusBar", nil, UIParent)
+    local bar = CreateFrame("StatusBar", nil, UIParent)
     bar:SetStatusBarTexture(mediaPath.."Statusbar")
     bar:GetStatusBarTexture():SetHorizTile(false)
     bar:GetStatusBarTexture():SetVertTile(false)
-    bar:SetWidth(oUF_karmaPlayer:GetWidth())
+    bar:SetWidth(barWidth)
     bar:SetHeight(barHeight)
     bar:SetFrameLevel(1)
 
-    helper = CreateFrame("Frame", nil, bar)
-    helper:SetFrameLevel(0)
-    helper:SetPoint("TOPLEFT",-5,5)
-    helper:SetPoint("BOTTOMRIGHT",5,-5)
-    helper:SetBackdrop(backdrop_tab)
-    helper:SetBackdropColor(0,0,0,0.6)
-    helper:SetBackdropBorderColor(0,0,0,1)
+    -- Helper frame for the backdrop
+    local backdrop = CreateFrame("Frame", nil, bar)
+    backdrop:SetFrameLevel(0)
+    backdrop:SetPoint("TOPLEFT",-5,5)
+    backdrop:SetPoint("BOTTOMRIGHT",5,-5)
+    backdrop:SetBackdrop(backdrop_tab)
+    backdrop:SetBackdropColor(0,0,0,0.6)
+    backdrop:SetBackdropBorderColor(0,0,0,1)
+
+    -- Spell name text
+    local spellName = getFont(bar, mediaPath.."ROADWAY.ttf", 16, "THINOUTLINE")
+    spellName:SetPoint("LEFT", 2, 10)
+    spellName:SetJustifyH("LEFT")
+
+    -- Tracked value text
+    local spellValue = getFont(bar, mediaPath.."ROADWAY.ttf", 18, "THINOUTLINE")
+    spellValue:SetPoint("LEFT", -2, 0)
+    spellValue:SetJustifyH("RIGHT", spellValue, "LEFT", -5, 0)
+
     return bar
 end
 
@@ -76,10 +99,11 @@ local function positionBars()
 end
 
 -- Displays the bar, or create it if it didn't exist already
-local function drawBar(info)
+local function drawBar(buffName, info)
     if not info.bar then
         info.bar = createBar()
         info.bar:SetStatusBarColor(info.color[1], info.color[2], info.color[3])
+        info.bar.SpellName:SetFormattedText(buffName)
     end
     positionBars()
     info.bar:Show()
@@ -97,6 +121,7 @@ local function updateTimers()
     -- This will only update currently active timers in trackedTimers
     for _, info in pairs(trackedTimers) do
         info.bar:SetValue(info.expires - GetTime())
+        --info.bar.SpellName:SetFormattedText(duration) -- Fix and timeleft
     end
 end
 
@@ -108,23 +133,25 @@ local function updateAuras()
         if name then
             if not info.active then -- create frame
                 info.active = true
-                drawBar(info)
+                drawBar(buff, info)
             end
 
             if info.isTimer then
                 info.expires = expires
                 info.bar:SetMinMaxValues(0, duration)
+                info.bar.SpellName:SetFormattedText(duration) -- Temporary test
                 trackedTimers[buff] = info
-                timerUpdater:SetScript("OnUpdate", updateTimers)
                 activeTimers = true
+                timerUpdater:SetScript("OnUpdate", updateTimers)
             else
                 info.bar:SetMinMaxValues(0, info.maxValue())
                 info.bar:SetValue(value1)
+                info.bar.SpellName:SetFormattedText(value1) -- Have to format this
             end
             
         elseif info.active then -- destroy frame
             info.active = false
-            trackedTimers[buff] = nil -- What if this isnt in the table? Crash?
+            trackedTimers[buff] = nil
             info.bar:Hide()
             positionBars()
         end
