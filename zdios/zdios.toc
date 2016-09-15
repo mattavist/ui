@@ -1,0 +1,9 @@
+## Interface: 70000
+## Title: zdios
+core.lua
+framehide.lua
+minimap.lua
+openmail.lua
+moveframe.lua
+bufficon.lua
+bartest.lua
