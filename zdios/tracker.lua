@@ -18,9 +18,9 @@ local trackedBuffs = {
   ["Ignore Pain"] = {
     active = false,
     barValue = function(absorb)
-		local maxHealth = UnitHealthMax("player")
-		return math.floor(100 * absorb/maxHealth)
-	end,
+        local maxHealth = UnitHealthMax("player")
+        return math.floor(100 * absorb/maxHealth)
+    end,
     maxValue = function()
         return UnitHealthMax("player")
     end,
@@ -102,15 +102,15 @@ end
 -- Every time UNIT_AURA fires collect the information on all tracked buffs
 local function updateAuras()
     local activeTimers = false
-	for buff, info in pairs(trackedBuffs) do
-		local name, _, _, _, _, duration, expires, _, _, _, _, _, _, _, _, _, value1, _, _ = UnitBuff("player", buff)
-		if name then
-			if not info.active then -- create frame
+    for buff, info in pairs(trackedBuffs) do
+        local name, _, _, _, _, duration, expires, _, _, _, _, _, _, _, _, _, value1, _, _ = UnitBuff("player", buff)
+        if name then
+            if not info.active then -- create frame
                 info.active = true
                 drawBar(info)
-			end
+            end
 
-			if info.isTimer then
+            if info.isTimer then
                 info.expires = expires
                 info.bar:SetMinMaxValues(0, duration)
                 trackedTimers[buff] = info
@@ -119,15 +119,15 @@ local function updateAuras()
             else
                 info.bar:SetMinMaxValues(0, info.maxValue())
                 info.bar:SetValue(value1)
-			end
+            end
             
-		elseif info.active then -- destroy frame
-			info.active = false
+        elseif info.active then -- destroy frame
+            info.active = false
             trackedTimers[buff] = nil -- What if this isnt in the table? Crash?
             info.bar:Hide()
             positionBars()
-		end
-	end
+        end
+    end
     if not activeTimers then
         timerUpdater:SetScript("OnUpdate", nil)
     end
