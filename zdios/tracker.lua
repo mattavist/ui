@@ -10,37 +10,38 @@ playerFrameOffset = 15
 
 local trackedTimers = {}
 local trackedBuffs = {
-  ["Shield Block"] = {
-    active = false,
-    isTimer = true,
-    color = { 14/255, 86/255, 153/255 }
-  },
-  ["Ignore Pain"] = {
-    active = false,
-    barValue = function(absorb)
+    ["Shield Block"] = {
+        active = false,
+        isTimer = true,
+        color = { 14/255, 86/255, 153/255 }
+    },
+
+    ["Ignore Pain"] = {
+        active = false,
+        barValue = function(absorb)
         local maxHealth = UnitHealthMax("player")
-        return math.floor(100 * absorb/maxHealth)
-    end,
-    maxValue = function()
-        return UnitHealthMax("player")
-    end,
-    color = { 178/255, 101/255, 1/255 }
-  },
+            return math.floor(100 * absorb/maxHealth)
+        end,
+        maxValue = function()
+            return UnitHealthMax("player")
+        end,
+        color = { 178/255, 101/255, 1/255 }
+    },
 }
 
 --backdrop table
 local backdrop_tab = { 
-bgFile = mediaPath.."backdrop", 
-edgeFile = mediaPath.."backdrop_edge",
-tile = false,
-tileSize = 0, 
-edgeSize = 5, 
-insets = { 
-  left = 3, 
-  right = 3, 
-  top = 3, 
-  bottom = 3,
-},
+    bgFile = mediaPath.."backdrop", 
+    edgeFile = mediaPath.."backdrop_edge",
+    tile = false,
+    tileSize = 0, 
+    edgeSize = 5, 
+    insets = { 
+        left = 3, 
+        right = 3, 
+        top = 3, 
+        bottom = 3,
+        },
 }
 
 -- Creates a new bar frame

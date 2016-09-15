@@ -12,8 +12,6 @@ end
 
 function f:OnEvent(event, addon)
 	hooksecurefunc("CreateFrame", function(frameType, name, parent, template)
-	--hooksecurefunc("AuraButton_Update", function(buttonName, index, filter)
-		--local buffName = buttonName..index
 		if (template == "BuffButtonTemplate") then
 			local buff = _G[name]
 			local icon = _G[name.."Icon"]
@@ -23,13 +21,7 @@ function f:OnEvent(event, addon)
 		end
 	end)
 
-	--hooksecurefunc("AuraButton_UpdateDuration", function(auraButton, timeLeft)
-		--local duration = auraButton.duration
-		--ChatFrame1:AddMessage("debug line" ..timeLeft)
-	--end)
-
 	self:UnregisterEvent(event)
-
 end
 
 f:RegisterEvent("ADDON_LOADED")
