@@ -5,7 +5,7 @@ local barAnchor = oUF_karmaPlayer
 local throttleCount = 0
 local mediaPath = "Interface\\AddOns\\oUF_Karma\\media\\"
 barHeight = 20
-barOffset = 25
+barOffset = 28
 playerFrameOffset = 15
 
 local trackedTimers = {}
@@ -13,7 +13,7 @@ local trackedBuffs = {
   ["Shield Block"] = {
     active = false,
     isTimer = true,
-    color = { 0, 0, .8 }
+    color = { 14/255, 86/255, 153/255 }
   },
   ["Ignore Pain"] = {
     active = false,
@@ -24,8 +24,23 @@ local trackedBuffs = {
     maxValue = function()
         return UnitHealthMax("player")
     end,
-    color = { .5, .5, 0 }
+    color = { 178/255, 101/255, 1/255 }
   },
+}
+
+--backdrop table
+local backdrop_tab = { 
+bgFile = mediaPath.."backdrop", 
+edgeFile = mediaPath.."backdrop_edge",
+tile = false,
+tileSize = 0, 
+edgeSize = 5, 
+insets = { 
+  left = 3, 
+  right = 3, 
+  top = 3, 
+  bottom = 3,
+},
 }
 
 -- Creates a new bar frame
@@ -33,8 +48,18 @@ local function createBar()
     bar = CreateFrame("StatusBar", nil, UIParent)
     bar:SetStatusBarTexture(mediaPath.."Statusbar")
     bar:GetStatusBarTexture():SetHorizTile(false)
+    bar:GetStatusBarTexture():SetVertTile(false)
     bar:SetWidth(oUF_karmaPlayer:GetWidth())
     bar:SetHeight(barHeight)
+    bar:SetFrameLevel(1)
+
+    helper = CreateFrame("Frame", nil, bar)
+    helper:SetFrameLevel(0)
+    helper:SetPoint("TOPLEFT",-5,5)
+    helper:SetPoint("BOTTOMRIGHT",5,-5)
+    helper:SetBackdrop(backdrop_tab)
+    helper:SetBackdropColor(0,0,0,0.6)
+    helper:SetBackdropBorderColor(0,0,0,1)
     return bar
 end
 
@@ -59,7 +84,7 @@ local function drawBar(info)
     info.bar:Show()
 end
 
--- Redraw the bar based on buff duration, runs ON_UPDATE if there are active bars to redraw
+-- Redraw the bar based on buff duration, runs OnUpdate if there are active bars to redraw
 local function updateTimers()
     -- Save CPU by only running once every throttleCount times
     throttleCount = throttleCount + 1

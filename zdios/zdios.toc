@@ -6,4 +6,4 @@ minimap.lua
 openmail.lua
 moveframe.lua
 bufficon.lua
-bartest.lua
+tracker.lua
