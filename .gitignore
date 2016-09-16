@@ -3,6 +3,8 @@
 
 # Add back some directories
 !/zdios/*
+!/mTrack/*
+
 Butsu/LICENSE
 oUF/LICENSE
 oUF/utils/changelog

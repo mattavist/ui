@@ -103,7 +103,6 @@ local function positionBars()
     local activeBars = 0
     for _, buff in pairs(buffIndex) do
         info = trackedBuffs[buff]
-    --for buff, info in pairs(trackedBuffs) do
         if info.active then
             info.bar:SetPoint("BOTTOM", oUF_karmaPlayer, "TOP", 0, playerFrameOffset + activeBars * barOffset)
             activeBars = activeBars + 1

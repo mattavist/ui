@@ -14,8 +14,8 @@ addon:SetScript("OnEvent", function(self, event, unit, ...)
 		TimeManagerClockButton:Hide()
 		collectgarbage("collect")
 		LootHistoryFrame:SetScale(1.5)
-		ChatFrame1:SetFont("Interface\\Addons\\SharedMedia\\fonts\\d.ttf", 16, "OUTLINE")
-		ChatFrame3:SetFont("Interface\\Addons\\SharedMedia\\fonts\\d.ttf", 16, "OUTLINE")
+		ChatFrame1:SetFont("Interface\\AddOns\\oUF_Karma\\media\\EMBLEM.ttf", 16, "OUTLINE")
+		ChatFrame3:SetFont("Interface\\AddOns\\oUF_Karma\\media\\EMBLEM.ttf", 16, "OUTLINE")
     end
 
 --DOES THIS WHEN EXITING COMBAT
