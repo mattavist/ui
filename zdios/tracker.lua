@@ -1,32 +1,26 @@
 local timerUpdater = CreateFrame('Frame', UIParent)
 local auraUpdater = CreateFrame('Frame', UIParent)
-local chatFrame = ChatFrame3
-local barAnchor = oUF_karmaPlayer
 local throttleCount = 0
 local mediaPath = "Interface\\AddOns\\oUF_Karma\\media\\"
 barHeight = 20
-barWidth = oUF_karmaPlayer:GetWidth()
-barOffset = 28
+barOffset = 30
 playerFrameOffset = 15
 
 local trackedTimers = {}
 local trackedBuffs = {
     ["Shield Block"] = {
-        active = false,
-        isTimer = true,
-        color = { 14/255, 86/255, 153/255 }
+        color = { 14/255, 86/255, 153/255 },
+        isTimer = true
     },
 
     ["Ignore Pain"] = {
-        active = false,
-        barValue = function(absorb)
-        local maxHealth = UnitHealthMax("player")
-            return math.floor(100 * absorb/maxHealth)
+        color = { 178/255, 101/255, 1/255 },
+        textValue = function(absorb) -- Returns absorbed damage as "___K"
+            return string.format("%uK", absorb/1000)
         end,
         maxValue = function()
             return UnitHealthMax("player")
-        end,
-        color = { 178/255, 101/255, 1/255 }
+        end
     },
 }
 
@@ -42,7 +36,7 @@ local backdrop_tab = {
         right = 3, 
         top = 3, 
         bottom = 3,
-        },
+    },
 }
 
 -- Returns a font object
@@ -61,7 +55,7 @@ local function createBar()
     bar:SetStatusBarTexture(mediaPath.."Statusbar")
     bar:GetStatusBarTexture():SetHorizTile(false)
     bar:GetStatusBarTexture():SetVertTile(false)
-    bar:SetWidth(barWidth)
+    bar:SetWidth(oUF_karmaPlayer:GetWidth())
     bar:SetHeight(barHeight)
     bar:SetFrameLevel(1)
 
@@ -76,13 +70,15 @@ local function createBar()
 
     -- Spell name text
     local spellName = getFont(bar, mediaPath.."ROADWAY.ttf", 16, "THINOUTLINE")
-    spellName:SetPoint("LEFT", 2, 10)
+    spellName:SetPoint("LEFT", 2, 8)
     spellName:SetJustifyH("LEFT")
+    bar.spellName = spellName
 
     -- Tracked value text
     local spellValue = getFont(bar, mediaPath.."ROADWAY.ttf", 18, "THINOUTLINE")
-    spellValue:SetPoint("LEFT", -2, 0)
+    spellValue:SetPoint("RIGHT", -2, 0)
     spellValue:SetJustifyH("RIGHT", spellValue, "LEFT", -5, 0)
+    bar.spellValue = spellValue
 
     return bar
 end
@@ -103,7 +99,7 @@ local function drawBar(buffName, info)
     if not info.bar then
         info.bar = createBar()
         info.bar:SetStatusBarColor(info.color[1], info.color[2], info.color[3])
-        info.bar.SpellName:SetFormattedText(buffName)
+        info.bar.spellName:SetFormattedText(buffName)
     end
     positionBars()
     info.bar:Show()
@@ -120,8 +116,9 @@ local function updateTimers()
 
     -- This will only update currently active timers in trackedTimers
     for _, info in pairs(trackedTimers) do
-        info.bar:SetValue(info.expires - GetTime())
-        --info.bar.SpellName:SetFormattedText(duration) -- Fix and timeleft
+        local remaining = info.expires - GetTime()
+        info.bar.spellValue:SetFormattedText("%.1f", remaining)
+        info.bar:SetValue(remaining)
     end
 end
 
@@ -139,14 +136,13 @@ local function updateAuras()
             if info.isTimer then
                 info.expires = expires
                 info.bar:SetMinMaxValues(0, duration)
-                info.bar.SpellName:SetFormattedText(duration) -- Temporary test
                 trackedTimers[buff] = info
                 activeTimers = true
                 timerUpdater:SetScript("OnUpdate", updateTimers)
             else
                 info.bar:SetMinMaxValues(0, info.maxValue())
                 info.bar:SetValue(value1)
-                info.bar.SpellName:SetFormattedText(value1) -- Have to format this
+                info.bar.spellValue:SetFormattedText(info.textValue(value1))
             end
             
         elseif info.active then -- destroy frame
