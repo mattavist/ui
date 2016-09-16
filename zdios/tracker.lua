@@ -7,6 +7,11 @@ barOffset = 30
 playerFrameOffset = 15
 
 local trackedTimers = {}
+local buffIndex = {"Shield Block",
+                    "Ignore Pain",
+                    "Shield Wall",
+                    "Last Stand"
+}
 local trackedBuffs = {
     ["Shield Block"] = {
         color = { 14/255, 86/255, 153/255 },
@@ -21,6 +26,16 @@ local trackedBuffs = {
         maxValue = function()
             return UnitHealthMax("player")
         end
+    },
+
+    ["Shield Wall"] = {
+        color = { 14/255, 153/255, 86/255 },
+        isTimer = true
+    },
+
+    ["Last Stand"] = {
+        color = { 86/255, 14/255, 153/255 },
+        isTimer = true
     },
 }
 
@@ -86,7 +101,9 @@ end
 -- Repositions all bars in a stack
 local function positionBars()
     local activeBars = 0
-    for buff, info in pairs(trackedBuffs) do
+    for _, buff in pairs(buffIndex) do
+        info = trackedBuffs[buff]
+    --for buff, info in pairs(trackedBuffs) do
         if info.active then
             info.bar:SetPoint("BOTTOM", oUF_karmaPlayer, "TOP", 0, playerFrameOffset + activeBars * barOffset)
             activeBars = activeBars + 1
