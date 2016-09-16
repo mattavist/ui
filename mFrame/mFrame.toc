@@ -1,0 +1,10 @@
+## Interface: 70000
+## Title: mFrame
+## Author: Mattavist (matavist@gmail.com)
+##
+## Edits and some changed behavior for various frames
+
+bufficon.lua
+combathide.lua
+minimap.lua
+reposition.lua

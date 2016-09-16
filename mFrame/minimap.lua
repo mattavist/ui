@@ -16,17 +16,18 @@ mbg:SetColorTexture(0, 0, 0)
 ---------------------------------------------------- Mousewheel zoom
 Minimap:EnableMouseWheel(true)
 Minimap:SetScript("OnMouseWheel", function(_, zoom)
-	if zoom > 0 then
-		Minimap_ZoomIn()
-	else
-		Minimap_ZoomOut()
-	end
+    if zoom > 0 then
+        Minimap_ZoomIn()
+    else
+        Minimap_ZoomOut()
+    end
 end)
 
----------------------------------------------------- Hiding ugly things	
+---------------------------------------------------- Hiding ugly things 
 local dummy = function() end
 
 local frames = {
+    TimeManagerClockButton,
     MiniMapMeetingStoneBorder,
     MiniMapTrackingBackground,
     MiniMapMeetingStoneFrame,

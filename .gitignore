@@ -4,6 +4,7 @@
 # Add back some directories
 !/zdios/*
 !/mTrack/*
+!/mFrame/*
 
 Butsu/LICENSE
 oUF/LICENSE
