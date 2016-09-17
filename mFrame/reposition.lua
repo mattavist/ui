@@ -7,7 +7,6 @@ function f:OnEvent(event, addon)
             TalkingHeadFrame:SetPoint("BOTTOM", WorldFrame, "TOP", 0, -300)
             TalkingHeadFrame.ignoreFramePositionManager = true
         end)
-        self:UnregisterEvent(event)
 
     -- Move Digsite Progress to Bottom of screen
     elseif addon == "Blizzard_ArchaeologyUI" then
@@ -15,7 +14,6 @@ function f:OnEvent(event, addon)
             ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", WorldFrame, "BOTTOM", 0, 50)
             ArcheologyDigsiteProgressBar.ignoreFramePositionManager = true
         end)
-        self:UnregisterEvent(event)
     end
 end
 

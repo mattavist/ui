@@ -2,5 +2,6 @@
 ## Title: mTrack
 ##
 ## Author: Mattavist, matavist@gmail.com
+## RequiredDeps: oUF_Karma
 
 mTrack.lua

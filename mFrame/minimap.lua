@@ -27,7 +27,6 @@ end)
 local dummy = function() end
 
 local frames = {
-    TimeManagerClockButton,
     MiniMapMeetingStoneBorder,
     MiniMapTrackingBackground,
     MiniMapMeetingStoneFrame,
@@ -46,12 +45,14 @@ local frames = {
     GameTimeFrame
 }
 
-for i in pairs(frames) do
-    frames[i]:Hide()
-    frames[i].Show = dummy
+for _, mapFrame in pairs(frames) do
+    mapFrame:Hide()
+    mapFrame.Show = dummy
 end
 
 frames = nil
+
+---------------------------------------------------- Clock
 
 ---------------------------------------------------- Tracking
 MiniMapTrackingButton:SetAlpha(0)
