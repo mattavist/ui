@@ -1,0 +1,7 @@
+## Interface: 70000
+## Title: mTooltip
+## Author: Mattavist (matavist@gmail.com)
+##
+## Tweaks the default tooltip
+
+mTooltip.lua
