@@ -1,5 +1,6 @@
 local tip = CreateFrame('Frame', UIParent)
 
+
 local classColors = {
     ["DEATHKNIGHT"] = "|cFFC41F3B",
     ["DEMONHUNTER"] = "|cFFA330C9",
@@ -17,8 +18,12 @@ local classColors = {
 
 tip:SetScript("OnEvent", function ()
     -- Reanchor the tooltip
-    GameTooltip:ClearAllPoints()
-    GameTooltip:SetPoint("BOTTOMLEFT", WorldFrame, "BOTTOMRIGHT", -700, 400)
+    if mouseAnchor then
+        GameTooltip:SetAnchorType("ANCHOR_CURSOR")
+    else
+        GameTooltip:ClearAllPoints()
+        GameTooltip:SetPoint("BOTTOMLEFT", WorldFrame, "BOTTOMRIGHT", -700, 400)
+    end
 
     --Recolor unit name
     local class, cls = UnitClass("mouseover")
