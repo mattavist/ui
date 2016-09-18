@@ -1,8 +1,8 @@
 local tip = CreateFrame('Frame', UIParent)
 
 local classColors = {
-    ["DEATH KNIGHT"] = "|cFFC41F3B",
-    ["DEMON HUNTER"] = "|cFFA330C9",
+    ["DEATHKNIGHT"] = "|cFFC41F3B",
+    ["DEMONHUNTER"] = "|cFFA330C9",
     ["DRUID"] = "|cFFFF7D0A",
     ["HUNTER"] = "|cFFABD473",
     ["MAGE"] = "|cFF69CCF0",
@@ -15,31 +15,39 @@ local classColors = {
     ["WARRIOR"] = "|cFFC79C6E"
 }
 
-local function line()
-    --Recolor unit name
-    local class, cls = UnitClass("mouseover")
-    if cls then
-        local playerName = _G["GameTooltipTextLeft" .. 1]
-        playerName:SetText(classColors[cls]..playerName:GetText())
-    end
-
+tip:SetScript("OnEvent", function ()
     -- Reanchor the tooltip
     GameTooltip:ClearAllPoints()
     GameTooltip:SetPoint("BOTTOMLEFT", WorldFrame, "BOTTOMRIGHT", -700, 400)
 
+    --Recolor unit name
+    local class, cls = UnitClass("mouseover")
+    if cls and UnitIsPlayer("mouseover") then
+        local playerName = _G["GameTooltipTextLeft" .. 1]
+        playerName:SetText(classColors[cls]..playerName:GetText())
+    end
+
     -- Add target line
-    local target = UnitName("mouseovertarget")
-    local player = UnitName("player")
-    if target == player then
-        target = "YOU"
+    local mouseovertarget = UnitName("mouseovertarget")
+    if mouseovertarget then
+        if mouseovertarget == UnitName("player") then
+            mouseovertarget = "YOU"
+        end
+        GameTooltip:AddLine(mouseovertarget, 1, 1, 1)
     end
 
-    if target then
-        GameTooltip:AddLine(target, 1, 1, 1)
-    end
+    -- Move Health bar
+    GameTooltip:AddLine("|c00000000_", 1, 1, 1) -- A blank line
+    local bar = GameTooltipStatusBar
+    bar:ClearAllPoints()
+    bar:SetPoint("BOTTOMLEFT", 10, 12)
+    bar:SetPoint("BOTTOMRIGHT", -10, 12)
+    bar:SetHeight(5)
+    bar:SetStatusBarTexture("Interface\\AddOns\\oUF_Karma\\media\\Statusbar")
+    GameTooltip.statusBar = bar
 
-    GameTooltip:Show()
-end
+    -- Redraw the updated tooltip
+    GameTooltip:Show() 
+end)
 
-tip:SetScript("OnEvent", function () line() end)
 tip:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
