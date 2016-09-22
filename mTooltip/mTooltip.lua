@@ -1,5 +1,6 @@
 local tip = CreateFrame('Frame', UIParent)
 
+local mouseAnchor = nil
 
 local classColors = {
     ["DEATHKNIGHT"] = "|cFFC41F3B",
@@ -17,13 +18,17 @@ local classColors = {
 }
 
 tip:SetScript("OnEvent", function ()
+    
     -- Reanchor the tooltip
+    
     if mouseAnchor then
         GameTooltip:SetAnchorType("ANCHOR_CURSOR")
     else
         GameTooltip:ClearAllPoints()
-        GameTooltip:SetPoint("BOTTOMLEFT", WorldFrame, "BOTTOMRIGHT", -700, 400)
+        GameTooltip:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 
+            -700 + tonumber(GameTooltip:GetWidth()), 400)
     end
+    
 
     --Recolor unit name
     local class, cls = UnitClass("mouseover")
@@ -35,10 +40,10 @@ tip:SetScript("OnEvent", function ()
     -- Add target line
     local mouseovertarget = UnitName("mouseovertarget")
     if mouseovertarget then
-        if mouseovertarget == UnitName("player") then
+        if UnitIsUnit("mouseovertarget", "player") then
             mouseovertarget = "YOU"
         end
-        GameTooltip:AddLine(mouseovertarget, 1, 1, 1)
+        GameTooltip:AddLine("Target: "..mouseovertarget, 1, 1, 1)
     end
 
     -- Move Health bar
@@ -53,6 +58,7 @@ tip:SetScript("OnEvent", function ()
 
     -- Redraw the updated tooltip
     GameTooltip:Show() 
+
 end)
 
 tip:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
