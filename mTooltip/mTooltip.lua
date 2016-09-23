@@ -18,9 +18,7 @@ local classColors = {
 }
 
 tip:SetScript("OnEvent", function ()
-    
     -- Reanchor the tooltip
-    
     if mouseAnchor then
         GameTooltip:SetAnchorType("ANCHOR_CURSOR")
     else
@@ -28,7 +26,6 @@ tip:SetScript("OnEvent", function ()
         GameTooltip:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 
             -700 + tonumber(GameTooltip:GetWidth()), 400)
     end
-    
 
     --Recolor unit name
     local class, cls = UnitClass("mouseover")
@@ -37,17 +34,7 @@ tip:SetScript("OnEvent", function ()
         playerName:SetText(classColors[cls]..playerName:GetText())
     end
 
-    -- Add target line
-    local mouseovertarget = UnitName("mouseovertarget")
-    if mouseovertarget then
-        if UnitIsUnit("mouseovertarget", "player") then
-            mouseovertarget = "YOU"
-        end
-        GameTooltip:AddLine("Target: "..mouseovertarget, 1, 1, 1)
-    end
-
     -- Move Health bar
-    GameTooltip:AddLine("|c00000000_", 1, 1, 1) -- A blank line
     local bar = GameTooltipStatusBar
     bar:ClearAllPoints()
     bar:SetPoint("BOTTOMLEFT", 10, 12)
@@ -55,10 +42,20 @@ tip:SetScript("OnEvent", function ()
     bar:SetHeight(5)
     bar:SetStatusBarTexture("Interface\\AddOns\\oUF_Karma\\media\\Statusbar")
     GameTooltip.statusBar = bar
+    GameTooltip:SetHeight(200)
 
     -- Redraw the updated tooltip
     GameTooltip:Show() 
 
 end)
-
 tip:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+
+local function hooker()
+    -- Add target line
+    local mouseovertarget = UnitName("mouseovertarget")
+    if mouseovertarget then
+        GameTooltip:AddLine("Target: "..mouseovertarget, 1, 1, 1)
+    end
+    GameTooltip:AddLine("|c00000000_", 1, 1, 1) -- A blank line
+end
+GameTooltip:HookScript("OnTooltipSetUnit", hooker)
