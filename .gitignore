@@ -1,18 +1,15 @@
 # Ignore All Files
 *
 !*/
-*.*
+
 
 # Add back some directories
 !/AddOns/zdios/*
 !/AddOns/mTrack/*
 !/AddOns/mFrame/*
 !/AddOns/mTooltip/*
+*/DS_Store
 
-AddOns/Butsu/LICENSE
-AddOns/Butsu/LICENSE
-AddOns/oUF/LICENSE
-AddOns/oUF/utils/changelog
-AddOns/tullaRange/LICENSE
-AddOns/oUF/utils/docs
-AddOns/DS_Store
+*/LICENSE
+*/changelog
+*/docs
