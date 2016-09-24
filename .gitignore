@@ -4,6 +4,7 @@
 
 
 # Add back some directories
+!/Tooltips/*
 !/AddOns/zdios/*
 !/AddOns/mTrack/*
 !/AddOns/mFrame/*
