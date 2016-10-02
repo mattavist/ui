@@ -7,12 +7,18 @@ barOffset = 30
 playerFrameOffset = 15
 
 local trackedTimers = {}
-local buffIndex = {"Shield Block",
+local buffIndex = { "Ultimatum",
+                    "Shield Block",
                     "Ignore Pain",
                     "Shield Wall",
                     "Last Stand"
 }
 local trackedBuffs = {
+    ["Ultimatum"] = {
+        color = { 255/255, 255/255, 0/255 },
+        isTimer = true
+    },
+
     ["Shield Block"] = {
         color = { 14/255, 86/255, 153/255 },
         isTimer = true
