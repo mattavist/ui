@@ -3,4 +3,5 @@
 ##
 ## Author: Mattavist, matavist@gmail.com
 
-mMap.lua
+mMinimap.lua
+mWorldMap.lua

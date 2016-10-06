@@ -7,5 +7,4 @@
 
 bufficon.lua
 combathide.lua
-minimap.lua
 reposition.lua
