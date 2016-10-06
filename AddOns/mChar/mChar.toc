@@ -1,0 +1,6 @@
+## Interface: 70000
+## Title: mChar
+## SavedVariables: mCharData
+## Author: Mattavist, matavist@gmail.com
+
+mChar.lua
