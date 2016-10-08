@@ -52,7 +52,7 @@ local function tracking()
 	MiniMapTrackingButton:SetAlpha(0)
 	MiniMapTrackingIcon:SetAlpha(0)
 	MiniMapTracking:ClearAllPoints()
-	MiniMapTracking:SetPoint("BOTTOMLEFT", Minimap)
+	MiniMapTracking:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 5, -5)
 	MiniMapTracking:SetScale(1)
 	MiniMapTracking:Show()
 end
@@ -60,7 +60,7 @@ end
 local function garrison()
 	GarrisonLandingPageMinimapButton:SetAlpha(0)
 	GarrisonLandingPageMinimapButton:ClearAllPoints()
-	GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", Minimap)
+	GarrisonLandingPageMinimapButton:SetPoint("TOPRIGHT", Minimap)
 	GarrisonLandingPageMinimapButton:SetScale(1)
 	GarrisonLandingPageMinimapButton:Show()
 end
@@ -89,7 +89,9 @@ Minimap:HookScript("OnEnter", function()
 end)
 
 Minimap:HookScript("OnLeave", function()
-	MiniMapTrackingButton:SetAlpha(0)
-	MiniMapTrackingIcon:SetAlpha(0)
-	GarrisonLandingPageMinimapButton:SetAlpha(0)
+	if not Minimap:IsMouseOver() then
+		MiniMapTrackingButton:SetAlpha(0)
+		MiniMapTrackingIcon:SetAlpha(0)
+		GarrisonLandingPageMinimapButton:SetAlpha(0)
+	end
 end)

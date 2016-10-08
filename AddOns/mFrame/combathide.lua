@@ -12,41 +12,42 @@ local function showAll()
     BuffFrame:SetAlpha(1)
 end
 
+-- Hides when exiting combat or stopping spell cast or losing target when ooc
+local hider = CreateFrame("Frame", nil, UIParent)
+hider:SetScript("OnEvent", function(self, event, unit, ...)
+    if not InCombatLockdown() and not UnitExists("target") then
+        if event == "UNIT_SPELLCAST_STOP" and not unit == "player" then
+            return
+        end
+        hideAll()
+    end
+end)
+
+-- Shows when starting spell cast, entering combat, or gaining a target
+local shower = CreateFrame("Frame", nil, UIParent)
+shower:SetScript("OnEvent", function(self, event, unit, ...)
+    if event == "PLAYER_TARGET_CHANGED" and not UnitExists("target") then
+            return
+        end
+    showAll()
+end)
+
+-- Small tweaks and register hider/shower
 local addon = CreateFrame("Frame", nil, UIParent)
 addon:RegisterEvent("PLAYER_ENTERING_WORLD")
 addon:SetScript("OnEvent", function(self, event, unit, ...)
--- Register events and small tweaks when logging in or zoning
-    
+    addon:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    LootHistoryFrame:SetScale(1.5)
+    TimeManagerClockButton:Hide()
+    ChatFrame1:SetFont("Interface\\AddOns\\oUF_Karma\\media\\Asap-Bold.ttf", 16, "OUTLINE")
+    ChatFrame3:SetFont("Interface\\AddOns\\oUF_Karma\\media\\Asap-Bold.ttf", 16, "OUTLINE")  
+    hideAll()      
 
--- Hide when leaving combat, losing target, or stopping a spellcast when not in combat, nothing targeted, 
--- and at max health
-    if (event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_TARGET_CHANGED" or "UNIT_SPELLCAST_STOP") then
-        if (not InCombatLockdown() and not UnitExists("target")) and 
-            (UnitHealth("player") == UnitHealthMax("player")) then
-            hideAll()
-        end
-    end
-    
--- Show when entering combat, gaining a target, or starting a spellcast
-    if (event == "PLAYER_REGEN_DISABLED") or
-        (event == "PLAYER_TARGET_CHANGED" and UnitExists("target")) or
-        (event == "UNIT_SPELLCAST_START" and unit == "player") then
-        showAll()
-    end
+    hider:RegisterEvent("PLAYER_REGEN_ENABLED")
+    hider:RegisterEvent("UNIT_SPELLCAST_STOP")
+    hider:RegisterEvent("PLAYER_TARGET_CHANGED")
 
-    if (event == "PLAYER_ENTERING_WORLD") then
-        addon:RegisterEvent("PLAYER_REGEN_ENABLED")
-        addon:RegisterEvent("PLAYER_REGEN_DISABLED")
-        addon:RegisterEvent("PLAYER_TARGET_CHANGED")
-        addon:RegisterEvent("UNIT_SPELLCAST_START")
-        addon:RegisterEvent("UNIT_SPELLCAST_STOP")
-
-        LootHistoryFrame:SetScale(1.5)
-        TimeManagerClockButton:Hide()
-        ChatFrame1:SetFont("Interface\\AddOns\\oUF_Karma\\media\\Asap-Bold.ttf", 16, "OUTLINE")
-        ChatFrame3:SetFont("Interface\\AddOns\\oUF_Karma\\media\\Asap-Bold.ttf", 16, "OUTLINE")
-        showAll()
-        addon:UnregisterEvent("PLAYER_ENTERING_WORLD")
-        hideAll()
-    end
+    shower:RegisterEvent("PLAYER_REGEN_DISABLED")
+    shower:RegisterEvent("UNIT_SPELLCAST_START")
+    shower:RegisterEvent("PLAYER_TARGET_CHANGED")
 end)
