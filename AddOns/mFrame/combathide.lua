@@ -41,7 +41,6 @@ addon:SetScript("OnEvent", function(self, event, unit, ...)
     TimeManagerClockButton:Hide()
     ChatFrame1:SetFont("Interface\\AddOns\\oUF_Karma\\media\\Asap-Bold.ttf", 16, "OUTLINE")
     ChatFrame3:SetFont("Interface\\AddOns\\oUF_Karma\\media\\Asap-Bold.ttf", 16, "OUTLINE")  
-    hideAll()      
 
     hider:RegisterEvent("PLAYER_REGEN_ENABLED")
     hider:RegisterEvent("UNIT_SPELLCAST_STOP")
