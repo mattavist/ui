@@ -1,0 +1,5 @@
+## Interface: 70000
+## Title: mGuide
+## Author: Mattavist, matavist@gmail.com
+
+mGuide.lua

@@ -7,13 +7,20 @@ barOffset = 30
 playerFrameOffset = 15
 
 local trackedTimers = {}
-local buffIndex = { "Ultimatum",
+local buffIndex = { 
+                    -- Warrior
+                    "Ultimatum",
                     "Shield Block",
                     "Ignore Pain",
                     "Shield Wall",
-                    "Last Stand"
+                    "Last Stand",
+
+                    -- Shaman
+                    "Stormbringer",
+                    "Flametongue"
 }
 local trackedBuffs = {
+    -- Warrior
     ["Ultimatum"] = {
         color = { 255/255, 255/255, 0/255 },
         isTimer = true
@@ -41,6 +48,16 @@ local trackedBuffs = {
 
     ["Last Stand"] = {
         color = { 86/255, 14/255, 153/255 },
+        isTimer = true
+    },
+
+    -- Shaman
+    ["Stormbringer"] = {
+        color = { 14/255, 86/255, 153/255 },
+        isTimer = true
+    },
+    ["Flametongue"] = {
+        color = { 178/255, 101/255, 1/255 },
         isTimer = true
     },
 }
