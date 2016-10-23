@@ -1,6 +1,7 @@
 local addon, ns = ...
 local mGuideFrame = CreateFrame("Frame", "mGuideFrame", UIParent)
 local background = mGuideFrame:CreateTexture(nil, "BACKGROUND")
+local foreground = mGuideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
 local spellTexture = mGuideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
 local gcdTime = 0
 local throttleCount = 0
@@ -17,8 +18,6 @@ ns.checkSpell = function(spellName)
 	end
 	return canCast and not notEnoughMana and learned
 end
-
-
 
 ns.auraDuration = function(buffName, unit, auraType)
 	local name, _, _, _, _, _, expires = UnitAura(unit, buffName, nil, auraType)
@@ -43,10 +42,6 @@ ns.talentChosen = function(row, column)
 	return selected == column
 end
 
-local function rage()
-	return UnitPower("player")
-end
-
 ns.getBuffValue = function(buffName, unit)
 	local name, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, value = UnitAura(unit, buffName)
 	--local name, _, _, _, _, _, expires = UnitAura(unit, buffName, nil, "HELPFUL")
@@ -61,8 +56,6 @@ local function setSpell(spellName)
 	spellTexture:SetTexture(GetSpellTexture(spellName))
 end
 
-
-
 local function guideParent()
     -- Save CPU by only running once every throttleCount times
     throttleCount = throttleCount + 1
@@ -76,6 +69,12 @@ local function guideParent()
 		setSpell(spell)
 		lastSpell = spell
 	end
+
+	if lastSpell and IsSpellInRange(lastSpell, "target") == 0 then
+		foreground:SetColorTexture(1, 0, 0, 0.5)
+	else
+		foreground:SetColorTexture(1, 0, 0, 0)
+	end
 end
 
 local function initGuideFrame()
@@ -83,7 +82,10 @@ local function initGuideFrame()
 	mGuideFrame:SetPoint("CENTER",0,-190)
 	background:SetPoint("BOTTOMRIGHT", 3, -3)
 	background:SetPoint("TOPLEFT", -3, 3)
-	background:SetColorTexture(0, 0, 0)
+	background:SetColorTexture(0, 0, 0, 0.5)
+	mGuideFrame:SetPoint("CENTER",0,-190)
+	foreground:SetPoint("BOTTOMRIGHT", 3, -3)
+	foreground:SetPoint("TOPLEFT", -3, 3)
 	spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
 	spellTexture:SetAllPoints(mGuideFrame) --make texture same size as button
 

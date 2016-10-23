@@ -20,6 +20,7 @@ warrior.arms = function()
 	local shatteredDefenses = ns.auraDuration("Shattered Defenses", "Player", "HELPFUL") > 0.3
 	local battleCry = ns.auraDuration("Battle Cry", "Player", "HELPFUL") > 0.3
 	local focusedRageStacks = ns.auraStacks("Focused Rage", "Player", "HELPFUL")
+	local rage = UnitPower("player")
 
 	-- Decide whether to use AoE or Single Target rotation based on cleave buff
 	if aoeTime then
@@ -40,7 +41,7 @@ warrior.arms = function()
 			spell = "Bladestorm"
 		elseif ns.checkSpell("Cleave") then
 			spell = "Cleave"
-		elseif ns.checkSpell("Whirlwind") and rage() > 35 then
+		elseif ns.checkSpell("Whirlwind") and rage > 35 then
 			spell = "Whirlwind"
 		elseif ns.checkSpell("Heroic Throw") then
 			spell = "Heroic Throw"
@@ -65,7 +66,7 @@ warrior.arms = function()
 			spell = "Focused Rage"
 		elseif ns.checkSpell("Mortal Strike") then
 			spell = "Mortal Strike"
-		elseif ns.checkSpell("Slam") and rage() > 40 or battleCry then
+		elseif ns.checkSpell("Slam") and rage > 40 or battleCry then
 			spell = "Slam"
 		elseif ns.checkSpell("Colossus Smash") then
 			spell = "Colossus Smash"
