@@ -2,4 +2,6 @@
 ## Title: mGuide
 ## Author: Mattavist, matavist@gmail.com
 
+shaman.lua
+warrior.lua
 mGuide.lua
