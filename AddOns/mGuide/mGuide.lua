@@ -6,10 +6,10 @@ local spellTexture = mGuideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
 local gcdTime = 0
 local throttleCount = 0
 local lastSpell = nil
-ns.gcd = 0
-ns.aoeTime = false
+local gcd = 0
+local aoeTime = false
 
-ns.checkSpell = function(spellName)
+local function checkSpell(spellName)
 	local canCast = true
 	learned, notEnoughMana = IsUsableSpell(spellName)
 	start, cooldown, enable = GetSpellCooldown(spellName)
@@ -19,7 +19,7 @@ ns.checkSpell = function(spellName)
 	return canCast and not notEnoughMana and learned
 end
 
-ns.auraDuration = function(buffName, unit, auraType)
+local function auraDuration(buffName, unit, auraType)
 	local name, _, _, _, _, _, expires = UnitAura(unit, buffName, nil, auraType)
     if name then
     	return expires - GetTime()
@@ -28,7 +28,7 @@ ns.auraDuration = function(buffName, unit, auraType)
     return 0
 end
 
-ns.auraStacks = function(buffName, unit, auraType)
+local function auraStacks(buffName, unit, auraType)
 	local name, _, _, count = UnitAura(unit, buffName, nil, auraType)
     if name then
     	return count
@@ -37,14 +37,13 @@ ns.auraStacks = function(buffName, unit, auraType)
     return 0
 end
 
-ns.talentChosen = function(row, column)
+local function talentChosen(row, column)
 	local _, selected = GetTalentTierInfo(row, 1)
 	return selected == column
 end
 
-ns.getBuffValue = function(buffName, unit)
+local function getBuffValue(buffName, unit)
 	local name, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, value = UnitAura(unit, buffName)
-	--local name, _, _, _, _, _, expires = UnitAura(unit, buffName, nil, "HELPFUL")
 	if name then
 		return value
 	else
@@ -70,22 +69,28 @@ local function guideParent()
 		lastSpell = spell
 	end
 
-	if lastSpell and IsSpellInRange(lastSpell, "target") == 0 then
-		foreground:SetColorTexture(1, 0, 0, 0.5)
+	if lastSpell then
+		background:SetColorTexture(0, 0, 0, .75)
+		if IsSpellInRange(lastSpell, "target") == 0 then
+			foreground:SetColorTexture(1, 0, 0, 0.5) -- Out of range
+		elseif not checkSpell(lastSpell) then
+			foreground:SetColorTexture(0, 0, 1, 0.5) -- Not enough mana
+		else
+			foreground:SetColorTexture(1, 0, 0, 0) -- Usable
+		end
 	else
-		foreground:SetColorTexture(1, 0, 0, 0)
+		background:SetColorTexture(0, 0, 0, 0)
 	end
 end
 
 local function initGuideFrame()
-	mGuideFrame:SetSize(40,40)
+	mGuideFrame:SetSize(50,50)
 	mGuideFrame:SetPoint("CENTER",0,-190)
 	background:SetPoint("BOTTOMRIGHT", 3, -3)
 	background:SetPoint("TOPLEFT", -3, 3)
-	background:SetColorTexture(0, 0, 0, 0.5)
-	mGuideFrame:SetPoint("CENTER",0,-190)
-	foreground:SetPoint("BOTTOMRIGHT", 3, -3)
-	foreground:SetPoint("TOPLEFT", -3, 3)
+	background:SetColorTexture(0, 0, 0, 0.75)
+	foreground:SetPoint("BOTTOMRIGHT")
+	foreground:SetPoint("TOPLEFT")
 	spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
 	spellTexture:SetAllPoints(mGuideFrame) --make texture same size as button
 
@@ -94,9 +99,9 @@ local function initGuideFrame()
 	PlayerCooldown:SetAllPoints(mGuideFrame)
 	mGuideFrame:SetScript("OnEvent", function(self, _, unit, _, _)
 		if unit == "player" then
-			ns.gcdStart, ns.gcd = GetSpellCooldown(61304)
-			gcdTime = ns.gcdStart + ns.gcd
-			PlayerCooldown:SetCooldown(ns.gcdStart, ns.gcd)
+			gcdStart, gcd = GetSpellCooldown(61304)
+			gcdTime = gcdStart + gcd
+			PlayerCooldown:SetCooldown(gcdStart, gcd)
 		end
 	end)
 end
@@ -149,3 +154,12 @@ guider:SetScript("OnEvent", function(self, event, unit, ...)
 		mGuideFrame:Show()
 	end
 end)
+
+-- Put shared functions and variables in the namespace
+ns.checkSpell = checkSpell
+ns.auraDuration = auraDuration
+ns.auraStacks = auraStacks
+ns.talentChosen = talentChosen
+ns.getBuffValue = getBuffValue
+ns.gcd = gcd
+ns.aoeTime = aoeTime

@@ -16,8 +16,8 @@ local buffIndex = {
                     "Last Stand",
 
                     -- Shaman
-                    "Stormbringer",
-                    "Flametongue"
+                    --"Stormbringer",
+                    --"Flametongue"
 }
 local trackedBuffs = {
     -- Warrior
@@ -52,14 +52,14 @@ local trackedBuffs = {
     },
 
     -- Shaman
-    ["Stormbringer"] = {
+    --[[["Stormbringer"] = {
         color = { 14/255, 86/255, 153/255 },
         isTimer = true
     },
     ["Flametongue"] = {
         color = { 178/255, 101/255, 1/255 },
         isTimer = true
-    },
+    },]]
 }
 
 --backdrop table

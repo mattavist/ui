@@ -62,11 +62,11 @@ warrior.arms = function()
 			elseif shatteredDefenses then
 				spell = "Execute"
 			end
-		elseif focusRageTalented and ns.checkSpell("Focused Rage") and focusedRageStacks < 3 or battleCry then
+		elseif focusedRageTalented and ns.checkSpell("Focused Rage") and (focusedRageStacks < 3 or battleCry) then
 			spell = "Focused Rage"
 		elseif ns.checkSpell("Mortal Strike") then
 			spell = "Mortal Strike"
-		elseif ns.checkSpell("Slam") and rage > 40 or battleCry then
+		elseif ns.checkSpell("Slam") and (rage > 40 or battleCry) then
 			spell = "Slam"
 		elseif ns.checkSpell("Colossus Smash") then
 			spell = "Colossus Smash"

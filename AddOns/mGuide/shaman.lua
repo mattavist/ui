@@ -4,12 +4,9 @@ local shaman = CreateFrame("Frame")
 shaman.enhance = function()
 	local spell = nil
 	local maelstrom = UnitPower("player")
-	local boulderfistTalented = ns.talentChosen(1, 3)
 	local hailstormTalented = ns.talentChosen(4, 3)
 
-	if boulderfistTalented and ns.checkSpell("Boulderfist") and ns.auraDuration("Boulderfist", "player", "HELPFUL") < ns.gcd then
-		spell = "Rockbiter"
-	elseif hailstormTalented and ns.checkSpell("Frostbrand") and ns.auraDuration("Frostbrand", "player", "HELPFUL") < ns.gcd then
+	if hailstormTalented and ns.checkSpell("Frostbrand") and ns.auraDuration("Frostbrand", "player", "HELPFUL") < ns.gcd then
 		spell = "Frostbrand"
 	elseif ns.auraDuration("Flametongue", "player", "HELPFUL") < ns.gcd then
 		spell = "Flametongue"
