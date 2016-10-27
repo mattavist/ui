@@ -6,8 +6,7 @@ local spellTexture = mGuideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
 local gcdTime = 0
 local throttleCount = 0
 local lastSpell = nil
-local gcd = 0
-local aoeTime = false
+local gcd = 1.3
 
 local function checkSpell(spellName)
 	local canCast = true
@@ -102,6 +101,9 @@ local function initGuideFrame()
 			gcdStart, gcd = GetSpellCooldown(61304)
 			gcdTime = gcdStart + gcd
 			PlayerCooldown:SetCooldown(gcdStart, gcd)
+			if gcd then
+				ns.gcd = gcd
+			end
 		end
 	end)
 end
@@ -162,4 +164,3 @@ ns.auraStacks = auraStacks
 ns.talentChosen = talentChosen
 ns.getBuffValue = getBuffValue
 ns.gcd = gcd
-ns.aoeTime = aoeTime

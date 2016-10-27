@@ -14,6 +14,7 @@ local buffIndex = {
                     "Ignore Pain",
                     "Shield Wall",
                     "Last Stand",
+                    "Battle Cry",
 
                     -- Shaman
                     --"Stormbringer",
@@ -48,6 +49,11 @@ local trackedBuffs = {
 
     ["Last Stand"] = {
         color = { 86/255, 14/255, 153/255 },
+        isTimer = true
+    },
+
+    ["Battle Cry"] = {
+        color = { 255/255, 30/255, 30/255 },
         isTimer = true
     },
 

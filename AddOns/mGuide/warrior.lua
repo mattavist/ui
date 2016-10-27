@@ -1,5 +1,6 @@
 local addon, ns = ...
 local warrior = CreateFrame("Frame")
+local aoeTime = false
 
 warrior.prot = function()
 	local spell = nil
@@ -47,7 +48,7 @@ warrior.arms = function()
 			spell = "Heroic Throw"
 		end
 	else
-		-- Focused Rage Rotation
+		-- Single Target Rotation
 		if ns.checkSpell("Colossus Smash") and not colSmashOnTarget and not shatteredDefenses then
 			spell = "Colossus Smash"
 		elseif ns.checkSpell("Warbreaker") and not colSmashOnTarget and not shatteredDefenses then
@@ -62,11 +63,14 @@ warrior.arms = function()
 			elseif shatteredDefenses then
 				spell = "Execute"
 			end
-		elseif focusedRageTalented and ns.checkSpell("Focused Rage") and (focusedRageStacks < 3 or battleCry) then
-			spell = "Focused Rage"
+		elseif focusedRageTalented and ns.checkSpell("Focused Rage") and (
+			not battleCry and (
+			(rage < 32 and (shatteredDefenses and focusedRageStacks < 1)) or
+			(rage > 90 and focusedRageStacks < 3))) then
+				spell = "Focused Rage"
 		elseif ns.checkSpell("Mortal Strike") then
 			spell = "Mortal Strike"
-		elseif ns.checkSpell("Slam") and (rage > 40 or battleCry) then
+		elseif ns.checkSpell("Slam") and (battleCry or (rage > 32)) then
 			spell = "Slam"
 		elseif ns.checkSpell("Colossus Smash") then
 			spell = "Colossus Smash"

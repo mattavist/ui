@@ -5,9 +5,12 @@ shaman.enhance = function()
 	local spell = nil
 	local maelstrom = UnitPower("player")
 	local hailstormTalented = ns.talentChosen(4, 3)
+	local boulderfistTalented = ns.talentChosen(1, 3)
 
 	if hailstormTalented and ns.checkSpell("Frostbrand") and ns.auraDuration("Frostbrand", "player", "HELPFUL") < ns.gcd then
 		spell = "Frostbrand"
+	elseif boulderfistTalented and ns.checkSpell("Rockbiter") and ns.auraDuration("Landslide", "player", "HELPFUL") < ns.gcd then
+		spell = "Rockbiter"
 	elseif ns.auraDuration("Flametongue", "player", "HELPFUL") < ns.gcd then
 		spell = "Flametongue"
 	elseif ns.checkSpell("Feral Spirit") then
