@@ -62,17 +62,26 @@ local function guideParent()
     end
     throttleCount = 0
 
-	local spell = guide()
+	-- Set the spell texture if it has changed
+    local spell, glow = guide()
 	if spell and spell ~= lastSpell then
 		setSpell(spell)
 		lastSpell = spell
 	end
 
-	if lastSpell then
+	-- Make it pulse a glowing thing
+	if glow then
+		ActionButton_ShowOverlayGlow(mGuideFrame)
+	else
+		ActionButton_HideOverlayGlow(mGuideFrame)
+	end
+
+	-- Set the cooldown spiral
+	if spell then
 		background:SetColorTexture(0, 0, 0, .75)
-		if IsSpellInRange(lastSpell, "target") == 0 then
+		if IsSpellInRange(spell, "target") == 0 then
 			foreground:SetColorTexture(1, 0, 0, 0.5) -- Out of range
-		elseif not checkSpell(lastSpell) then
+		elseif not checkSpell(spell) then
 			foreground:SetColorTexture(0, 0, 1, 0.5) -- Not enough mana
 		else
 			foreground:SetColorTexture(1, 0, 0, 0) -- Usable
@@ -120,10 +129,8 @@ local function getSpec()
 	elseif class == "WARRIOR" then
 		if specID == 1 then
 			guide = ns.warrior.arms
-		elseif specID == 3 then
-			if ns.talentChosen(6, 1) then -- Checks for Vengeance talent
-				guide = ns.warrior.prot
-			end
+		elseif specID == 3 and ns.talentChosen(6, 1) then -- Checks for Vengeance talent
+			guide = ns.warrior.prot
 		end
 	end
 
