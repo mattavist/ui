@@ -4,17 +4,27 @@ local aoeTime = false
 
 warrior.prot = function()
 	local spell = nil
+	local glow = false
+
+	-- Glow when Shield Block is available and missing
+	if ns.auraDuration("Shield Block", "Player", "HELPFUL") == 0 and
+		(GetSpellCooldown("Focused Rage") == 0) then
+		glow = true
+	end
+
+	-- Set spell to Ignore Pain or Focused Rage
 	if ns.auraDuration("Vengeance: Ignore Pain", "Player", "HELPFUL") > 0 then
 		spell = "Ignore Pain"
-	elseif ns.auraDuration("Vengeance: Focused Rage", "Player", "HELPFUL") > 0 then
+	else
 		spell = "Focused Rage"
 	end
 
-	return spell, false
+	return spell, glow
 end
 
 warrior.arms = function()
 	local spell = nil
+	local glow = false
 	local rage = UnitPower("player")
 	local focusedRageTalented = ns.talentChosen(5, 3)
 	local colSmashOnTarget = ns.auraDuration("Colossus Smash", "target", "HARMFUL|PLAYER") > 0
@@ -23,13 +33,11 @@ warrior.arms = function()
 	local focusedRageStacks = ns.auraStacks("Focused Rage", "Player", "HELPFUL")
 
 	-- Arms glow is based on focus rage
-	if focusedRageTalented and ns.checkSpell("Focused Rage") and (
+	if focusedRageTalented and (GetSpellCooldown("Focused Rage") == 0) and (
 		battleCry or (
 		(rage < 32 and (shatteredDefenses and focusedRageStacks < 1)) or
 		(rage > 90 and focusedRageStacks < 3))) then
 			glow = true
-	else
-		glow = false
 	end
 
 	-- Decide whether to use AoE or Single Target rotation based on cleave buff
@@ -38,7 +46,7 @@ warrior.arms = function()
 			aoeTime = false
 		end
 	end
-	if ns.getBuffValue("Cleave", "Player") >= 1 then
+	if ns.getBuffValue("Cleave", "Player") >= 30 then
 		aoeTime = GetTime() + 4
 	end
 
@@ -54,7 +62,7 @@ warrior.arms = function()
 	elseif ns.talentChosen(1, 2) and ns.auraDuration("Overpower!", "Player", "HELPFUL") then -- ns.checkSpell("Overpower") and 
 		spell = "Overpower"
 	elseif ns.checkSpell("Execute") and focusedRageStacks < 3 then
-			spell = "Execute"
+		spell = "Execute"
 	elseif ns.checkSpell("Mortal Strike") then
 		spell = "Mortal Strike"
 	elseif ns.checkSpell("Slam") and (battleCry or (rage > 32)) then

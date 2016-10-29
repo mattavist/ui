@@ -3,6 +3,7 @@ local mGuideFrame = CreateFrame("Frame", "mGuideFrame", UIParent)
 local background = mGuideFrame:CreateTexture(nil, "BACKGROUND")
 local foreground = mGuideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
 local spellTexture = mGuideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
+local PlayerCooldown = CreateFrame("Cooldown", "PlayerCooldown", mGuideFrame, "CooldownFrameTemplate")
 local gcdTime = 0
 local throttleCount = 0
 local lastSpell = nil
@@ -50,47 +51,6 @@ local function getBuffValue(buffName, unit)
 	end
 end
 
-local function setSpell(spellName)
-	spellTexture:SetTexture(GetSpellTexture(spellName))
-end
-
-local function guideParent()
-    -- Save CPU by only running once every throttleCount times
-    throttleCount = throttleCount + 1
-    if (throttleCount < 10) then -- Hard coded for performance
-        return
-    end
-    throttleCount = 0
-
-	-- Set the spell texture if it has changed
-    local spell, glow = guide()
-	if spell and spell ~= lastSpell then
-		setSpell(spell)
-		lastSpell = spell
-	end
-
-	-- Make it pulse a glowing thing
-	if glow then
-		ActionButton_ShowOverlayGlow(mGuideFrame)
-	else
-		ActionButton_HideOverlayGlow(mGuideFrame)
-	end
-
-	-- Set the cooldown spiral
-	if spell then
-		background:SetColorTexture(0, 0, 0, .75)
-		if IsSpellInRange(spell, "target") == 0 then
-			foreground:SetColorTexture(1, 0, 0, 0.5) -- Out of range
-		elseif not checkSpell(spell) then
-			foreground:SetColorTexture(0, 0, 1, 0.5) -- Not enough mana
-		else
-			foreground:SetColorTexture(1, 0, 0, 0) -- Usable
-		end
-	else
-		background:SetColorTexture(0, 0, 0, 0)
-	end
-end
-
 local function initGuideFrame()
 	mGuideFrame:SetSize(50,50)
 	mGuideFrame:SetPoint("CENTER",0,-190)
@@ -101,20 +61,43 @@ local function initGuideFrame()
 	foreground:SetPoint("TOPLEFT")
 	spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
 	spellTexture:SetAllPoints(mGuideFrame) --make texture same size as button
-
-	-- Show GCD Swirl on Frame
-	CreateFrame("Cooldown", "PlayerCooldown", mGuideFrame, "CooldownFrameTemplate")
 	PlayerCooldown:SetAllPoints(mGuideFrame)
-	mGuideFrame:SetScript("OnEvent", function(self, _, unit, _, _)
-		if unit == "player" then
-			gcdStart, gcd = GetSpellCooldown(61304)
-			gcdTime = gcdStart + gcd
-			PlayerCooldown:SetCooldown(gcdStart, gcd)
-			if gcd then
-				ns.gcd = gcd
-			end
+end
+
+
+local function rotate()
+    -- Save CPU by only running once every throttleCount times
+    throttleCount = throttleCount + 1
+    if (throttleCount < 10) then -- Hard coded for performance
+        return
+    end
+    throttleCount = 0
+
+	-- Set the spell texture if it has changed
+    local spell, glow = guide()
+	if spell then
+		if spell ~= lastSpell then
+			spellTexture:SetTexture(GetSpellTexture(spell))
+			lastSpell = spell
 		end
-	end)
+
+		if IsSpellInRange(spell, "target") == 0 then
+			foreground:SetColorTexture(1, 0, 0, 0.5) -- Out of range
+		elseif not ns.checkSpell(spell) then
+			foreground:SetColorTexture(0, 0, 1, 0.5) -- Not enough mana
+		else
+			foreground:SetColorTexture(1, 0, 0, 0) -- Usable
+		end
+	end
+
+	-- Make it pulse a glowing thing
+	if glow then
+		ActionButton_ShowOverlayGlow(mGuideFrame)
+	else
+		ActionButton_HideOverlayGlow(mGuideFrame)
+	end
+
+
 end
 
 local function getSpec()
@@ -152,15 +135,30 @@ guider:SetScript("OnEvent", function(self, event, unit, ...)
 
 	guide = getSpec()
 	if not guide then
-		mGuideFrame:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-		mGuideFrame:UnregisterEvent("UNIT_SPELLCAST_START")
+		PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+		PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_START")
 		mGuideFrame:SetScript("OnUpdate", nil)
 		mGuideFrame:Hide()
 	else
-		mGuideFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-		mGuideFrame:RegisterEvent("UNIT_SPELLCAST_START")
-		mGuideFrame:SetScript("OnUpdate", guideParent)
+		PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+		PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_START")
+		mGuideFrame:SetScript("OnUpdate", rotate)
 		mGuideFrame:Show()
+	end
+end)
+
+-- Show GCD Swirl on Frame
+PlayerCooldown:SetScript("OnEvent", function(self, _, unit, _, _)
+	if unit == "player" then
+		gcdStart, gcd = GetSpellCooldown(61304)
+		newgcdTime = gcdStart + gcd
+		if newgcdTime ~= gcdTime then
+			gcdTime = newgcdTime
+			PlayerCooldown:SetCooldown(GetTime(), gcd)
+			if gcd then
+				ns.gcd = gcd
+			end
+		end
 	end
 end)
 
