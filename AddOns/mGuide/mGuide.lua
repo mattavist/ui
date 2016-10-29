@@ -4,10 +4,10 @@ local background = mGuideFrame:CreateTexture(nil, "BACKGROUND")
 local foreground = mGuideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
 local spellTexture = mGuideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
 local PlayerCooldown = CreateFrame("Cooldown", "PlayerCooldown", mGuideFrame, "CooldownFrameTemplate")
-local gcdTime = 0
 local throttleCount = 0
 local lastSpell = nil
 local gcd = 1.3
+local gcdTime = 0
 
 local function checkSpell(spellName)
 	local canCast = true
