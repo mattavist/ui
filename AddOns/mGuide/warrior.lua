@@ -15,7 +15,13 @@ warrior.prot = function()
 		right = "Focused Rage"
 	end
 
-	spell = "Shield Block"
+	if ns.checkSpell("Shield Slam") then
+		spell = "Shield Slam"
+	elseif ns.checkSpell("Revenge") then
+		spell = "Revenge"
+	else
+		spell = "Shield Block"
+	end
 
 	return spell, glow, left, right
 end
@@ -25,6 +31,7 @@ warrior.arms = function()
 	local glow = false
 	local left = false
 	local right = false
+
 	local rage = UnitPower("player")
 	local focusedRageTalented = ns.talentChosen(5, 3)
 	local colSmashOnTarget = ns.auraDuration("Colossus Smash", "target", "HARMFUL|PLAYER") > 0

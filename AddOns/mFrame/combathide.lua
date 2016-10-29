@@ -3,7 +3,7 @@ local function hideAll()
     oUF_karmaPlayer:SetAlpha(0)
     rABS_MainMenuBar:SetAlpha(0)
     BuffFrame:SetAlpha(0)
-    mGuideFrame:SetAlpha(0)
+    --mGuideFrame:SetAlpha(0)
 end
 
 local function showAll()
@@ -11,7 +11,7 @@ local function showAll()
     oUF_karmaPlayer:SetAlpha(1)
     rABS_MainMenuBar:SetAlpha(1)
     BuffFrame:SetAlpha(1)
-    mGuideFrame:SetAlpha(1)
+    --mGuideFrame:SetAlpha(1)
 end
 
 -- Hides when exiting combat or stopping spell cast or losing target when ooc

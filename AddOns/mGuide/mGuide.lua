@@ -1,13 +1,14 @@
 local addon, ns = ...
 local mainFrame = nil
 local throttleCount = 0
-local lastSpell = nil
 
 local function initGuideFrame(size, parent, x, y, showGCD)
 	local guideFrame = CreateFrame("Frame", "mGuideFrame", parent)
 	guideFrame.background = guideFrame:CreateTexture(nil, "BACKGROUND")
 	guideFrame.foreground = guideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
 	guideFrame.spellTexture = guideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
+	guideFrame.lastSpell = nil
+
 	guideFrame:SetSize(size, size)
 	guideFrame:SetPoint("CENTER", x, y)
 	guideFrame.background:SetPoint("BOTTOMRIGHT", 3, -3)
@@ -17,6 +18,7 @@ local function initGuideFrame(size, parent, x, y, showGCD)
 	guideFrame.foreground:SetPoint("TOPLEFT")
 	guideFrame.spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
 	guideFrame.spellTexture:SetAllPoints(guideFrame) --make texture same size as button
+
 	-- Show GCD Swirl on Frame
 	if showGCD then
 		guideFrame.PlayerCooldown = CreateFrame("Cooldown", nil, guideFrame, "CooldownFrameTemplate")
@@ -45,6 +47,26 @@ local function spellShade(guide, spell)
 	end
 end	
 
+local function setSpell(frame, spell, glow)
+	if spell then
+		if spell ~= frame.lastSpell then
+			frame:Show()
+			frame.spellTexture:SetTexture(GetSpellTexture(spell))
+			frame.lastSpell = spell
+		end
+		spellShade(frame, spell)
+	elseif frame ~= mainFrame then
+		frame:Hide()
+		frame.lastSpell = nil
+	end
+
+	if glow then 
+		ActionButton_ShowOverlayGlow(frame)
+	else 
+		ActionButton_HideOverlayGlow(frame)
+	end
+end
+
 
 local function rotate()
     -- Save CPU by only running once every throttleCount times
@@ -54,41 +76,13 @@ local function rotate()
     end
     throttleCount = 0
 
-	-- Set the spell texture if it has changed
+	-- Set the spell texture and glow if it has changed
     local spell, glow, left, right = guide()
-	if spell then
-		if spell ~= lastSpell then
-			mainFrame.spellTexture:SetTexture(GetSpellTexture(spell))
-			lastSpell = spell
-		end
-		spellShade(mainFrame, spell)
-	end
-
-	if left then
-		mainFrame.leftFrame:Show()
-		mainFrame.leftFrame.spellTexture:SetTexture(GetSpellTexture(left))
-		spellShade(mainFrame.leftFrame, left)
-	else
-		mainFrame.leftFrame:Hide()
-	end
-
-	if right then
-		mainFrame.rightFrame:Show()
-		mainFrame.rightFrame.spellTexture:SetTexture(GetSpellTexture(right))
-		spellShade(mainFrame.rightFrame, right)
-	else
-		mainFrame.rightFrame:Hide()
-	end
-
-	-- Make it pulse a glowing thing
-	if glow then
-		ActionButton_ShowOverlayGlow(mainFrame)
-	else
-		ActionButton_HideOverlayGlow(mainFrame)
-	end
-
-
+	setSpell(mainFrame, spell, glow)
+	setSpell(mainFrame.leftFrame, left, false)
+	setSpell(mainFrame.rightFrame, right, false)
 end
+
 
 local function getSpec()
 	local guide = nil
@@ -115,11 +109,7 @@ local guider = CreateFrame("Frame", nil, UIParent)
 guider:RegisterEvent("PLAYER_ENTERING_WORLD")
 guider:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 guider:SetScript("OnEvent", function(self, event, unit, ...)
-	if event == "PLAYER_SPECIALIZATION_CHANGED" then
-		if not unit == "Player" then
-			return
-		end
-	elseif event == "PLAYER_ENTERING_WORLD" then
+	if not mainFrame then
 		mainFrame = initGuideFrame(50, UIParent, 0, -190, true)
 		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, false)
 		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, false)
