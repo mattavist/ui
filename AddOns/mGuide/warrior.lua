@@ -5,32 +5,45 @@ local aoeTime = false
 warrior.prot = function()
 	local spell = nil
 	local glow = false
-
-	-- Glow when Shield Block is available and missing
-	if ns.auraDuration("Shield Block", "Player", "HELPFUL") == 0 and
-		(GetSpellCooldown("Focused Rage") == 0) then
-		glow = true
-	end
+	local left = false
+	local right = false
 
 	-- Set spell to Ignore Pain or Focused Rage
 	if ns.auraDuration("Vengeance: Ignore Pain", "Player", "HELPFUL") > 0 then
-		spell = "Ignore Pain"
-	else
-		spell = "Focused Rage"
+		left = "Ignore Pain"
+	elseif ns.auraDuration("Vengeance: Focused Rage", "Player", "HELPFUL") > 0 then
+		right = "Focused Rage"
 	end
 
-	return spell, glow
+	spell = "Shield Block"
+
+	return spell, glow, left, right
 end
 
 warrior.arms = function()
 	local spell = nil
 	local glow = false
+	local left = false
+	local right = false
 	local rage = UnitPower("player")
 	local focusedRageTalented = ns.talentChosen(5, 3)
 	local colSmashOnTarget = ns.auraDuration("Colossus Smash", "target", "HARMFUL|PLAYER") > 0
 	local shatteredDefenses = ns.auraDuration("Shattered Defenses", "Player", "HELPFUL") > 0.5
 	local battleCry = ns.auraDuration("Battle Cry", "Player", "HELPFUL") > 0.5
 	local focusedRageStacks = ns.auraStacks("Focused Rage", "Player", "HELPFUL")
+
+	-- Charge
+	if ns.checkSpell("Charge") and UnitExists("target") and IsSpellInRange("Charge", "target") ~= 0 then
+		left = "Charge"
+	else
+		left = false
+	end
+
+	-- Battle Cry
+	if ns.checkSpell("Battle Cry") then
+		right = "Battle Cry"
+	end
+
 
 	-- Arms glow is based on focus rage
 	if focusedRageTalented and (GetSpellCooldown("Focused Rage") == 0) and (
@@ -73,7 +86,7 @@ warrior.arms = function()
 		spell = "Heroic Throw"
 	end
 
-	return spell, glow
+	return spell, glow, left, right
 end
 
 

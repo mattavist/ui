@@ -2,6 +2,7 @@
 ## Title: mGuide
 ## Author: Mattavist, matavist@gmail.com
 
+helpers.lua
+mGuide.lua
 shaman.lua
 warrior.lua
-mGuide.lua

@@ -27,7 +27,7 @@ shaman.enhance = function()
 		spell = "Lightning Bolt"
 	end
 
-	return spell, false -- No glows for enhance
+	return spell, false, false, false -- No glows for enhance
 end
 
 ns.shaman = shaman

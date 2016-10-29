@@ -1,4 +1,6 @@
 local addon, ns = ...
+ns.gcd = 1.3
+ns.gcdTime = 0
 --ns.gcdTime = 0
 --ns.gcd = 1.3
 
@@ -44,8 +46,8 @@ local function getBuffValue(buffName, unit)
 	end
 end
 
---ns.checkSpell = checkSpell
---ns.auraDuration = auraDuration
---ns.auraStacks = auraStacks
---ns.talentChosen = talentChosen
---ns.getBuffValue = getBuffValue
+ns.checkSpell = checkSpell
+ns.auraDuration = auraDuration
+ns.auraStacks = auraStacks
+ns.talentChosen = talentChosen
+ns.getBuffValue = getBuffValue

@@ -1,68 +1,49 @@
 local addon, ns = ...
-local mGuideFrame = CreateFrame("Frame", "mGuideFrame", UIParent)
-local background = mGuideFrame:CreateTexture(nil, "BACKGROUND")
-local foreground = mGuideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
-local spellTexture = mGuideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
-local PlayerCooldown = CreateFrame("Cooldown", "PlayerCooldown", mGuideFrame, "CooldownFrameTemplate")
+local mainFrame = nil
 local throttleCount = 0
 local lastSpell = nil
-local gcd = 1.3
-local gcdTime = 0
 
-local function checkSpell(spellName)
-	local canCast = true
-	learned, notEnoughMana = IsUsableSpell(spellName)
-	start, cooldown, enable = GetSpellCooldown(spellName)
-	if start and start ~= 0 then
-		canCast = gcdTime >= start + cooldown
+local function initGuideFrame(size, parent, x, y, showGCD)
+	local guideFrame = CreateFrame("Frame", "mGuideFrame", parent)
+	guideFrame.background = guideFrame:CreateTexture(nil, "BACKGROUND")
+	guideFrame.foreground = guideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
+	guideFrame.spellTexture = guideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
+	guideFrame:SetSize(size, size)
+	guideFrame:SetPoint("CENTER", x, y)
+	guideFrame.background:SetPoint("BOTTOMRIGHT", 3, -3)
+	guideFrame.background:SetPoint("TOPLEFT", -3, 3)
+	guideFrame.background:SetColorTexture(0, 0, 0, 0.75)
+	guideFrame.foreground:SetPoint("BOTTOMRIGHT")
+	guideFrame.foreground:SetPoint("TOPLEFT")
+	guideFrame.spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
+	guideFrame.spellTexture:SetAllPoints(guideFrame) --make texture same size as button
+	-- Show GCD Swirl on Frame
+	if showGCD then
+		guideFrame.PlayerCooldown = CreateFrame("Cooldown", nil, guideFrame, "CooldownFrameTemplate")
+		guideFrame.PlayerCooldown:SetAllPoints(guideFrame)
+		guideFrame.PlayerCooldown:SetScript("OnEvent", function(self, _, unit, _, _)
+			if unit == "player" then
+				gcdStart, ns.gcd = GetSpellCooldown(61304)
+				newgcdTime = gcdStart + ns.gcd
+				if newgcdTime ~= ns.gcdTime then
+					ns.gcdTime = newgcdTime
+					mainFrame.PlayerCooldown:SetCooldown(GetTime(), ns.gcd)
+				end
+			end
+		end)
 	end
-	return canCast and not notEnoughMana and learned
+	return guideFrame
 end
 
-local function auraDuration(buffName, unit, auraType)
-	local name, _, _, _, _, _, expires = UnitAura(unit, buffName, nil, auraType)
-    if name then
-    	return expires - GetTime()
-	end
-
-    return 0
-end
-
-local function auraStacks(buffName, unit, auraType)
-	local name, _, _, count = UnitAura(unit, buffName, nil, auraType)
-    if name then
-    	return count
-	end
-
-    return 0
-end
-
-local function talentChosen(row, column)
-	local _, selected = GetTalentTierInfo(row, 1)
-	return selected == column
-end
-
-local function getBuffValue(buffName, unit)
-	local name, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, value = UnitAura(unit, buffName)
-	if name then
-		return value
+local function spellShade(guide, spell)
+	if IsSpellInRange(spell, "target") == 0 then
+		guide.foreground:SetColorTexture(1, 0, 0, 0.5) -- Out of range
+	elseif not ns.checkSpell(spell) then
+		guide.foreground:SetColorTexture(0, 0, 1, 0.5) -- Not enough mana
 	else
-		return 0
+		guide.foreground:SetColorTexture(1, 0, 0, 0) -- Usable
 	end
-end
-
-local function initGuideFrame()
-	mGuideFrame:SetSize(50,50)
-	mGuideFrame:SetPoint("CENTER",0,-190)
-	background:SetPoint("BOTTOMRIGHT", 3, -3)
-	background:SetPoint("TOPLEFT", -3, 3)
-	background:SetColorTexture(0, 0, 0, 0.75)
-	foreground:SetPoint("BOTTOMRIGHT")
-	foreground:SetPoint("TOPLEFT")
-	spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
-	spellTexture:SetAllPoints(mGuideFrame) --make texture same size as button
-	PlayerCooldown:SetAllPoints(mGuideFrame)
-end
+end	
 
 
 local function rotate()
@@ -74,27 +55,36 @@ local function rotate()
     throttleCount = 0
 
 	-- Set the spell texture if it has changed
-    local spell, glow = guide()
+    local spell, glow, left, right = guide()
 	if spell then
 		if spell ~= lastSpell then
-			spellTexture:SetTexture(GetSpellTexture(spell))
+			mainFrame.spellTexture:SetTexture(GetSpellTexture(spell))
 			lastSpell = spell
 		end
+		spellShade(mainFrame, spell)
+	end
 
-		if IsSpellInRange(spell, "target") == 0 then
-			foreground:SetColorTexture(1, 0, 0, 0.5) -- Out of range
-		elseif not ns.checkSpell(spell) then
-			foreground:SetColorTexture(0, 0, 1, 0.5) -- Not enough mana
-		else
-			foreground:SetColorTexture(1, 0, 0, 0) -- Usable
-		end
+	if left then
+		mainFrame.leftFrame:Show()
+		mainFrame.leftFrame.spellTexture:SetTexture(GetSpellTexture(left))
+		spellShade(mainFrame.leftFrame, left)
+	else
+		mainFrame.leftFrame:Hide()
+	end
+
+	if right then
+		mainFrame.rightFrame:Show()
+		mainFrame.rightFrame.spellTexture:SetTexture(GetSpellTexture(right))
+		spellShade(mainFrame.rightFrame, right)
+	else
+		mainFrame.rightFrame:Hide()
 	end
 
 	-- Make it pulse a glowing thing
 	if glow then
-		ActionButton_ShowOverlayGlow(mGuideFrame)
+		ActionButton_ShowOverlayGlow(mainFrame)
 	else
-		ActionButton_HideOverlayGlow(mGuideFrame)
+		ActionButton_HideOverlayGlow(mainFrame)
 	end
 
 
@@ -130,42 +120,22 @@ guider:SetScript("OnEvent", function(self, event, unit, ...)
 			return
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" then
-		initGuideFrame()
+		mainFrame = initGuideFrame(50, UIParent, 0, -190, true)
+		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, false)
+		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, false)
 	end
 
 	guide = getSpec()
 	if not guide then
-		PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-		PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_START")
-		mGuideFrame:SetScript("OnUpdate", nil)
-		mGuideFrame:Hide()
+		mainFrame.PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+		mainFrame.PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_START")
+		mainFrame:SetScript("OnUpdate", nil)
+		mainFrame:Hide()
 	else
-		PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-		PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_START")
-		mGuideFrame:SetScript("OnUpdate", rotate)
-		mGuideFrame:Show()
+		mainFrame.PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+		mainFrame.PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_START")
+		mainFrame:SetScript("OnUpdate", rotate)
+		mainFrame:Show()
 	end
 end)
 
--- Show GCD Swirl on Frame
-PlayerCooldown:SetScript("OnEvent", function(self, _, unit, _, _)
-	if unit == "player" then
-		gcdStart, gcd = GetSpellCooldown(61304)
-		newgcdTime = gcdStart + gcd
-		if newgcdTime ~= gcdTime then
-			gcdTime = newgcdTime
-			PlayerCooldown:SetCooldown(GetTime(), gcd)
-			if gcd then
-				ns.gcd = gcd
-			end
-		end
-	end
-end)
-
--- Put shared functions and variables in the namespace
-ns.checkSpell = checkSpell
-ns.auraDuration = auraDuration
-ns.auraStacks = auraStacks
-ns.talentChosen = talentChosen
-ns.getBuffValue = getBuffValue
-ns.gcd = gcd
