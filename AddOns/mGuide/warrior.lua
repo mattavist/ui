@@ -2,6 +2,15 @@ local addon, ns = ...
 local warrior = CreateFrame("Frame")
 local aoeTime = false
 
+local function pummelStatus()
+	local _, _, _, _, _, _, _, _, notInterruptible = UnitCastingInfo("target")
+	if ns.checkSpell("Pummel") and notInterruptible == false then
+		return "Pummel"
+	else
+		return false
+	end
+end
+
 warrior.prot = function()
 	local spell = nil
 	local glow = false
@@ -23,7 +32,7 @@ warrior.prot = function()
 		spell = "Shield Block"
 	end
 
-	return spell, glow, left, right
+	return spell, glow, left, right, pummelStatus()
 end
 
 warrior.arms = function()
@@ -39,18 +48,17 @@ warrior.arms = function()
 	local battleCry = ns.auraDuration("Battle Cry", "Player", "HELPFUL") > 0.5
 	local focusedRageStacks = ns.auraStacks("Focused Rage", "Player", "HELPFUL")
 
-	-- Charge
+	-- Charge on left
 	if ns.checkSpell("Charge") and UnitExists("target") and IsSpellInRange("Charge", "target") ~= 0 then
 		left = "Charge"
-	else
-		left = false
 	end
 
-	-- Battle Cry
-	if ns.checkSpell("Battle Cry") then
+	-- Battle Cry on right
+	if ns.checkSpell("Heroic Throw") and UnitExists("target") and IsSpellInRange("Heroic Throw", "target") ~= 0 then
+		right = "Heroic Throw"
+	elseif ns.checkSpell("Battle Cry") and IsSpellInRange("Pummel", "target") ~= 0 then
 		right = "Battle Cry"
 	end
-
 
 	-- Arms glow is based on focus rage
 	if focusedRageTalented and (GetSpellCooldown("Focused Rage") == 0) and (
@@ -93,7 +101,7 @@ warrior.arms = function()
 		spell = "Heroic Throw"
 	end
 
-	return spell, glow, left, right
+	return spell, glow, left, right, pummelStatus()
 end
 
 

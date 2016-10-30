@@ -2,20 +2,26 @@ local addon, ns = ...
 local mainFrame = nil
 local throttleCount = 0
 
-local function initGuideFrame(size, parent, x, y, showGCD)
+local function initGuideFrame(size, parent, x, y, showGCD, hideFrame)
 	local guideFrame = CreateFrame("Frame", "mGuideFrame", parent)
-	guideFrame.background = guideFrame:CreateTexture(nil, "BACKGROUND")
-	guideFrame.foreground = guideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
-	guideFrame.spellTexture = guideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
-	guideFrame.lastSpell = nil
-
 	guideFrame:SetSize(size, size)
 	guideFrame:SetPoint("CENTER", x, y)
+	guideFrame.lastSpell = nil
+	guideFrame.hideFrame = hideFrame
+
+	-- Background and Border
+	guideFrame.background = guideFrame:CreateTexture(nil, "BACKGROUND")
 	guideFrame.background:SetPoint("BOTTOMRIGHT", 3, -3)
 	guideFrame.background:SetPoint("TOPLEFT", -3, 3)
 	guideFrame.background:SetColorTexture(0, 0, 0, 0.75)
+
+	-- Shader for OOR, not castable
+	guideFrame.foreground = guideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
 	guideFrame.foreground:SetPoint("BOTTOMRIGHT")
 	guideFrame.foreground:SetPoint("TOPLEFT")
+
+	-- Spell Icon
+	guideFrame.spellTexture = guideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
 	guideFrame.spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
 	guideFrame.spellTexture:SetAllPoints(guideFrame) --make texture same size as button
 
@@ -34,6 +40,7 @@ local function initGuideFrame(size, parent, x, y, showGCD)
 			end
 		end)
 	end
+	
 	return guideFrame
 end
 
@@ -48,14 +55,14 @@ local function spellShade(guide, spell)
 end	
 
 local function setSpell(frame, spell, glow)
-	if spell then
+	if spell and UnitCanAttack("player", "target") then
 		if spell ~= frame.lastSpell then
 			frame:Show()
 			frame.spellTexture:SetTexture(GetSpellTexture(spell))
 			frame.lastSpell = spell
 		end
 		spellShade(frame, spell)
-	elseif frame ~= mainFrame then
+	elseif frame.hideFrame then
 		frame:Hide()
 		frame.lastSpell = nil
 	end
@@ -77,10 +84,11 @@ local function rotate()
     throttleCount = 0
 
 	-- Set the spell texture and glow if it has changed
-    local spell, glow, left, right = guide()
+    local spell, glow, left, right, top = guide()
 	setSpell(mainFrame, spell, glow)
 	setSpell(mainFrame.leftFrame, left, false)
 	setSpell(mainFrame.rightFrame, right, false)
+	setSpell(mainFrame.topFrame, top, false)
 end
 
 
@@ -110,9 +118,10 @@ guider:RegisterEvent("PLAYER_ENTERING_WORLD")
 guider:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 guider:SetScript("OnEvent", function(self, event, unit, ...)
 	if not mainFrame then
-		mainFrame = initGuideFrame(50, UIParent, 0, -190, true)
-		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, false)
-		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, false)
+		mainFrame = initGuideFrame(50, UIParent, 0, -190, true, false)
+		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, false, true)
+		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, false, true)
+		mainFrame.topFrame = initGuideFrame(60, mainFrame, 0, 100, false, true)
 	end
 
 	guide = getSpec()
