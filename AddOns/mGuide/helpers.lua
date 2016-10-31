@@ -1,6 +1,7 @@
 local addon, ns = ...
-ns.gcd = 1.3
+ns.gcd = 7
 ns.gcdTime = 0
+ns.start = 0
 --ns.gcdTime = 0
 --ns.gcd = 1.3
 

@@ -20,7 +20,7 @@ shaman.enhance = function()
 	local boulderfistTalented = ns.talentChosen(1, 3)
 
 	-- Right
-	if ns.checkSpell("Lightning Bolt") and UnitExists("target") and IsSpellInRange("Lightning Bolt", "target") ~= 0 and IsSpellInRange("Rockbiter", "target") == 0 then
+	if UnitExists("target") and IsSpellInRange("Lightning Bolt", "target") ~= 0 and IsSpellInRange("Rockbiter", "target") == 0 then
 		right = "Lightning Bolt"
 	elseif ns.checkSpell("Doom Winds") and IsSpellInRange("Stormstrike", "target") ~= 0 then
 		right = "Doom Winds"
@@ -49,7 +49,7 @@ shaman.enhance = function()
 		spell = "Lightning Bolt"
 	end
 
-	return spell, glow, left, right, windShockStatus() -- No glows for enhance
+	return spell, glow, left, right, windShockStatus(), false -- No glows for enhance
 end
 
 ns.shaman = shaman

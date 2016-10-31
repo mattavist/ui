@@ -20,7 +20,7 @@ warrior.prot = function()
 	-- Set spell to Ignore Pain or Focused Rage
 	if ns.auraDuration("Vengeance: Ignore Pain", "Player", "HELPFUL") > 0 then
 		left = "Ignore Pain"
-	elseif ns.auraDuration("Vengeance: Focused Rage", "Player", "HELPFUL") > 0 then
+	else
 		right = "Focused Rage"
 	end
 
@@ -97,7 +97,7 @@ warrior.arms = function()
 		spell = "Slam"
 	elseif ns.checkSpell("Colossus Smash") then
 		spell = "Colossus Smash"
-	elseif ns.checkSpell("Heroic Throw") then
+	else
 		spell = "Heroic Throw"
 	end
 

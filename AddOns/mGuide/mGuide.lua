@@ -1,6 +1,7 @@
 local addon, ns = ...
 local mainFrame = nil
 local throttleCount = 0
+local lastStart = 0
 
 local function initGuideFrame(size, parent, x, y, showGCD, hideFrame)
 	local guideFrame = CreateFrame("Frame", "mGuideFrame", parent)
@@ -29,18 +30,8 @@ local function initGuideFrame(size, parent, x, y, showGCD, hideFrame)
 	if showGCD then
 		guideFrame.PlayerCooldown = CreateFrame("Cooldown", nil, guideFrame, "CooldownFrameTemplate")
 		guideFrame.PlayerCooldown:SetAllPoints(guideFrame)
-		guideFrame.PlayerCooldown:SetScript("OnEvent", function(self, _, unit, _, _)
-			if unit == "player" then
-				gcdStart, ns.gcd = GetSpellCooldown(61304)
-				newgcdTime = gcdStart + ns.gcd
-				if newgcdTime ~= ns.gcdTime then
-					ns.gcdTime = newgcdTime
-					mainFrame.PlayerCooldown:SetCooldown(GetTime(), ns.gcd)
-				end
-			end
-		end)
 	end
-	
+
 	return guideFrame
 end
 
@@ -75,6 +66,16 @@ local function setSpell(frame, spell, glow)
 end
 
 
+local function gcdSpiral(frame)
+	local start, gcd = GetSpellCooldown(61304)
+	if start > 0 then
+	    ns.gcdTime = start + gcd
+		local time = GetTime()
+		frame.PlayerCooldown:SetCooldown(time, ns.gcdTime - time)
+	end
+end
+
+
 local function rotate()
     -- Save CPU by only running once every throttleCount times
     throttleCount = throttleCount + 1
@@ -83,12 +84,17 @@ local function rotate()
     end
     throttleCount = 0
 
+
+    if GetTime() > ns.gcdTime then
+    	gcdSpiral(mainFrame)
+    end
+
 	-- Set the spell texture and glow if it has changed
     local spell, glow, left, right, top = guide()
 	setSpell(mainFrame, spell, glow)
 	setSpell(mainFrame.leftFrame, left, false)
 	setSpell(mainFrame.rightFrame, right, false)
-	setSpell(mainFrame.topFrame, top, false)
+	setSpell(mainFrame.topFrame, top, true)
 end
 
 
@@ -122,19 +128,19 @@ guider:SetScript("OnEvent", function(self, event, unit, ...)
 		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, false, true)
 		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, false, true)
 		mainFrame.topFrame = initGuideFrame(60, mainFrame, 0, 100, false, true)
+		mainFrame:Hide()
 	end
 
 	guide = getSpec()
 	if not guide then
 		mainFrame.PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 		mainFrame.PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_START")
-		mainFrame:SetScript("OnUpdate", nil)
+		guider:SetScript("OnUpdate", nil)
 		mainFrame:Hide()
 	else
 		mainFrame.PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 		mainFrame.PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_START")
-		mainFrame:SetScript("OnUpdate", rotate)
-		mainFrame:Show()
+		guider:SetScript("OnUpdate", rotate)
 	end
 end)
 
