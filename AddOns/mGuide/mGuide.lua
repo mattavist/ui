@@ -84,7 +84,6 @@ local function rotate()
     end
     throttleCount = 0
 
-
     if GetTime() > ns.gcdTime then
     	gcdSpiral(mainFrame)
     end
@@ -94,7 +93,7 @@ local function rotate()
 	setSpell(mainFrame, spell, glow)
 	setSpell(mainFrame.leftFrame, left, false)
 	setSpell(mainFrame.rightFrame, right, false)
-	setSpell(mainFrame.topFrame, top, true)
+	setSpell(mainFrame.topFrame, top, false)
 end
 
 
@@ -127,7 +126,16 @@ guider:SetScript("OnEvent", function(self, event, unit, ...)
 		mainFrame = initGuideFrame(50, UIParent, 0, -190, true, false)
 		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, false, true)
 		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, false, true)
-		mainFrame.topFrame = initGuideFrame(60, mainFrame, 0, 100, false, true)
+		mainFrame.topFrame = initGuideFrame(80, mainFrame, 0, 100, false, true)
+
+		local ag = mainFrame.topFrame:CreateAnimationGroup()
+		ag:SetLooping("BOUNCE")
+		local a2 = ag:CreateAnimation("Scale")
+		a2:SetScale(0.3, 0.3)
+		a2:SetDuration(.3)
+		a2:SetSmoothing("IN_OUT")
+		ag:Play()
+
 		mainFrame:Hide()
 	end
 
