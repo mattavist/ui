@@ -33,12 +33,13 @@ local function initGuideFrame(size, anchor, x, y, showGCD, hideFrame)
 		guideFrame.PlayerCooldown:SetAllPoints(guideFrame)
 	end
 
+	-- Set up pulse animation
 	guideFrame.ag = guideFrame:CreateAnimationGroup()
 	guideFrame.ag:SetLooping("BOUNCE")
 	local a2 = guideFrame.ag:CreateAnimation("Scale")
 	animSize = (110 - size)/100
 	a2:SetScale(animSize, animSize)
-	a2:SetDuration(.25d)
+	a2:SetDuration(.25)
 	a2:SetSmoothing("IN_OUT")
 
 	return guideFrame
