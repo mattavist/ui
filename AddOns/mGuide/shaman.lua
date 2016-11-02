@@ -15,6 +15,10 @@ shaman.enhance = function()
 	local glow = false
 	local left = false
 	local right = false
+	local leftPulse = false
+	local rightPulse = false
+	local topPulse = true
+
 	local maelstrom = UnitPower("player")
 	local hailstormTalented = ns.talentChosen(4, 3)
 	local boulderfistTalented = ns.talentChosen(1, 3)
@@ -24,6 +28,7 @@ shaman.enhance = function()
 		right = "Lightning Bolt"
 	elseif ns.checkSpell("Doom Winds") and IsSpellInRange("Stormstrike", "target") ~= 0 then
 		right = "Doom Winds"
+		rightPulse = true
 	end
 
 	-- Left
@@ -49,7 +54,7 @@ shaman.enhance = function()
 		spell = "Lightning Bolt"
 	end
 
-	return spell, glow, left, right, windShockStatus(), false -- No glows for enhance
+	return spell, glow, left, right, windShockStatus(), leftPulse, rightPulse, topPulse
 end
 
 ns.shaman = shaman

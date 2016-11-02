@@ -16,6 +16,9 @@ warrior.prot = function()
 	local glow = false
 	local left = false
 	local right = false
+	local leftPulse = false
+	local rightPulse = false
+	local topPulse = true
 
 	-- Set spell to Ignore Pain or Focused Rage
 	if ns.auraDuration("Vengeance: Ignore Pain", "Player", "HELPFUL") > 0 then
@@ -32,7 +35,7 @@ warrior.prot = function()
 		spell = "Shield Block"
 	end
 
-	return spell, glow, left, right, pummelStatus()
+	return spell, glow, left, right, pummelStatus(), leftPulse, rightPulse, topPulse
 end
 
 warrior.arms = function()
@@ -40,6 +43,9 @@ warrior.arms = function()
 	local glow = false
 	local left = false
 	local right = false
+	local leftPulse = false
+	local rightPulse = false
+	local topPulse = true
 
 	local rage = UnitPower("player")
 	local focusedRageTalented = ns.talentChosen(5, 3)
@@ -58,6 +64,7 @@ warrior.arms = function()
 		right = "Heroic Throw"
 	elseif ns.checkSpell("Battle Cry") and IsSpellInRange("Pummel", "target") ~= 0 then
 		right = "Battle Cry"
+		rightPulse = true
 	end
 
 	-- Arms glow is based on focus rage
@@ -101,7 +108,7 @@ warrior.arms = function()
 		spell = "Heroic Throw"
 	end
 
-	return spell, glow, left, right, pummelStatus()
+	return spell, glow, left, right, pummelStatus(), leftPulse, rightPulse, topPulse
 end
 
 

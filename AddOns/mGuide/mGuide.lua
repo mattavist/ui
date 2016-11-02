@@ -1,12 +1,13 @@
 local addon, ns = ...
+local guider = CreateFrame("Frame", "guider", UIParent, UIParent)
 local mainFrame = nil
 local throttleCount = 0
 local lastStart = 0
 
-local function initGuideFrame(size, parent, x, y, showGCD, hideFrame)
-	local guideFrame = CreateFrame("Frame", "mGuideFrame", parent)
+local function initGuideFrame(size, anchor, x, y, showGCD, hideFrame)
+	local guideFrame = CreateFrame("Frame", "mGuideFrame", guider)
 	guideFrame:SetSize(size, size)
-	guideFrame:SetPoint("CENTER", x, y)
+	guideFrame:SetPoint("CENTER", anchor, x, y)
 	guideFrame.lastSpell = nil
 	guideFrame.hideFrame = hideFrame
 
@@ -32,6 +33,14 @@ local function initGuideFrame(size, parent, x, y, showGCD, hideFrame)
 		guideFrame.PlayerCooldown:SetAllPoints(guideFrame)
 	end
 
+	guideFrame.ag = guideFrame:CreateAnimationGroup()
+	guideFrame.ag:SetLooping("BOUNCE")
+	local a2 = guideFrame.ag:CreateAnimation("Scale")
+	animSize = (110 - size)/100
+	a2:SetScale(animSize, animSize)
+	a2:SetDuration(.25d)
+	a2:SetSmoothing("IN_OUT")
+
 	return guideFrame
 end
 
@@ -45,7 +54,7 @@ local function spellShade(guide, spell)
 	end
 end	
 
-local function setSpell(frame, spell, glow)
+local function setSpell(frame, spell, glow, pulse)
 	if spell and UnitCanAttack("player", "target") then
 		if spell ~= frame.lastSpell then
 			frame:Show()
@@ -62,6 +71,12 @@ local function setSpell(frame, spell, glow)
 		ActionButton_ShowOverlayGlow(frame)
 	else 
 		ActionButton_HideOverlayGlow(frame)
+	end
+
+	if pulse then
+		frame.ag:Play()
+	else
+		frame.ag:Stop()
 	end
 end
 
@@ -89,11 +104,11 @@ local function rotate()
     end
 
 	-- Set the spell texture and glow if it has changed
-    local spell, glow, left, right, top = guide()
-	setSpell(mainFrame, spell, glow)
-	setSpell(mainFrame.leftFrame, left, false)
-	setSpell(mainFrame.rightFrame, right, false)
-	setSpell(mainFrame.topFrame, top, false)
+    local spell, glow, left, right, top, leftPulse, rightPulse, topPulse = guide()
+	setSpell(mainFrame, spell, glow, false)
+	setSpell(mainFrame.leftFrame, left, false, leftPulse)
+	setSpell(mainFrame.rightFrame, right, false, rightPulse)
+	setSpell(mainFrame.topFrame, top, false, topPulse)
 end
 
 
@@ -118,7 +133,6 @@ local function getSpec()
 end
 
 -- Initializes and changes guide when spec changes
-local guider = CreateFrame("Frame", nil, UIParent)
 guider:RegisterEvent("PLAYER_ENTERING_WORLD")
 guider:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 guider:SetScript("OnEvent", function(self, event, unit, ...)
@@ -127,15 +141,6 @@ guider:SetScript("OnEvent", function(self, event, unit, ...)
 		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, false, true)
 		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, false, true)
 		mainFrame.topFrame = initGuideFrame(80, mainFrame, 0, 100, false, true)
-
-		local ag = mainFrame.topFrame:CreateAnimationGroup()
-		ag:SetLooping("BOUNCE")
-		local a2 = ag:CreateAnimation("Scale")
-		a2:SetScale(0.3, 0.3)
-		a2:SetDuration(.3)
-		a2:SetSmoothing("IN_OUT")
-		ag:Play()
-
 		mainFrame:Hide()
 	end
 
@@ -151,4 +156,3 @@ guider:SetScript("OnEvent", function(self, event, unit, ...)
 		guider:SetScript("OnUpdate", rotate)
 	end
 end)
-
