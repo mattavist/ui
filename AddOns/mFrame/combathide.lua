@@ -1,3 +1,16 @@
+local function buttonAlphaHigh()    
+    for i = 1, 24 do
+        local button = nil
+        if i < 13 then
+            button = _G["ActionButton"..i]
+        else
+            button = _G["MultiBarBottomLeftButton"..i-12]
+            i = i + 48
+        end
+        button:SetAlpha(1)
+    end
+end
+
 local function hideAll()
     MultiBarBottomLeft:SetAlpha(0)
     oUF_karmaPlayer:SetAlpha(0)
@@ -12,6 +25,7 @@ local function showAll()
     rABS_MainMenuBar:SetAlpha(1)
     BuffFrame:SetAlpha(1)
     mGuideFrame:SetAlpha(1)
+    buttonAlphaHigh()
 end
 
 -- Hides when exiting combat or stopping spell cast or losing target when ooc

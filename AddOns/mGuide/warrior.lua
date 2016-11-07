@@ -111,5 +111,78 @@ warrior.arms = function()
 	return spell, glow, left, right, pummelStatus(), leftPulse, rightPulse, topPulse
 end
 
+warrior.fury = function()
+	local spell = nil
+	local glow = false
+	local left = false
+	local right = false
+	local leftPulse = false
+	local rightPulse = false
+	local topPulse = true
+
+	local rage = UnitPower("player")
+	local wreckingBallTalented = ns.talentChosen(3, 1)
+	local enraged = ns.auraDuration("Enrage", "Player", "HELPFUL") > 1.5
+	local battleCry = ns.auraDuration("Battle Cry", "Player", "HELPFUL") > 0.5
+	local meatCleaver = ns.auraDuration("Meat Cleaver", "Player", "HELPFUL") > 0.5
+	local inCombat = InCombatLockdown()
+
+	-- Charge on left
+	if ns.checkSpell("Charge") and UnitExists("target") and IsSpellInRange("Charge", "target") ~= 0 then
+		left = "Charge"
+	end
+
+	-- Buffs on right
+	if ns.checkSpell("Heroic Throw") and UnitExists("target") and IsSpellInRange("Heroic Throw", "target") ~= 0 then
+		right = "Heroic Throw"
+	elseif ns.checkSpell("Dragon Roar") and ns.checkSpell("Battle Cry") then
+		right = "Dragon Roar"
+		rightPulse = true
+	elseif ns.checkSpell("Battle Cry") and IsSpellInRange("Pummel", "target") ~= 0 then
+		right = "Battle Cry"
+		rightPulse = true
+	elseif ns.checkSpell("Avatar") and battleCry then
+		right = "Avatar"
+		rightPulse = true
+	elseif ns.checkSpell("Bloodbath") and battleCry then
+		right = "Bloodbath"
+		rightPulse = true
+	end
+
+	-- Decide whether to use AoE or Single Target rotation based on whirlwind buff
+	if aoeTime then
+		if GetTime() > aoeTime then
+			aoeTime = false
+		end
+	end
+
+	if meatCleaver then
+		aoeTime = GetTime() + 3
+	end
+
+	-- Rotation
+	if aoeTime and ns.checkSpell("Whirlwind") and not meatCleaver then
+		spell = "Whirlwind"
+	elseif ns.checkSpell("Rampage") and (not enraged or rage > 90) then
+		spell = "Rampage"
+	elseif ns.checkSpell("Bloodthirst") and (aoeTime or not enraged) then
+		spell = "Bloodthirst"
+	elseif ns.checkSpell("Odyn's Fury") and battleCry then
+		spell = "Odyn's Fury"
+	elseif ns.checkSpell("Whirlwind") and aoeTime then
+		spell = "Whirlwind"
+	elseif ns.checkSpell("Execute") then
+		spell = "Execute"
+	elseif ns.checkSpell("Raging Blow") then
+		spell = "Raging Blow"
+	elseif ns.checkSpell("Bloodthirst") then
+		spell = "Bloodthirst"
+	else
+		spell = "Furious Slash"
+	end
+
+	return spell, glow, left, right, pummelStatus(), leftPulse, rightPulse, topPulse
+end
+
 
 ns.warrior = warrior

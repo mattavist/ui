@@ -4,46 +4,6 @@ local mainFrame = nil
 local throttleCount = 0
 local lastStart = 0
 
-local function initGuideFrame(size, anchor, x, y, showGCD, hideFrame)
-	local guideFrame = CreateFrame("Frame", "mGuideFrame", guider)
-	guideFrame:SetSize(size, size)
-	guideFrame:SetPoint("CENTER", anchor, x, y)
-	guideFrame.lastSpell = nil
-	guideFrame.hideFrame = hideFrame
-
-	-- Background and Border
-	guideFrame.background = guideFrame:CreateTexture(nil, "BACKGROUND")
-	guideFrame.background:SetPoint("BOTTOMRIGHT", 3, -3)
-	guideFrame.background:SetPoint("TOPLEFT", -3, 3)
-	guideFrame.background:SetColorTexture(0, 0, 0, 0.75)
-
-	-- Shader for OOR, not castable
-	guideFrame.foreground = guideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
-	guideFrame.foreground:SetPoint("BOTTOMRIGHT")
-	guideFrame.foreground:SetPoint("TOPLEFT")
-
-	-- Spell Icon
-	guideFrame.spellTexture = guideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
-	guideFrame.spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
-	guideFrame.spellTexture:SetAllPoints(guideFrame) --make texture same size as button
-
-	-- Show GCD Swirl on Frame
-	if showGCD then
-		guideFrame.PlayerCooldown = CreateFrame("Cooldown", nil, guideFrame, "CooldownFrameTemplate")
-		guideFrame.PlayerCooldown:SetAllPoints(guideFrame)
-	end
-
-	-- Set up pulse animation
-	guideFrame.ag = guideFrame:CreateAnimationGroup()
-	guideFrame.ag:SetLooping("BOUNCE")
-	local a2 = guideFrame.ag:CreateAnimation("Scale")
-	animSize = (110 - size)/100
-	a2:SetScale(animSize, animSize)
-	a2:SetDuration(.25)
-	a2:SetSmoothing("IN_OUT")
-
-	return guideFrame
-end
 
 local function spellShade(guide, spell)
 	if IsSpellInRange(spell, "target") == 0 then
@@ -54,6 +14,7 @@ local function spellShade(guide, spell)
 		guide.foreground:SetColorTexture(1, 0, 0, 0) -- Usable
 	end
 end	
+
 
 local function setSpell(frame, spell, glow, pulse)
 	if spell and UnitCanAttack("player", "target") then
@@ -125,7 +86,9 @@ local function getSpec()
 	elseif class == "WARRIOR" then
 		if specID == 1 then
 			guide = ns.warrior.arms
-		elseif specID == 3 and ns.talentChosen(6, 1) then -- Checks for Vengeance talent
+		elseif specID == 2 then -- Checks for Vengeance talent
+			guide = ns.warrior.fury
+		elseif specID == 3 then -- Checks for Vengeance talent
 			guide = ns.warrior.prot
 		end
 	end
@@ -133,15 +96,56 @@ local function getSpec()
 	return guide
 end
 
+
+local function initGuideFrame(size, anchor, x, y, hideFrame)
+	local guideFrame = CreateFrame("Frame", "mGuideFrame", guider)
+	guideFrame:SetSize(size, size)
+	guideFrame:SetPoint("CENTER", anchor, x, y)
+	guideFrame.lastSpell = nil
+	guideFrame.hideFrame = hideFrame
+
+	-- Background and Border
+	guideFrame.background = guideFrame:CreateTexture(nil, "BACKGROUND")
+	guideFrame.background:SetPoint("BOTTOMRIGHT", 3, -3)
+	guideFrame.background:SetPoint("TOPLEFT", -3, 3)
+	guideFrame.background:SetColorTexture(0, 0, 0, 0.75)
+
+	-- Shader for OOR, not castable
+	guideFrame.foreground = guideFrame:CreateTexture(nil, "BACKGROUND",nil,2)
+	guideFrame.foreground:SetPoint("BOTTOMRIGHT")
+	guideFrame.foreground:SetPoint("TOPLEFT")
+
+	-- Spell Icon
+	guideFrame.spellTexture = guideFrame:CreateTexture(nil,"BACKGROUND",nil,1)
+	guideFrame.spellTexture:SetTexCoord(0.1,0.9,0.1,0.9) --cut out crappy icon border
+	guideFrame.spellTexture:SetAllPoints(guideFrame) --make texture same size as button
+
+	-- Show GCD Swirl on Frame
+	guideFrame.PlayerCooldown = CreateFrame("Cooldown", nil, guideFrame, "CooldownFrameTemplate")
+	guideFrame.PlayerCooldown:SetAllPoints(guideFrame)
+
+	-- Set up pulse animation
+	guideFrame.ag = guideFrame:CreateAnimationGroup()
+	guideFrame.ag:SetLooping("BOUNCE")
+	local a2 = guideFrame.ag:CreateAnimation("Scale")
+	animSize = (110 - size)/100
+	a2:SetScale(animSize, animSize)
+	a2:SetDuration(.25)
+	a2:SetSmoothing("IN_OUT")
+
+	return guideFrame
+end
+
+
 -- Initializes and changes guide when spec changes
 guider:RegisterEvent("PLAYER_ENTERING_WORLD")
 guider:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 guider:SetScript("OnEvent", function(self, event, unit, ...)
 	if not mainFrame then
-		mainFrame = initGuideFrame(50, UIParent, 0, -190, true, false)
-		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, false, true)
-		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, false, true)
-		mainFrame.topFrame = initGuideFrame(80, mainFrame, 0, 100, false, true)
+		mainFrame = initGuideFrame(50, UIParent, 0, -190, false)
+		mainFrame.leftFrame = initGuideFrame(36, mainFrame, -60, -7, true)
+		mainFrame.rightFrame = initGuideFrame(36, mainFrame, 60, -7, true)
+		mainFrame.topFrame = initGuideFrame(80, mainFrame, 0, 100, true)
 		mainFrame:Hide()
 	end
 
@@ -150,7 +154,7 @@ guider:SetScript("OnEvent", function(self, event, unit, ...)
 		mainFrame.PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 		mainFrame.PlayerCooldown:UnregisterEvent("UNIT_SPELLCAST_START")
 		guider:SetScript("OnUpdate", nil)
-		mainFrame:Hide()
+		guider:Hide()
 	else
 		mainFrame.PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 		mainFrame.PlayerCooldown:RegisterEvent("UNIT_SPELLCAST_START")

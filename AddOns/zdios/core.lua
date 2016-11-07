@@ -45,41 +45,32 @@ end
 local f = CreateFrame("Frame")
 f:RegisterEvent("MERCHANT_SHOW")
 f:SetScript("OnEvent", OnEvent)
-
 if MerchantFrame:IsVisible() then OnEvent() end
 
---[[
----------------------------------------------------- Move UIErrors frame
-UIErrorsFrame:ClearAllPoints()
-UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -30)
-UIErrorsFrame.SetPoint = dummy
 
----------------------------------------------------- Word map styling
-UIPanelWindows["WorldMapFrame"] = {area = "center", pushable = 9}
-hooksecurefunc(WorldMapFrame, "Show", function(self)
-	self:SetScale(1)
-	self:EnableKeyboard(false)
-	BlackoutWorld:Hide()
-	WorldMapFrame:EnableMouse(false)
+local c = CreateFrame("Frame")
+c:RegisterEvent("SPELL_UPDATE_USABLE")
+c:SetScript("OnEvent", function(self, event, unit, ...)
+	for i = 1, 24 do
+		local button = nil
+		if i < 13 then
+			button = _G["ActionButton"..i]
+		else
+			button = _G["MultiBarBottomLeftButton"..i-12]
+			i = i + 48
+		end
+
+		local actionType, id = GetActionInfo(i)
+        local actionName = GetSpellInfo(id)
+
+        if actionName and button then
+			local start, cooldown, enable = GetSpellCooldown(actionName)
+			
+			if start and start ~= 0 and cooldown > 12 then
+				button:SetAlpha(1)
+			else
+				button:SetAlpha(.25)
+			end
+		end
+	end
 end)
-
----------------------------------------------------- Power Bar
-local p = PlayerPowerBarAlt
-local a = CreateFrame("Frame", nil, UIParent)
-a:SetSize(10,10)
-a:SetPoint("TOP", p, "TOP", 0, 2.5)
-a:EnableMouse(true)
-p:SetSize(10,10)
-p:SetMovable(true)
-p:SetUserPlaced(true)
-a:SetScript("OnMouseDown", function() p:StartMoving() end)
-a:SetScript("OnMouseUp", function() p:StopMovingOrSizing() end)
-a.t = a:CreateTexture()
-a.t:SetAllPoints()
-a.t:SetTexture(1,1,1)
-a.t:SetAlpha(0.3)
-a:Hide()
-SlashCmdList["MOVEPOWERBAR"]=function() a[a:IsShown() and "Hide" or "Show"](a) end
-SLASH_MOVEPOWERBAR1 = "/mpb
---]]
-
