@@ -10,7 +10,7 @@ local function checkSpell(spellName)
 	learned, notEnoughMana = IsUsableSpell(spellName)
 	start, cooldown, enable = GetSpellCooldown(spellName)
 	if start and start ~= 0 then
-		canCast = ns.gcdTime >= start + cooldown
+		canCast = ns.gcdTime >= start + cooldown - .1
 	end
 	return canCast and not notEnoughMana and learned
 end

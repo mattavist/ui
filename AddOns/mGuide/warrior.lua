@@ -120,25 +120,26 @@ warrior.fury = function()
 	local rightPulse = false
 	local topPulse = true
 
-	local rage = UnitPower("player")
-	local wreckingBallTalented = ns.talentChosen(3, 1)
-	local enraged = ns.auraDuration("Enrage", "Player", "HELPFUL") > 1.5
-	local battleCry = ns.auraDuration("Battle Cry", "Player", "HELPFUL") > 0.5
-	local meatCleaver = ns.auraDuration("Meat Cleaver", "Player", "HELPFUL") > 0.5
-	local inCombat = InCombatLockdown()
+	local enraged = ns.auraDuration("Enrage", "Player", "HELPFUL") > 1
+	local dragonRoar = ns.auraDuration("Dragon Roar", "Player", "HELPFUL") > 2
+	local battleCry = ns.auraDuration("Battle Cry", "Player", "HELPFUL") > 1
+	local meatCleaver = ns.auraDuration("Meat Cleaver", "Player", "HELPFUL") > 1
 
 	-- Charge on left
 	if ns.checkSpell("Charge") and UnitExists("target") and IsSpellInRange("Charge", "target") ~= 0 then
 		left = "Charge"
+	elseif ns.checkSpell("Dragon Roar") and not ns.checkSpell("Battle Cry") then
+		left = "Dragon Roar"
+		leftPulse = true
 	end
 
-	-- Buffs on right
+	-- Battle Cry on right
 	if ns.checkSpell("Heroic Throw") and UnitExists("target") and IsSpellInRange("Heroic Throw", "target") ~= 0 then
 		right = "Heroic Throw"
 	elseif ns.checkSpell("Dragon Roar") and ns.checkSpell("Battle Cry") then
 		right = "Dragon Roar"
 		rightPulse = true
-	elseif ns.checkSpell("Battle Cry") and IsSpellInRange("Pummel", "target") ~= 0 then
+	elseif ns.checkSpell("Battle Cry") and dragonRoar then
 		right = "Battle Cry"
 		rightPulse = true
 	elseif ns.checkSpell("Avatar") and battleCry then
@@ -149,28 +150,13 @@ warrior.fury = function()
 		rightPulse = true
 	end
 
-	-- Decide whether to use AoE or Single Target rotation based on whirlwind buff
-	if aoeTime then
-		if GetTime() > aoeTime then
-			aoeTime = false
-		end
-	end
-
-	if meatCleaver then
-		aoeTime = GetTime() + 3
-	end
-
 	-- Rotation
-	if aoeTime and ns.checkSpell("Whirlwind") and not meatCleaver then
-		spell = "Whirlwind"
-	elseif ns.checkSpell("Rampage") and (not enraged or rage > 90) then
+	if ns.checkSpell("Rampage") and (meatCleaver or not enraged or UnitPower("player") > 90) then
 		spell = "Rampage"
-	elseif ns.checkSpell("Bloodthirst") and (aoeTime or not enraged) then
+	elseif ns.checkSpell("Bloodthirst") and (meatCleaver or not enraged) then
 		spell = "Bloodthirst"
 	elseif ns.checkSpell("Odyn's Fury") and battleCry then
 		spell = "Odyn's Fury"
-	elseif ns.checkSpell("Whirlwind") and aoeTime then
-		spell = "Whirlwind"
 	elseif ns.checkSpell("Execute") then
 		spell = "Execute"
 	elseif ns.checkSpell("Raging Blow") then

@@ -28,7 +28,7 @@ local framesToMove = {
         frameAnchor = "TOP",
         parent = WorldFrame,
         parentAnchor = "CENTER",
-        x = 0,
+        x = 300,
         y = -300,
         height = 300
     },
@@ -70,7 +70,7 @@ function s:OnAddon(event, addon)
         hooksecurefunc("TalkingHeadFrame_PlayCurrent", function()
             AlertFrame:ClearAllPoints()
             AlertFrame:SetPoint("BOTTOM", 0, 350)
-            TalkingHeadFrame:SetPoint("BOTTOM", WorldFrame, "BOTTOM", 0, 350)
+            TalkingHeadFrame:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", -10, 650)
             TalkingHeadFrame.ignoreFramePositionManager = true
         end)
 

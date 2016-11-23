@@ -47,7 +47,7 @@ f:RegisterEvent("MERCHANT_SHOW")
 f:SetScript("OnEvent", OnEvent)
 if MerchantFrame:IsVisible() then OnEvent() end
 
-
+--[[
 local c = CreateFrame("Frame")
 c:RegisterEvent("SPELL_UPDATE_USABLE")
 c:SetScript("OnEvent", function(self, event, unit, ...)
@@ -74,3 +74,4 @@ c:SetScript("OnEvent", function(self, event, unit, ...)
 		end
 	end
 end)
+]]
