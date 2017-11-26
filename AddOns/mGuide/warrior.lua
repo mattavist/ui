@@ -11,28 +11,73 @@ local function pummelStatus()
 	end
 end
 
+local function tankSwap()
+	if not UnitExists("focus") then
+		return false
+	elseif not ns.checkSpell("Taunt") then
+		return false
+	end
+
+	-- Nighthold
+	if ns.auraStacks("Chronometric Particles", "focus", "HARMFUL") > 7 then
+		return true
+	elseif ns.auraStacks("Arcane Slash", "focus", "HARMFUL") > 1 then
+		return true
+	elseif ns.auraStacks("Annihilated", "focus", "HARMFUL") > 1 then
+		return true
+	elseif ns.auraStacks("Searing Brand", "focus", "HARMFUL") > 7 then
+		return true
+	elseif ns.auraStacks("Recursive Strikes", "focus", "HARMFUL") > 7 then
+		return true
+	elseif ns.auraStacks("Ablation", "focus", "HARMFUL") > 3 then
+		return true
+	--elseif ns.auraDuration("Thunder Clap", "focus", "HARMFUL") > 0 then
+	--	return true
+	-- Tomb of Sargeras
+	elseif ns.auraDuration("Burden of Pain", "focus", "HARMFUL") > 0 then
+		return true
+	elseif ns.auraStacks("Lunar Fire", "focus", "HARMFUL") > 1 then
+		return true
+	elseif ns.auraStacks("Desolate", "focus", "HARMFUL") > 1 then
+		return true
+	-- Antorus
+	end
+
+	return false
+end
+
 warrior.prot = function()
 	local spell = nil
-	local glow = false
+	local glow = tankSwap()
 	local left = false
 	local right = false
 	local leftPulse = false
 	local rightPulse = false
 	local topPulse = true
 
-	-- Set spell to Ignore Pain or Focused Rage
-	if ns.auraDuration("Vengeance: Ignore Pain", "Player", "HELPFUL") > 0 then
-		left = "Ignore Pain"
-	else
-		right = "Focused Rage"
+	local revenge = ns.auraDuration("Revenge!", "Player", "HELPFUL") > 0.5
+	local ignorePain = ns.auraDuration("Vengeance: Ignore Pain", "Player", "HELPFUL") > 0
+	local shieldBlock = ns.auraDuration("Shield Block", "Player", "HELPFUL") < 3 and ns.checkSpell("Shield Block")
+
+	-- Left and Right Buttons
+	if shieldBlock then
+		left = "Shield Block"
+	end
+
+	if ignorePain then
+		right = "Ignore Pain"
 	end
 
 	if ns.checkSpell("Shield Slam") then
 		spell = "Shield Slam"
-	elseif ns.checkSpell("Revenge") then
+	elseif not ignorePain and ns.checkSpell("Revenge") then
+		spell = "Revenge"
+	elseif ns.checkSpell("Thunder Clap") then
+		spell = "Thunder Clap"
+	elseif revenge and ns.checkSpell("Revenge") then
 		spell = "Revenge"
 	else
-		spell = "Shield Block"
+		spell = "Devastator"
 	end
 
 	return spell, glow, left, right, pummelStatus(), leftPulse, rightPulse, topPulse
@@ -94,7 +139,8 @@ warrior.arms = function()
 		spell = "Colossus Smash"
 	elseif ns.checkSpell("Warbreaker") and not colSmashOnTarget then --and not shatteredDefenses then
 		spell = "Warbreaker"
-	elseif ns.talentChosen(1, 2) and ns.auraDuration("Overpower!", "Player", "HELPFUL") then -- ns.checkSpell("Overpower") and 
+	elseif ns.talentChosen(1, 2) and ns.auraDuration("Overpower!", "Player", "HELPFUL") > 0 then -- and ns.checkSpell("Overpower") then
+
 		spell = "Overpower"
 	elseif ns.checkSpell("Execute") and focusedRageStacks < 3 then
 		spell = "Execute"
@@ -124,6 +170,7 @@ warrior.fury = function()
 	local dragonRoar = ns.auraDuration("Dragon Roar", "Player", "HELPFUL") > 2
 	local battleCry = ns.auraDuration("Battle Cry", "Player", "HELPFUL") > 1
 	local meatCleaver = ns.auraDuration("Meat Cleaver", "Player", "HELPFUL") > 1
+	local wreckingBall = ns.auraDuration("Wrecking Ball", "Player", "HELPFUL") > 1
 
 	-- Charge on left
 	if ns.checkSpell("Charge") and UnitExists("target") and IsSpellInRange("Charge", "target") ~= 0 then
@@ -139,7 +186,8 @@ warrior.fury = function()
 	elseif ns.checkSpell("Dragon Roar") and ns.checkSpell("Battle Cry") then
 		right = "Dragon Roar"
 		rightPulse = true
-	elseif ns.checkSpell("Battle Cry") and dragonRoar then
+	--elseif ns.checkSpell("Battle Cry") and dragonRoar then
+	elseif ns.checkSpell("Battle Cry") then
 		right = "Battle Cry"
 		rightPulse = true
 	elseif ns.checkSpell("Avatar") and battleCry then
@@ -159,10 +207,12 @@ warrior.fury = function()
 		spell = "Odyn's Fury"
 	elseif ns.checkSpell("Execute") then
 		spell = "Execute"
-	elseif ns.checkSpell("Raging Blow") then
-		spell = "Raging Blow"
 	elseif ns.checkSpell("Bloodthirst") then
 		spell = "Bloodthirst"
+	elseif ns.checkSpell("Raging Blow") then
+		spell = "Raging Blow"
+	elseif ns.checkSpell("Whirlwind") and wreckingBall then
+		spell = "Whirlwind"
 	else
 		spell = "Furious Slash"
 	end

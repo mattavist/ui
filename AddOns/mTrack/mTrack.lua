@@ -28,6 +28,7 @@ local trackedBuffs = {
     },
 
     ["Shield Block"] = {
+        spellID = 132404,
         color = { 14/255, 86/255, 153/255 },
         isTimer = true
     },
@@ -167,12 +168,33 @@ local function updateTimers()
     end
 end
 
+local function getBuff(buff, info)
+    local name, _, _, _, _, duration, expires, _, _, _, spellID, _, _, _, _, _, value1, _, _ = UnitBuff("player", buff)
+
+    if name and info.spellID then
+        if spellID ~= info.spellID then
+            for i=1,40,1 do
+                local name, _, _, _, _, duration, expires, _, _, _, spellID, _, _, _, _, _, value1, _, _ = UnitBuff("player", i)
+                if spellID == info.spellID then
+                    return name, duration, expires, value1
+                end
+            end
+        end
+    end
+    
+    return name, duration, expires, value1
+end
+
 -- Every time UNIT_AURA fires collect the information on all tracked buffs
+-- This can be broken when UnitBuff can return multiple values for one buff name, i.e. "Shield Block" with 
+-- tier bonus that modify its buff. Only way to fix this is iterate over all player buffs and find the one
+-- with the correct SpellID
 local function updateAuras()
     local activeTimers = false
     for buff, info in pairs(trackedBuffs) do
-        local name, _, _, _, _, duration, expires, _, _, _, _, _, _, _, _, _, value1, _, _ = UnitBuff("player", buff)
+        local name, duration, expires, value1 = getBuff(buff, info)
         if name then
+            --ChatFrame3:AddMessage(string.format(".%s. %f %f %s", name, duration, expires, spellID))
             if not info.active then -- create frame
                 info.active = true
                 drawBar(buff, info)
