@@ -42,7 +42,7 @@ shaman.enhance = function()
 		spell = "Frostbrand"
 	elseif ns.checkSpell("Rockbiter") and ns.auraDuration("Landslide", "player", "HELPFUL") < ns.gcd then
 		spell = "Rockbiter"
-	elseif ns.auraDuration("Emalon's Charged Core", "player", "HELPFUL") > 0 and ns.checkSpell("Crash Lightning") then
+	elseif ns.auraDuration("Emalon 's Charged Core", "player", "HELPFUL") > 0 and ns.checkSpell("Crash Lightning") then
 		spell = "Crash Lightning"
 	elseif ns.checkSpell("Earthen Spike") then
 		spell = "Earthen Spike"

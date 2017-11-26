@@ -17,8 +17,8 @@ local buffIndex = {
                     "Battle Cry",
 
                     -- Shaman
-                    --"Stormbringer",
-                    --"Flametongue"
+                    "Landslide",
+                    "Flametongue"
 }
 local trackedBuffs = {
     -- Warrior
@@ -59,14 +59,14 @@ local trackedBuffs = {
     },
 
     -- Shaman
-    --[[["Stormbringer"] = {
-        color = { 14/255, 86/255, 153/255 },
+    ["Landslide"] = {
+        color = { 14/255, 180/255, 60/255 },
         isTimer = true
     },
     ["Flametongue"] = {
-        color = { 178/255, 101/255, 1/255 },
+        color = { 255/255, 101/255, 1/255 },
         isTimer = true
-    },]]
+    },
 }
 
 --backdrop table
@@ -171,6 +171,7 @@ end
 local function getBuff(buff, info)
     local name, _, _, _, _, duration, expires, _, _, _, spellID, _, _, _, _, _, value1, _, _ = UnitBuff("player", buff)
 
+    -- If buff has a SpellID, make sure we got the correct buff
     if name and info.spellID then
         if spellID ~= info.spellID then
             for i=1,40,1 do
@@ -194,7 +195,6 @@ local function updateAuras()
     for buff, info in pairs(trackedBuffs) do
         local name, duration, expires, value1 = getBuff(buff, info)
         if name then
-            --ChatFrame3:AddMessage(string.format(".%s. %f %f %s", name, duration, expires, spellID))
             if not info.active then -- create frame
                 info.active = true
                 drawBar(buff, info)
