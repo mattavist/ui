@@ -18,7 +18,8 @@ local buffIndex = {
 
                     -- Shaman
                     "Landslide",
-                    "Flametongue"
+                    "Flametongue",
+                    "Frostbrand"
 }
 local trackedBuffs = {
     -- Warrior
@@ -65,6 +66,10 @@ local trackedBuffs = {
     },
     ["Flametongue"] = {
         color = { 255/255, 101/255, 1/255 },
+        isTimer = true
+    },
+    ["Frostbrand"] = {
+        color = { 1/255, 101/255, 255/255 },
         isTimer = true
     },
 }
