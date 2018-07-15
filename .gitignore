@@ -12,9 +12,9 @@
 !/AddOns/mTooltip/*
 !/AddOns/mMap/*
 !/AddOns/mChar/*
-!/Addons/rActionBarStyler
-!/Addons/rActionButtonStyler
-!/Addons/rLib
+!/Addons/rActionBarStyler/*
+!/Addons/rActionButtonStyler/*
+!/Addons/rLib/*
 
 */LICENSE
 */changelog
