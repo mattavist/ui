@@ -1,0 +1,14 @@
+tag 7.0.3.2
+c490d9827b1245fa66b443796af302f9ed94efed
+Talyrius <contact@talyrius.net>
+2016-08-18 17:35:34 -0700
+
+Tagging as 7.0.3.2
+
+
+--------------------
+
+Talyrius:
+	- Damage dealt to Soul Effigy is now ignored
+	- Damage absorbed by Soul Capacitor's Spirit Shift is now ignored
+	- Adjusted argument return order for combat events to account for multistrikes being removed

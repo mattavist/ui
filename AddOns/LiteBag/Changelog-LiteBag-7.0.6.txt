@@ -1,0 +1,12 @@
+tag 7.0.6
+e1495e7bc45e0bb7003bdb494752b0e7c070c96d
+Mike "Xodiv" Battersby <mib@post.com>
+2016-09-01 23:19:16 +1000
+
+Tagging 7.0.6. Can't drag-resize while reagent bank is shown.
+
+
+--------------------
+
+Mike "Xodiv" Battersby:
+	- Can't resize while reagent bank is shown!
