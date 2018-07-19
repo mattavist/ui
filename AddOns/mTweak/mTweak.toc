@@ -1,0 +1,7 @@
+## Interface: 80000
+## Author: Mattavist
+## Title: mTweak
+## Notes: Miscellaneous UI tweaks
+
+core.lua
+openmail.lua
