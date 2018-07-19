@@ -26,6 +26,7 @@ local function hideElements()
 
 	local frames = {
 	    --MiniMapMeetingStoneBorder,
+	    TimeManagerClockButton,
 	    MiniMapTrackingBackground,
 	    --MiniMapMeetingStoneFrame,
 	    --MiniMapBattlefieldBorder,

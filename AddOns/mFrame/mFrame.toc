@@ -1,9 +1,9 @@
-## Interface: 70000
+## Interface: 80000
 ## Title: mFrame
 ## Author: Mattavist (matavist@gmail.com)
 ##
 ## Edits and some changed behavior for various frames
-## RequiredDeps: Blizzard_ObjectiveTracker
+## RequiredDeps: Blizzard_ObjectiveTracker, oUF_Karma
 
 bufficon.lua
 combathide.lua
