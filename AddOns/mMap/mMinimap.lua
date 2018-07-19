@@ -2,7 +2,7 @@ local function reshapeMap()
 	Minimap:ClearAllPoints()
 	Minimap:SetScale(1.0)
 	Minimap:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -12, -12)
-	Minimap:SetMaskTexture("Interface\\AddOns\\zdios\\media\\mask.blp")
+	Minimap:SetMaskTexture("Interface\\AddOns\\mTweak\\media\\mask.blp")
 
 	local mbg = Minimap:CreateTexture(nil, "BACKGROUND")
 	mbg:SetPoint("BOTTOMRIGHT", 2, -2)

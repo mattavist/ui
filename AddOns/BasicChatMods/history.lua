@@ -6,38 +6,12 @@ BCM.earlyModules[#BCM.earlyModules+1] = function()
 	if bcmDB.BCM_History then bcmDB.lines, bcmDB.savedChat = nil, nil end
 
 	if not bcmDB.lines then bcmDB.lines = {["ChatFrame1"] = 1000} end
-	for k, v in pairs(bcmDB.lines) do
-		local f, tbl = _G[k], {}
-
-		for i = 1, f:GetNumMessages() do
-			local text, accessID, lineID, extraData = f:GetMessageInfo(i)
-			local cType = ChatHistory_GetChatType(extraData)
-			local info = ChatTypeInfo[cType]
-			if not info then -- Message was probably printed by an addon
-				for i = select("#", f:GetRegions()), 1, -1 do
-					local region = select(i, f:GetRegions())
-					if region:GetObjectType() == "FontString" and text == region:GetText() then
-						local r, g, b = region:GetTextColor()
-						tbl[#tbl+1] = {text, r, g, b, lineID, false, accessID, extraData}
-						info = true
-						break
-					end
-				end
-				if not info then -- Don't think this is needed, but better safe than sorry. If we didn't find the message, print it white.
-					tbl[#tbl+1] = {text, 1, 1, 1, lineID, false, accessID, extraData}
-				end
-			else -- Normal chat message
-				tbl[#tbl+1] = {text, info.r, info.g, info.b, lineID, false, accessID, extraData}
-			end
-		end
-		f:SetMaxLines(v) -- Set the max lines, which unfortunately clears the chat frame, resulting in all this extra chat restoration code :'(
+	for k, v in next, bcmDB.lines do
+		local f = _G[k]
+		f:SetMaxLines(v)
 		if k == "ChatFrame2" then
 			COMBATLOG_MESSAGE_LIMIT = v -- Blizzard keeps changing the combat log max lines in Blizzard_CombatLog_Refilter... this better not taint.
 		end
-		for i = 1, #tbl do
-			f:AddMessage(unpack(tbl[i]))
-		end
-		tbl=nil
 	end
 
 	if true and bcmDB.savedChat then
@@ -45,10 +19,7 @@ BCM.earlyModules[#BCM.earlyModules+1] = function()
 			for i = 1, #v do
 				local cF = _G[k]
 				if cF then
-					local text, r, g, b, lineID, backFill, accessID, extraData = unpack(v[i])
-					local id = cF:GetNumMessages() + 1
-					-- Text gsub is to fix timestamp copying after a reload :X
-					cF:AddMessage(text:gsub("(BCMt:)%d+", "%1"..id), r, g, b, lineID, backFill, accessID, extraData)
+					cF:AddMessage(unpack(v[i]))
 				end
 			end
 		end
@@ -71,26 +42,12 @@ BCM.earlyModules[#BCM.earlyModules+1] = function()
 					bcmDB.savedChat[name] = tbl
 					local num = cf:GetNumMessages()
 					local count = num > 5 and num - 5 or 1
+					local timestampNum = 1
 					for i = count, num do
-						local text, accessID, lineID, extraData = cf:GetMessageInfo(i)
-						local cType = ChatHistory_GetChatType(extraData)
-						local info = ChatTypeInfo[cType]
-						if not info then -- Message was probably printed by an addon
-							for i = select("#", cf:GetRegions()), 1, -1 do
-								local region = select(i, cf:GetRegions())
-								if region:GetObjectType() == "FontString" and text == region:GetText() then
-									local r, g, b = region:GetTextColor()
-									tbl[#tbl+1] = {text, r, g, b, lineID, false, accessID, extraData}
-									info = true
-									break
-								end
-							end
-							if not info then -- Don't think this is needed, but better safe than sorry. If we didn't find the message, print it white.
-								tbl[#tbl+1] = {text, 1, 1, 1, lineID, false, accessID, extraData}
-							end
-						else -- Normal chat message
-							tbl[#tbl+1] = {text, info.r, info.g, info.b, lineID, false, accessID, extraData}
-						end
+						tbl[#tbl+1] = {cf:GetMessageInfo(i)}
+						-- Fix timestamp module (if enabled)
+						tbl[#tbl][1]:gsub("(BCMt:)%d+", "%1"..timestampNum)
+						timestampNum = timestampNum + 1
 					end
 				end
 			end

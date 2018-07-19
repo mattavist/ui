@@ -106,7 +106,7 @@ BCM.modules[#BCM.modules+1] = function()
 	InterfaceOptions_AddCategory(bcm)
 	local bcmTitle = bcm:CreateFontString(nil, "ARTWORK", "GameFontNormalHuge")
 	bcmTitle:SetPoint("CENTER", bcm, "TOP", 0, -30)
-	bcmTitle:SetText(name.." r533-release") --wowace magic, replaced with tag version
+	bcmTitle:SetText(name.." v8.0.3") --wowace magic, replaced with tag version
 	local bcmDesc = bcm:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	bcmDesc:SetPoint("CENTER")
 	bcmDesc:SetText(BCM.CORE)
@@ -121,10 +121,10 @@ BCM.modules[#BCM.modules+1] = function()
 	enableBtn:SetScript("OnClick", function(frame)
 		BCM_Warning:Show()
 		if frame:GetChecked() then
-			PlaySound("igMainMenuOptionCheckBoxOn")
+			PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 			bcmDB[frame:GetParent():GetName()] = nil
 		else
-			PlaySound("igMainMenuOptionCheckBoxOff")
+			PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 			bcmDB[frame:GetParent():GetName()] = true
 		end
 	end)
@@ -154,7 +154,7 @@ BCM.modules[#BCM.modules+1] = function()
 	if not bcmDB.BCM_AutoLog then
 		local onClick = function(frame)
 			if frame:GetChecked() then
-				PlaySound("igMainMenuOptionCheckBoxOn")
+				PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 				if frame:GetName() == "BCM_ChatLog_Button" then
 					bcmDB.logchat = true
 					print("|cFF33FF99BasicChatMods|r: ", CHATLOGENABLED)
@@ -164,7 +164,7 @@ BCM.modules[#BCM.modules+1] = function()
 					bcmDB.logcombat = true
 				end
 			else
-				PlaySound("igMainMenuOptionCheckBoxOff")
+				PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 				if frame:GetName() == "BCM_ChatLog_Button" then
 					bcmDB.logchat = nil
 					print("|cFF33FF99BasicChatMods|r: ", CHATLOGDISABLED)
@@ -199,7 +199,7 @@ BCM.modules[#BCM.modules+1] = function()
 	if not bcmDB.BCM_BNet then
 		local OnClick = function(frame)
 			if frame:GetChecked() then
-				PlaySound("igMainMenuOptionCheckBoxOn")
+				PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 				if frame:GetName() == "BCM_BNetFakeName_Button" then
 					bcmDB.noRealName = true
 				elseif frame:GetName() == "BCM_BNetNoIcon_Button" then
@@ -208,7 +208,7 @@ BCM.modules[#BCM.modules+1] = function()
 					bcmDB.noBNetColor = nil
 				end
 			else
-				PlaySound("igMainMenuOptionCheckBoxOff")
+				PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 				if frame:GetName() == "BCM_BNetFakeName_Button" then
 					bcmDB.noRealName = nil
 				elseif frame:GetName() == "BCM_BNetNoIcon_Button" then
@@ -239,7 +239,7 @@ BCM.modules[#BCM.modules+1] = function()
 		removeIconBtn:SetChecked(bcmDB.noBNetIcon)
 		local removeIconBtnText = removeIconBtn:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		removeIconBtnText:SetPoint("LEFT", removeIconBtn, "RIGHT")
-		removeIconBtnText:SetText(BCM.BNETICON:format("|TInterface\\FriendsFrame\\UI-Toast-ToastIcons.tga:16:16:0:0:128:64:2:29:34:61|t"))
+		removeIconBtnText:SetText(BCM.BNETICON:format("|T386865:16:16:0:0:128:64:2:29:34:61|t")) --Interface\\FriendsFrame\\UI-Toast-ToastIcons
 
 		local brackInputText = BCM_BNet:CreateFontString("BCM_PlayerBrackDesc", "ARTWORK", "GameFontNormal")
 		brackInputText:SetPoint("TOPLEFT", 16, -240)
@@ -333,10 +333,10 @@ BCM.modules[#BCM.modules+1] = function()
 		local chatCopyBtn = CreateFrame("CheckButton", "BCM_ChatCopy_Button", BCM_ChatCopy, "OptionsBaseCheckButtonTemplate")
 		chatCopyBtn:SetScript("OnClick", function(frame)
 			if frame:GetChecked() then
-				PlaySound("igMainMenuOptionCheckBoxOn")
+				PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 				bcmDB.noChatCopyTip = nil
 			else
-				PlaySound("igMainMenuOptionCheckBoxOff")
+				PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 				bcmDB.noChatCopyTip = true
 			end
 		end)
@@ -354,7 +354,7 @@ BCM.modules[#BCM.modules+1] = function()
 		local editBoxBGBtn = CreateFrame("CheckButton", "BCM_EditBoxBG_Button", BCM_EditBox, "OptionsBaseCheckButtonTemplate")
 		editBoxBGBtn:SetScript("OnClick", function(frame)
 			if frame:GetChecked() then
-				PlaySound("igMainMenuOptionCheckBoxOn")
+				PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 				bcmDB.noEditBoxBG = true
 				for i=1, BCM.chatFrames do
 					local eb = format("%s%d%s", "ChatFrame", i, "EditBox")
@@ -363,7 +363,7 @@ BCM.modules[#BCM.modules+1] = function()
 					_G[eb.."Right"]:Hide()
 				end
 			else
-				PlaySound("igMainMenuOptionCheckBoxOff")
+				PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 				bcmDB.noEditBoxBG = nil
 				for i=1, BCM.chatFrames do
 					local eb = format("%s%d%s", "ChatFrame", i, "EditBox")
@@ -657,7 +657,7 @@ BCM.modules[#BCM.modules+1] = function()
 		local onClick = function(frame)
 			BCM_Warning:Show()
 			if frame:GetChecked() then
-				PlaySound("igMainMenuOptionCheckBoxOn")
+				PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 				if frame:GetName() == "BCM_PlayerLevel_Button" then
 					bcmDB.nolevel = nil
 				elseif frame:GetName() == "BCM_PlayerColor_Button" then
@@ -666,7 +666,7 @@ BCM.modules[#BCM.modules+1] = function()
 					bcmDB.nogroup = nil
 				end
 			else
-				PlaySound("igMainMenuOptionCheckBoxOff")
+				PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 				if frame:GetName() == "BCM_PlayerLevel_Button" then
 					bcmDB.nolevel = true
 				elseif frame:GetName() == "BCM_PlayerColor_Button" then
@@ -787,12 +787,12 @@ BCM.modules[#BCM.modules+1] = function()
 		stampBtn:SetScript("OnClick", function(frame)
 			local input = BCM_Timestamp_InputCol
 			if frame:GetChecked() then
-				PlaySound("igMainMenuOptionCheckBoxOn")
+				PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 				bcmDB.stampcol = "777777"
 				input:SetText(bcmDB.stampcol)
 				input:EnableMouse(true)
 			else
-				PlaySound("igMainMenuOptionCheckBoxOff")
+				PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 				bcmDB.stampcol = ""
 				input:SetText(bcmDB.stampcol)
 				input:EnableMouse(false)

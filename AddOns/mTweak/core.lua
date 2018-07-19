@@ -16,7 +16,7 @@ SLASH_RCSLASH1 = "/rc"
 SetCVar("screenshotQuality", 6)
 
 ---------------------------------------------------- Not Sure
-local fontName = "Interface\\AddOns\\zdios\\media\\font.ttf"
+local fontName = "Interface\\AddOns\\mTweak\\media\\font.ttf"
 local fontHeight = 24
 local function FS_SetFont()
 	DAMAGE_TEXT_FONT = fontName

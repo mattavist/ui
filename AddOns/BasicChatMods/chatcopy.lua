@@ -15,13 +15,15 @@ BCM.modules[#BCM.modules+1] = function()
 		local cf = _G[format("%s%d", "ChatFrame", frame:GetID())]
 		local text = ""
 		for i = 1, cf:GetNumMessages() do
-			text = text .. cf:GetMessageInfo(i) .. "\n"
+			local line = cf:GetMessageInfo(i)
+			BCMCopyFrame.font:SetFormattedText("%s\n", line) -- We do this to fix special pipe methods e.g. 5 |4hour:hours; Example: copying /played text
+			local cleanLine = BCMCopyFrame.font:GetText() or ""
+			text = text .. cleanLine
 		end
-		text = text:gsub("|[Tt]Interface\\TargetingFrame\\UI%-RaidTargetingIcon_(%d):0|[Tt]", "{rt%1}") -- I like being able to copy raid icons
-		text = text:gsub("|[Tt]13700([1-8]):0|[Tt]", "{rt%1}") -- I like being able to copy raid icons
-		text = text:gsub("|[Tt][^|]+|[Tt]", "") -- Remove any other icons to prevent copying issues
-		BCMCopyFrame.font:SetText(text) -- We do this to fix special pipe methods e.g. 5 |4hour:hours; Example: copying /played text
-		BCMCopyFrame.box:SetText(BCMCopyFrame.font:GetText())
+		text = text:gsub("|T[^\\]+\\[^\\]+\\[Uu][Ii]%-[Rr][Aa][Ii][Dd][Tt][Aa][Rr][Gg][Ee][Tt][Ii][Nn][Gg][Ii][Cc][Oo][Nn]_(%d)[^|]+|t", "{rt%1}") -- I like being able to copy raid icons
+		text = text:gsub("|T13700([1-8])[^|]+|t", "{rt%1}") -- I like being able to copy raid icons
+		text = text:gsub("|T[^|]+|t", "") -- Remove any other icons to prevent copying issues
+		BCMCopyFrame.box:SetText(text)
 		BCMCopyFrame:Show()
 		C_Timer.After(0.25, scrollDown) -- Scroll to the bottom, we have to delay it unfortunately
 	end
@@ -29,11 +31,11 @@ BCM.modules[#BCM.modules+1] = function()
 		if bcmDB.noChatCopyTip then return end
 
 		if SHOW_NEWBIE_TIPS == "1" then
-			GameTooltip:AddLine("\n|TInterface\\Icons\\Spell_ChargePositive:20|t"..BCM.CLICKTOCOPY, 1, 0, 0)
+			GameTooltip:AddLine("\n|T135769:20|t"..BCM.CLICKTOCOPY, 1, 0, 0) -- Interface\\Icons\\Spell_ChargePositive
 			GameTooltip:Show()
 		else
 			GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-			GameTooltip:AddLine("|TInterface\\Icons\\Spell_ChargePositive:20|t"..BCM.CLICKTOCOPY, 1, 0, 0)
+			GameTooltip:AddLine("|T135769:20|t"..BCM.CLICKTOCOPY, 1, 0, 0) -- Interface\\Icons\\Spell_ChargePositive
 			GameTooltip:Show()
 		end
 	end
