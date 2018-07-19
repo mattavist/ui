@@ -1,4 +1,4 @@
-## Interface: 30000
+## Interface: 80000
 ## Title: LynStats
 ## Author: Lyn
 ## Notes: mail, xp, fps, mb usage, time, latency

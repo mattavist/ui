@@ -1,4 +1,4 @@
-## Interface: 60200
+## Interface: 80000
 ## Title: Addon Usage
 ## Notes: Displays addon memory/cpu usage.
 ## Author: Gello

@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: LiteBag
 ## Version: 7.3.2
 ## Author: Xodiv of Proudmoore

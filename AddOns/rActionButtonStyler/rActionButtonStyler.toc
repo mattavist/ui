@@ -1,3 +1,4 @@
+## Interface: 80000
 ## Author: zork
 ## Title: rActionButtonStyler
 ## Notes: The default ActionButtonTemplate with style!
