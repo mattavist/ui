@@ -17,7 +17,7 @@
   --hide main menu bar frames
   if gcfg.bars.bar1.enable then
     MainMenuBar:SetParent(blizzHider)
-    MainMenuBarPageNumber:SetParent(blizzHider)
+    --MainMenuBarPageNumber:SetParent(blizzHider)
     ActionBarDownButton:SetParent(blizzHider)
     ActionBarUpButton:SetParent(blizzHider)
   end
@@ -43,12 +43,9 @@
   PossessBackground2:SetTexture(nil)
 
   if gcfg.bars.bar1.enable then
-    MainMenuBarTexture0:SetTexture(nil)
-    MainMenuBarTexture1:SetTexture(nil)
-    MainMenuBarTexture2:SetTexture(nil)
-    MainMenuBarTexture3:SetTexture(nil)
-    MainMenuBarLeftEndCap:SetTexture(nil)
-    MainMenuBarRightEndCap:SetTexture(nil)
+    MainMenuBarArtFrameBackground.BackgroundLarge:SetTexture(nil)
+    MainMenuBarArtFrame.LeftEndCap:SetTexture(nil)
+    MainMenuBarArtFrame.RightEndCap:SetTexture(nil)
   end
 
   --remove OverrideBar textures
