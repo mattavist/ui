@@ -52,7 +52,7 @@ local ECLIPSE_BAR_LUNAR_BUFF = GetSpellInfo(171743)
 local SPELL_POWER_ECLIPSE = SPELL_POWER_ECLIPSE
 local MOONKIN_FORM = MOONKIN_FORM
 
-local UNIT_POWER = function(self, event, unit, powerType)
+local UNIT_POWER_UPDATE= function(self, event, unit, powerType)
 	if(self.unit ~= unit or (event == 'UNIT_POWER_FREQUENT' and powerType ~= 'ECLIPSE')) then return end
 
 	local eb = self.EclipseBar

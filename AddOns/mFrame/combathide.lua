@@ -13,18 +13,18 @@ end
 
 local function hideAll()
     MultiBarBottomLeft:SetAlpha(0)
-    oUF_karmaPlayer:SetAlpha(0)
+    oUF_LumenPlayer:SetAlpha(0)
     rABS_MainMenuBar:SetAlpha(0)
     BuffFrame:SetAlpha(0)
-    mGuideFrame:SetAlpha(0)
+    --mGuideFrame:SetAlpha(0)
 end
 
 local function showAll()
     MultiBarBottomLeft:SetAlpha(1)
-    oUF_karmaPlayer:SetAlpha(1)
+    oUF_LumenPlayer:SetAlpha(1)
     rABS_MainMenuBar:SetAlpha(1)
     BuffFrame:SetAlpha(1)
-    mGuideFrame:SetAlpha(1)
+    --mGuideFrame:SetAlpha(1)
     buttonAlphaHigh()
 end
 
@@ -55,8 +55,8 @@ addon:SetScript("OnEvent", function(self, event, unit, ...)
     addon:UnregisterEvent("PLAYER_ENTERING_WORLD")
     LootHistoryFrame:SetScale(1.5)
     TimeManagerClockButton:Hide()
-    ChatFrame1:SetFont("Interface\\AddOns\\oUF_Karma\\media\\Asap-Bold.ttf", 16, "OUTLINE")
-    ChatFrame3:SetFont("Interface\\AddOns\\oUF_Karma\\media\\Asap-Bold.ttf", 16, "OUTLINE")  
+    ChatFrame1:SetFont("Interface\\Fonts\\Asap-Bold.ttf", 16, "OUTLINE")
+    ChatFrame3:SetFont("Interface\\Fonts\\Asap-Bold.ttf", 16, "OUTLINE")  
 
     hider:RegisterEvent("PLAYER_REGEN_ENABLED")
     hider:RegisterEvent("UNIT_SPELLCAST_STOP")

@@ -98,7 +98,7 @@ tags.Methods['karma:raidhp']  = function(u)
 end
 ]]--
 
-tags.Events['karma:color'] = 'UNIT_REACTION UNIT_HEALTH UNIT_HAPPINESS'
+tags.Events['karma:color'] = 'UNIT_HEALTH'
 tags.Methods['karma:color'] = function(u, r)
 		local _, class = UnitClass(u)
 	local reaction = UnitReaction(u, "player")
@@ -118,7 +118,7 @@ tags.Methods['karma:color'] = function(u, r)
 	end
 end
 
-tags.Events["karma:afkdnd"] = 'PLAYER_FLAGS_CHANGED UNIT_POWER UNIT_MAXPOWER'
+tags.Events["karma:afkdnd"] = 'PLAYER_FLAGS_CHANGED UNIT_POWER_UPDATE UNIT_MAXPOWER'
 tags.Methods["karma:afkdnd"] = function(unit) 
 	return UnitIsAFK(unit) and "|cffCFCFCF <afk>|r" or UnitIsDND(unit) and "|cffCFCFCF <dnd>|r" or ""
 end
@@ -134,7 +134,7 @@ tags.Methods['karma:DDG'] = function(u)
 	end
 end
 
-tags.Events['karma:power'] = 'UNIT_POWER UNIT_MAXPOWER'
+tags.Events['karma:power'] = 'UNIT_POWER_UPDATE UNIT_MAXPOWER'
 tags.Methods['karma:power']  = function(u) 
 	local min, max = UnitPower(u), UnitPowerMax(u)
 	if min~=max then 
@@ -144,7 +144,7 @@ tags.Methods['karma:power']  = function(u)
 	end
 end
 
-tags.Events['karma:pp'] = 'UNIT_POWER UNIT_MAXPOWER'
+tags.Events['karma:pp'] = 'UNIT_POWER_UPDATE UNIT_MAXPOWER'
 tags.Methods['karma:pp'] = function(u)
     if u == "player" or u == "target" then 
 		local _, str = UnitPowerType(u)
