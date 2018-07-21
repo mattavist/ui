@@ -1,7 +1,6 @@
-## Interface: 70000
+## Interface: 80000
 ## Title: mTrack
 ##
 ## Author: Mattavist, matavist@gmail.com
-## RequiredDeps: oUF_Karma
 
 mTrack.lua

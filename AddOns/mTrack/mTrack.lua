@@ -1,26 +1,28 @@
 local timerUpdater = CreateFrame('Frame', UIParent)
 local auraUpdater = CreateFrame('Frame', UIParent)
 local throttleCount = 0
-local mediaPath = "Interface\\AddOns\\oUF_Karma\\media\\"
+local mediaPath = "Interface\\media\\"
 barHeight = 20
 barOffset = 30
 playerFrameOffset = 15
 
 local trackedTimers = {}
 local buffIndex = { 
-                    -- Warrior
-                    "Ultimatum",
-                    "Shield Block",
-                    "Ignore Pain",
-                    "Shield Wall",
-                    "Last Stand",
-                    "Battle Cry",
+    -- Warrior
+    "Ultimatum",
+    "Shield Block",
+    "Ignore Pain",
+    "Shield Wall",
+    "Last Stand",
+    "Battle Cry",
+    "Enrage",
 
-                    -- Shaman
-                    "Landslide",
-                    "Flametongue",
-                    "Frostbrand"
+    -- Shaman
+    "Landslide",
+    "Flametongue",
+    "Frostbrand"
 }
+
 local trackedBuffs = {
     -- Warrior
     ["Ultimatum"] = {
@@ -37,7 +39,7 @@ local trackedBuffs = {
     ["Ignore Pain"] = {
         color = { 178/255, 101/255, 1/255 },
         textValue = function(absorb) -- Returns absorbed damage as "___K"
-            return string.format("%uK", absorb/1000)
+                        return string.format("%uK", absorb/1000)
         end,
         maxValue = function()
             return UnitHealthMax("player")
@@ -59,15 +61,22 @@ local trackedBuffs = {
         isTimer = true
     },
 
+    ["Enrage"] = {
+        color = { 255/255, 30/255, 30/255 },
+        isTimer = true
+    },
+
     -- Shaman
     ["Landslide"] = {
         color = { 14/255, 180/255, 60/255 },
         isTimer = true
     },
+
     ["Flametongue"] = {
         color = { 255/255, 101/255, 1/255 },
         isTimer = true
     },
+
     ["Frostbrand"] = {
         color = { 1/255, 101/255, 255/255 },
         isTimer = true
@@ -105,7 +114,7 @@ local function createBar()
     bar:SetStatusBarTexture(mediaPath.."Statusbar")
     bar:GetStatusBarTexture():SetHorizTile(false)
     bar:GetStatusBarTexture():SetVertTile(false)
-    bar:SetWidth(oUF_karmaPlayer:GetWidth())
+    bar:SetWidth(oUF_LumenPlayer:GetWidth())
     bar:SetHeight(barHeight)
     bar:SetFrameLevel(1)
 
@@ -138,9 +147,11 @@ local function positionBars()
     local activeBars = 0
     for _, buff in pairs(buffIndex) do
         info = trackedBuffs[buff]
-        if info.active then
-            info.bar:SetPoint("BOTTOM", oUF_karmaPlayer, "TOP", 0, playerFrameOffset + activeBars * barOffset)
-            activeBars = activeBars + 1
+        if info then
+            if info.active then
+                info.bar:SetPoint("BOTTOM", oUF_LumenPlayer, "TOP", 0, playerFrameOffset + activeBars * barOffset)
+                activeBars = activeBars + 1
+            end
         end
     end
 end
@@ -174,19 +185,21 @@ local function updateTimers()
 end
 
 local function getBuff(buff, info)
-    local name, _, _, _, _, duration, expires, _, _, _, spellID, _, _, _, _, _, value1, _, _ = UnitBuff("player", buff)
+    --[[ Used to search by spell name for efficiency, but seems I can't anymore
+    local name, _, _, _, _, duration, expires, _, _, spellID, _, _, _, _, value1, _, _, _, _ = UnitBuff("player", info.spellID)
 
-    -- If buff has a SpellID, make sure we got the correct buff
-    if name and info.spellID then
-        if spellID ~= info.spellID then
-            for i=1,40,1 do
-                local name, _, _, _, _, duration, expires, _, _, _, spellID, _, _, _, _, _, value1, _, _ = UnitBuff("player", i)
-                if spellID == info.spellID then
-                    return name, duration, expires, value1
-                end
-            end
+    -- If buff has a SpellID, make sure we got the correct buff, needed for buffs that share the same name
+    if spellID ~= info.spellID then]]
+
+    -- Just iterate through all buffs on player and match the name
+    for i=1,40,1 do
+        local name, _, _, _, duration, expires, _, _, _, spellID, _, _, _, _, value1, _, _ = UnitBuff("player", i)
+        
+        if name == buff then
+            return name, duration, expires, value1
         end
     end
+    --end
     
     return name, duration, expires, value1
 end

@@ -3,7 +3,7 @@
 ## Author: Mattavist (matavist@gmail.com)
 ##
 ## Edits and some changed behavior for various frames
-## RequiredDeps: Blizzard_ObjectiveTracker, oUF
+## RequiredDeps: Blizzard_ObjectiveTracker, oUF_lumen
 
 bufficon.lua
 combathide.lua

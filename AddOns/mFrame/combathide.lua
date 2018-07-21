@@ -1,3 +1,5 @@
+local mediaPath = "Interface\\media\\"
+
 local function buttonAlphaHigh()    
     for i = 1, 24 do
         local button = nil
@@ -55,8 +57,8 @@ addon:SetScript("OnEvent", function(self, event, unit, ...)
     addon:UnregisterEvent("PLAYER_ENTERING_WORLD")
     LootHistoryFrame:SetScale(1.5)
     TimeManagerClockButton:Hide()
-    ChatFrame1:SetFont("Interface\\Fonts\\Asap-Bold.ttf", 16, "OUTLINE")
-    ChatFrame3:SetFont("Interface\\Fonts\\Asap-Bold.ttf", 16, "OUTLINE")  
+    ChatFrame1:SetFont(mediaPath.."Asap-Bold.ttf", 16, "OUTLINE")
+    ChatFrame3:SetFont(mediaPath.."Asap-Bold.ttf", 16, "OUTLINE")  
 
     hider:RegisterEvent("PLAYER_REGEN_ENABLED")
     hider:RegisterEvent("UNIT_SPELLCAST_STOP")

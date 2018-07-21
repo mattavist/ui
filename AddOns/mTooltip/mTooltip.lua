@@ -1,4 +1,5 @@
 local tip = CreateFrame('Frame', UIParent)
+local mediaPath = "Interface\\media\\"
 
 local mouseAnchor = nil
 
@@ -40,7 +41,7 @@ tip:SetScript("OnEvent", function ()
     bar:SetPoint("BOTTOMLEFT", 10, 12)
     bar:SetPoint("BOTTOMRIGHT", -10, 12)
     bar:SetHeight(5)
-    bar:SetStatusBarTexture("Interface\\AddOns\\oUF_Karma\\media\\Statusbar")
+    bar:SetStatusBarTexture(mediaPath.."Statusbar")
     GameTooltip.statusBar = bar
     GameTooltip:SetHeight(200)
 

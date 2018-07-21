@@ -81,7 +81,7 @@ end
 -- -----------------------------------
 
 local OnEnter = function(self)
-	self:SetAlpha(1) -- Player frame fading
+	--self:SetAlpha(1) -- Player frame fading
 
   self.Highlight:Show()  -- Mouseover highlight Show
   UnitFrame_OnEnter(self)
