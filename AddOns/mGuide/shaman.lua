@@ -20,13 +20,13 @@ shaman.enhance = function()
 	local topPulse = true
 
 	local maelstrom = UnitPower("player")
-	local hailstormTalented = ns.talentChosen(4, 3)
+	local lightningShield = ns.auraDuration("Lightning Shield", "Player", "HELPFUL") > 1
 
 	-- Right
 	if UnitExists("target") and IsSpellInRange("Lightning Bolt", "target") ~= 0 and IsSpellInRange("Rockbiter", "target") == 0 then
 		right = "Lightning Bolt"
-	elseif ns.checkSpell("Doom Winds") and IsSpellInRange("Stormstrike", "target") ~= 0 then
-		right = "Doom Winds"
+	elseif ns.checkSpell("Lightning Shield") and not lightningShield then
+		right = "Lightning Shield"
 		rightPulse = true
 	end
 
@@ -38,18 +38,16 @@ shaman.enhance = function()
 		leftPulse = true
 	end
 
-	if hailstormTalented and ns.checkSpell("Frostbrand") and ns.auraDuration("Frostbrand", "player", "HELPFUL") < ns.gcd then
-		spell = "Frostbrand"
-	elseif ns.checkSpell("Rockbiter") and ns.auraDuration("Landslide", "player", "HELPFUL") < ns.gcd then
-		spell = "Rockbiter"
-	elseif ns.auraDuration("Emalon 's Charged Core", "player", "HELPFUL") > 0 and ns.checkSpell("Crash Lightning") then
-		spell = "Crash Lightning"
-	elseif ns.checkSpell("Earthen Spike") then
-		spell = "Earthen Spike"
-	elseif ns.auraDuration("Flametongue", "player", "HELPFUL") < ns.gcd then
+	if ns.checkSpell("Flametongue") and ns.auraDuration("Flametongue", "player", "HELPFUL") < ns.gcd then
 		spell = "Flametongue"
 	elseif ns.checkSpell("Stormstrike") then
 		spell = "Stormstrike"
+	elseif ns.checkSpell("Flametongue") then
+		spell = "Flametongue"
+	elseif ns.checkSpell("Sundering") then
+		spell = "Sundering"
+	elseif ns.checkSpell("Rockbiter") and maelstrom < 70 then
+		spell = "Rockbiter"
 	elseif ns.checkSpell("Lava Lash") and maelstrom > 40 then
 		spell = "Lava Lash"
 	elseif ns.checkSpell("Rockbiter") then

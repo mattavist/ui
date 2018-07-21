@@ -18,7 +18,7 @@ local buffIndex = {
     "Enrage",
 
     -- Shaman
-    "Landslide",
+    --"Landslide",
     "Flametongue",
     "Frostbrand"
 }

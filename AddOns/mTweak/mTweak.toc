@@ -4,4 +4,6 @@
 ## Notes: Miscellaneous UI tweaks
 
 core.lua
+login.lua
 openmail.lua
+test.lua

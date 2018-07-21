@@ -13,8 +13,19 @@ local function checkSpell(spellName)
 	return canCast and not notEnoughMana and learned
 end
 
+local function getAura(buffName, unit, auraType)
+	for i=1,40,1 do
+		local name, _, count, _, duration, expires, _, _, _, spellID, _, _, _, _, value1 = UnitBuff(unit, i, auraType)
+		if name == buffName then
+			return name, _, count, _, duration, expires, _, _, _, spellID, _, _, _, _, value1
+		end
+	end
+
+	return
+end
+
 local function auraDuration(buffName, unit, auraType)
-	local name, _, _, _, _, _, expires = UnitAura(unit, buffName, nil, auraType)
+	local name, _, _, _, _, expires = getAura(buffName, unit, auraType)
     if name then
     	return expires - GetTime()
 	end
@@ -23,7 +34,7 @@ local function auraDuration(buffName, unit, auraType)
 end
 
 local function auraStacks(buffName, unit, auraType)
-	local name, _, _, count = UnitAura(unit, buffName, nil, auraType)
+	local name, _, count = getAura(buffName, unit, auraType)
     if name then
     	return count
 	end
@@ -31,18 +42,18 @@ local function auraStacks(buffName, unit, auraType)
     return 0
 end
 
-local function talentChosen(row, column)
-	local _, selected = GetTalentTierInfo(row, 1)
-	return selected == column
-end
-
 local function getBuffValue(buffName, unit)
-	local name, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, value = UnitAura(unit, buffName)
+	local name, _, _, _, _, _, _, _, _, _, _, _, _, _, value = getAura(buffName, unit, auraType)
 	if name then
 		return value
 	else
 		return 0
 	end
+end
+
+local function talentChosen(row, column)
+	local _, selected = GetTalentTierInfo(row, 1)
+	return selected == column
 end
 
 ns.checkSpell = checkSpell

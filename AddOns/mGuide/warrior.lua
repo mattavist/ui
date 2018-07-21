@@ -166,55 +166,39 @@ warrior.fury = function()
 	local rightPulse = false
 	local topPulse = true
 
+	local rage = UnitPower("player")
 	local enraged = ns.auraDuration("Enrage", "Player", "HELPFUL") > 1
-	local dragonRoar = ns.auraDuration("Dragon Roar", "Player", "HELPFUL") > 2
-	local battleCry = ns.auraDuration("Battle Cry", "Player", "HELPFUL") > 1
-	local meatCleaver = ns.auraDuration("Meat Cleaver", "Player", "HELPFUL") > 1
-	local wreckingBall = ns.auraDuration("Wrecking Ball", "Player", "HELPFUL") > 1
+	local battleShout = ns.auraDuration("Battle Shout", "Player", "HELPFUL") > 600
 
 	-- Charge on left
 	if ns.checkSpell("Charge") and UnitExists("target") and IsSpellInRange("Charge", "target") ~= 0 then
 		left = "Charge"
-	elseif ns.checkSpell("Dragon Roar") and not ns.checkSpell("Battle Cry") then
-		left = "Dragon Roar"
+	elseif ns.checkSpell("Battle Shout") and not battleShout then
+		left = "Battle Shout"
 		leftPulse = true
 	end
 
 	-- Battle Cry on right
 	if ns.checkSpell("Heroic Throw") and UnitExists("target") and IsSpellInRange("Heroic Throw", "target") ~= 0 then
 		right = "Heroic Throw"
-	elseif ns.checkSpell("Dragon Roar") and ns.checkSpell("Battle Cry") then
-		right = "Dragon Roar"
-		rightPulse = true
-	--elseif ns.checkSpell("Battle Cry") and dragonRoar then
-	elseif ns.checkSpell("Battle Cry") then
-		right = "Battle Cry"
-		rightPulse = true
-	elseif ns.checkSpell("Avatar") and battleCry then
-		right = "Avatar"
-		rightPulse = true
-	elseif ns.checkSpell("Bloodbath") and battleCry then
-		right = "Bloodbath"
+	elseif ns.checkSpell("Recklessness") then
+		right = "Recklessness"
 		rightPulse = true
 	end
 
 	-- Rotation
-	if ns.checkSpell("Rampage") and (meatCleaver or not enraged or UnitPower("player") > 90) then
+	if ns.checkSpell("Rampage") and (not enraged or rage > 95) then
 		spell = "Rampage"
-	elseif ns.checkSpell("Bloodthirst") and (meatCleaver or not enraged) then
-		spell = "Bloodthirst"
-	elseif ns.checkSpell("Odyn's Fury") and battleCry then
-		spell = "Odyn's Fury"
-	elseif ns.checkSpell("Execute") then
+	elseif ns.checkSpell("Execute") and enraged then
 		spell = "Execute"
 	elseif ns.checkSpell("Bloodthirst") then
 		spell = "Bloodthirst"
 	elseif ns.checkSpell("Raging Blow") then
 		spell = "Raging Blow"
-	elseif ns.checkSpell("Whirlwind") and wreckingBall then
-		spell = "Whirlwind"
+	elseif ns.checkSpell("Bladestorm") then
+		spell = "Bladestorm"
 	else
-		spell = "Furious Slash"
+		spell = "Whirlwind"
 	end
 
 	return spell, glow, left, right, pummelStatus(), leftPulse, rightPulse, topPulse

@@ -18,7 +18,7 @@ local function hideAll()
     oUF_LumenPlayer:SetAlpha(0)
     rABS_MainMenuBar:SetAlpha(0)
     BuffFrame:SetAlpha(0)
-    --mGuideFrame:SetAlpha(0)
+    mGuideFrame:SetAlpha(0)
 end
 
 local function showAll()
@@ -26,7 +26,7 @@ local function showAll()
     oUF_LumenPlayer:SetAlpha(1)
     rABS_MainMenuBar:SetAlpha(1)
     BuffFrame:SetAlpha(1)
-    --mGuideFrame:SetAlpha(1)
+    mGuideFrame:SetAlpha(1)
     buttonAlphaHigh()
 end
 
@@ -55,10 +55,6 @@ local addon = CreateFrame("Frame", nil, UIParent)
 addon:RegisterEvent("PLAYER_ENTERING_WORLD")
 addon:SetScript("OnEvent", function(self, event, unit, ...)
     addon:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    LootHistoryFrame:SetScale(1.5)
-    TimeManagerClockButton:Hide()
-    ChatFrame1:SetFont(mediaPath.."Asap-Bold.ttf", 16, "OUTLINE")
-    ChatFrame3:SetFont(mediaPath.."Asap-Bold.ttf", 16, "OUTLINE")  
 
     hider:RegisterEvent("PLAYER_REGEN_ENABLED")
     hider:RegisterEvent("UNIT_SPELLCAST_STOP")
