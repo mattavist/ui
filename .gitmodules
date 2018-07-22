@@ -1,0 +1,3 @@
+[submodule "AddOns/oUF_lumen"]
+	path = AddOns/oUF_lumen
+	url = git@github.com:mattavist/oUF_lumen.git
