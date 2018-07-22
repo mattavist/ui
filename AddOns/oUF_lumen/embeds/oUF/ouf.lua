@@ -1,6 +1,6 @@
 local parent, ns = ...
 local global = GetAddOnMetadata(parent, 'X-oUF')
-local _VERSION = '8.0.0'
+local _VERSION = '@project-version@'
 if(_VERSION:find('project%-version')) then
 	_VERSION = 'devel'
 end

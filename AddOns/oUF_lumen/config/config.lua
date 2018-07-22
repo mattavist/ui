@@ -84,7 +84,7 @@ cfg.units = {
     power = {
       height = cfg.frames.main.power.height,
       classColored = false,
-      frequentUpdates =true,
+      frequentUpdates = true,
       smooth = true,
     },
     altpower = {
