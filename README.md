@@ -2,4 +2,6 @@
 
 My UI, contains modified versions of some other authors' works
 
-After pulling, run `git submodule update --init --recursive`
+## Clone Project
+
+`git clone --recurse-submodules git@github.com:mattavist/addons.git`
