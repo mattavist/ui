@@ -9,35 +9,53 @@ playerFrameOffset = 15
 local trackedTimers = {}
 local buffIndex = { 
     -- Warrior
+    "Bladestorm",
     "Ultimatum",
     "Shield Block",
     "Ignore Pain",
     "Shield Wall",
     "Last Stand",
+    "Rallying Cry",
     "Battle Cry",
     "Enrage",
+    "Recklessness",
+    "Enraged Regeneration",
 
     -- Shaman
     --"Landslide",
     "Flametongue",
-    "Frostbrand"
+    "Frostbrand",
+    "Astral Shift",
+    "Spirit Walk",
+
+    -- Both
+    "Bloodlust",
 }
+
+-- DK Purple { 163/255, 48/255, 201/255 }
+-- Mage Blue { 105/255, 204/255, 240/255 }
+-- Monk Green { 0/255, 255/255, 150/255 }
 
 local trackedBuffs = {
     -- Warrior
+    ["Bladestorm"] = {
+        color = { 0/255, 112/255, 222/255 }, -- Blue
+        isTimer = true
+    },
+
     ["Ultimatum"] = {
-        color = { 255/255, 255/255, 0/255 },
+        color = { 255/255, 245/255, 105/255 }, -- Yellow
         isTimer = true
     },
 
     ["Shield Block"] = {
         spellID = 132404,
-        color = { 14/255, 86/255, 153/255 },
+        color = { 148/255, 130/255, 201/255 }, -- Purple
         isTimer = true
     },
 
     ["Ignore Pain"] = {
-        color = { 178/255, 101/255, 1/255 },
+        color = { 245/255, 140/255, 186/255 }, -- Pink
         textValue = function(absorb) -- Returns absorbed damage as "___K"
                         return string.format("%uK", absorb/1000)
         end,
@@ -47,38 +65,65 @@ local trackedBuffs = {
     },
 
     ["Shield Wall"] = {
-        color = { 14/255, 153/255, 86/255 },
+        color = { 199/255, 156/255, 110/255 }, -- Brown
         isTimer = true
     },
 
     ["Last Stand"] = {
-        color = { 86/255, 14/255, 153/255 },
+        color = { 245/255, 140/255, 186/255 }, -- Pink
         isTimer = true
     },
 
-    ["Battle Cry"] = {
-        color = { 255/255, 30/255, 30/255 },
+    ["Rallying Cry"] = {
+        color = { 245/255, 140/255, 186/255 }, -- Pink
         isTimer = true
     },
 
     ["Enrage"] = {
-        color = { 255/255, 30/255, 30/255 },
+        color = { 196/255, 30/255, 59/255 }, -- Red
         isTimer = true
     },
 
+    ["Recklessness"] = {
+        color = { 255/255, 125/255, 10/255 }, -- Orange
+        isTimer = true
+    },
+
+    ["Enraged Regeneration"] = {
+        color = { 171/255, 212/255, 115/255 }, -- Green
+        isTimer = true
+    },
+
+    
+
     -- Shaman
     ["Landslide"] = {
-        color = { 14/255, 180/255, 60/255 },
+        color = { 171/255, 212/255, 115/255 }, -- Green
         isTimer = true
     },
 
     ["Flametongue"] = {
-        color = { 255/255, 101/255, 1/255 },
+        color = { 255/255, 125/255, 10/255 }, -- Orange
         isTimer = true
     },
 
     ["Frostbrand"] = {
-        color = { 1/255, 101/255, 255/255 },
+        color = { 255/255, 255/255, 255/255 }, -- White
+        isTimer = true
+    },
+
+    ["Bloodlust"] = {
+        color = { 196/255, 30/255, 59/255 }, -- Red
+        isTimer = true
+    },
+
+    ["Astral Shift"] = {
+        color = { 245/255, 140/255, 186/255 }, -- Pink
+        isTimer = true
+    },
+
+    ["Spirit Walk"] = {
+        color = { 0/255, 112/255, 222/255 }, -- Blue
         isTimer = true
     },
 }
