@@ -8,8 +8,8 @@ local framesToMove = {
         frameAnchor = "TOPLEFT",
         parent = UIParent,
         parentAnchor = "TOPLEFT",
-        x = 30,
-        y = -12,
+        x = 20,
+        y = 25,
         height = 500
     },
     ["AlertFrame"] = {

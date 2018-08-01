@@ -3,8 +3,8 @@ local auraUpdater = CreateFrame('Frame', UIParent)
 local throttleCount = 0
 local mediaPath = "Interface\\media\\"
 barHeight = 20
-barOffset = 30
-playerFrameOffset = 15
+barWidth = 175
+barOffset = -(barHeight + 10)
 
 local trackedTimers = {}
 local buffIndex = { 
@@ -27,6 +27,7 @@ local buffIndex = {
     "Frostbrand",
     "Astral Shift",
     "Spirit Walk",
+    "Wind Rush",
 
     -- Both
     "Bloodlust",
@@ -34,7 +35,8 @@ local buffIndex = {
 
 -- DK Purple { 163/255, 48/255, 201/255 }
 -- Mage Blue { 105/255, 204/255, 240/255 }
--- Monk Green { 0/255, 255/255, 150/255 }
+-- Monk Green { 0/255, 255/255, 150/255}
+
 
 local trackedBuffs = {
     -- Warrior
@@ -126,6 +128,11 @@ local trackedBuffs = {
         color = { 0/255, 112/255, 222/255 }, -- Blue
         isTimer = true
     },
+
+    ["Wind Rush"] = {
+        color = { 0/255, 112/255, 222/255 }, -- Blue
+        isTimer = true
+    },
 }
 
 --backdrop table
@@ -134,12 +141,12 @@ local backdrop_tab = {
     edgeFile = mediaPath.."backdrop_edge",
     tile = false,
     tileSize = 0, 
-    edgeSize = 5, 
+    edgeSize = 2, 
     insets = { 
-        left = 3, 
-        right = 3, 
-        top = 3, 
-        bottom = 3,
+        left = 2, 
+        right = 2, 
+        top = 2, 
+        bottom = 2,
     },
 }
 
@@ -159,30 +166,31 @@ local function createBar()
     bar:SetStatusBarTexture(mediaPath.."Statusbar")
     bar:GetStatusBarTexture():SetHorizTile(false)
     bar:GetStatusBarTexture():SetVertTile(false)
-    bar:SetWidth(oUF_LumenPlayer:GetWidth())
+    bar:SetWidth(barWidth)
     bar:SetHeight(barHeight)
     bar:SetFrameLevel(1)
 
     -- Helper frame for the backdrop
     local backdrop = CreateFrame("Frame", nil, bar)
     backdrop:SetFrameLevel(0)
-    backdrop:SetPoint("TOPLEFT",-5,5)
-    backdrop:SetPoint("BOTTOMRIGHT",5,-5)
+    backdrop:SetPoint("TOPLEFT",-2,2)
+    backdrop:SetPoint("BOTTOMRIGHT",2,-2)
     backdrop:SetBackdrop(backdrop_tab)
     backdrop:SetBackdropColor(0,0,0,0.6)
     backdrop:SetBackdropBorderColor(0,0,0,1)
 
     -- Spell name text
-    local spellName = getFont(bar, mediaPath.."ROADWAY.ttf", 16, "THINOUTLINE")
-    spellName:SetPoint("LEFT", 2, 8)
-    spellName:SetJustifyH("LEFT")
+    local spellName = getFont(bar, mediaPath.."LemonMilk.otf", 16, "THINOUTLINE")
+    spellName:SetPoint("CENTER", 0, 6)
+    spellName:SetJustifyH("CENTER")
     bar.spellName = spellName
 
-    -- Tracked value text
-    local spellValue = getFont(bar, mediaPath.."ROADWAY.ttf", 18, "THINOUTLINE")
+    --[[ Tracked value text
+    local spellValue = getFont(bar, mediaPath.."ROADWAY.ttf", 16, "THINOUTLINE")
     spellValue:SetPoint("RIGHT", -2, 0)
     spellValue:SetJustifyH("RIGHT", spellValue, "LEFT", -5, 0)
     bar.spellValue = spellValue
+    ]]
 
     return bar
 end
@@ -194,7 +202,7 @@ local function positionBars()
         info = trackedBuffs[buff]
         if info then
             if info.active then
-                info.bar:SetPoint("BOTTOM", oUF_LumenPlayer, "TOP", 0, playerFrameOffset + activeBars * barOffset)
+                info.bar:SetPoint("TOP", mGuideFrame, "BOTTOM", 0, activeBars * barOffset - 20)
                 activeBars = activeBars + 1
             end
         end
@@ -224,7 +232,7 @@ local function updateTimers()
     -- This will only update currently active timers in trackedTimers
     for _, info in pairs(trackedTimers) do
         local remaining = info.expires - GetTime()
-        info.bar.spellValue:SetFormattedText("%.1f", remaining)
+        --info.bar.spellValue:SetFormattedText("%.1f", remaining)
         info.bar:SetValue(remaining)
     end
 end
@@ -272,7 +280,7 @@ local function updateAuras()
             else
                 info.bar:SetMinMaxValues(0, info.maxValue())
                 info.bar:SetValue(value1)
-                info.bar.spellValue:SetFormattedText(info.textValue(value1))
+                --info.bar.spellValue:SetFormattedText(info.textValue(value1))
             end
             
         elseif info.active then -- destroy frame

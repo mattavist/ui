@@ -28,7 +28,7 @@
         size            = 40,
         margin          = 5,
       },
-      pos             = { a1 = "BOTTOM", a2 = "BOTTOM", af = "UIParent", x = 156, y = 4 },
+      pos             = { a1 = "BOTTOM", a2 = "BOTTOM", af = "UIParent", x = 135, y = 49 },
       userplaced      = {
         enable          = false,
       },
@@ -77,7 +77,7 @@
         size            = 40,
         margin          = 5,
       },
-      pos             = { a1 = "BOTTOM", a2 = "BOTTOM", af = "UIParent", x = 0, y = 94 },
+      pos             = { a1 = "BOTTOM", a2 = "BOTTOM", af = "UIParent", x = 0, y = 4 },
       userplaced      = {
         enable          = false,
       },

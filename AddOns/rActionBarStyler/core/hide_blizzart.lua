@@ -43,6 +43,7 @@
   PossessBackground2:SetTexture(nil)
 
   if gcfg.bars.bar1.enable then
+    MainMenuBarArtFrame.PageNumber:Hide()
     MainMenuBarArtFrameBackground.BackgroundLarge:SetTexture(nil)
     MainMenuBarArtFrame.LeftEndCap:SetTexture(nil)
     MainMenuBarArtFrame.RightEndCap:SetTexture(nil)

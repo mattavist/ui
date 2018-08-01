@@ -23,11 +23,11 @@ shaman.enhance = function()
 	local lightningShield = ns.auraDuration("Lightning Shield", "Player", "HELPFUL") > 1
 
 	-- Right
-	if UnitExists("target") and IsSpellInRange("Lightning Bolt", "target") ~= 0 and IsSpellInRange("Rockbiter", "target") == 0 then
-		right = "Lightning Bolt"
-	elseif ns.checkSpell("Lightning Shield") and not lightningShield then
+	if ns.checkSpell("Lightning Shield") and not lightningShield then
 		right = "Lightning Shield"
-		rightPulse = true
+		--rightPulse = true
+	elseif UnitExists("target") and IsSpellInRange("Lightning Bolt", "target") ~= 0 and IsSpellInRange("Rockbiter", "target") == 0 then
+		right = "Lightning Bolt"
 	end
 
 	-- Left
@@ -35,7 +35,7 @@ shaman.enhance = function()
 		left = "Feral Lunge"
 	elseif ns.checkSpell("Feral Spirit") then
 		left = "Feral Spirit"
-		leftPulse = true
+		--leftPulse = true
 	end
 
 	if ns.checkSpell("Flametongue") and ns.auraDuration("Flametongue", "player", "HELPFUL") < ns.gcd then

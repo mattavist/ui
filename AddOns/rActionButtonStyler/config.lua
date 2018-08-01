@@ -17,13 +17,13 @@
   -----------------------------
 
   cfg.textures = {
-    normal            = "Interface\\AddOns\\rActionButtonStyler\\media\\gloss2",
+    normal            = "Interface\\AddOns\\rActionButtonStyler\\media\\gloss3",
     flash             = "Interface\\AddOns\\rActionButtonStyler\\media\\flash",
     hover             = "Interface\\AddOns\\rActionButtonStyler\\media\\hover",
-    pushed            = "Interface\\AddOns\\rActionButtonStyler\\media\\gloss2",
+    pushed            = "Interface\\AddOns\\rActionButtonStyler\\media\\gloss3",
     checked           = "Interface\\AddOns\\rActionButtonStyler\\media\\checked",
-    equipped          = "Interface\\AddOns\\rActionButtonStyler\\media\\gloss2",
-    buttonback        = "Interface\\AddOns\\rActionButtonStyler\\media\\button_background",
+    equipped          = "Interface\\AddOns\\rActionButtonStyler\\media\\gloss3",
+    buttonback        = "Interface\\AddOns\\rActionButtonStyler\\media\\black_button_background",
     buttonbackflat    = "Interface\\AddOns\\rActionButtonStyler\\media\\button_background_flat",
     outer_shadow      = "Interface\\AddOns\\rActionButtonStyler\\media\\outer_shadow",
   }
@@ -35,7 +35,7 @@
     backgroundcolor   = { r = 0.2, g = 0.2, b = 0.2, a = 0.3},
     shadowcolor       = { r = 0, g = 0, b = 0, a = 0.9},
     classcolored      = false,
-    inset             = 5,
+    inset             = 0,
   }
 
   cfg.color = {
