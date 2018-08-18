@@ -8,7 +8,7 @@ local framesToMove = {
         frameAnchor = "TOPLEFT",
         parent = UIParent,
         parentAnchor = "TOPLEFT",
-        x = 20,
+        x = 30,
         y = 25,
         height = 500
     },

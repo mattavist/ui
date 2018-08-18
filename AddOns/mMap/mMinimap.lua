@@ -69,7 +69,7 @@ end
 local function mail()
 	MiniMapMailFrame:ClearAllPoints()
 	MiniMapMailFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 6, -8)
-	MiniMapMailIcon:SetTexture("Interface\\AddOns\\zdios\\media\\mail")
+	MiniMapMailIcon:SetTexture("Interface\\AddOns\\mTweak\\media\\mail")
 end
 
 local map = CreateFrame("Frame", nil, UIParent)
