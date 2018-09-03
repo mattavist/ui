@@ -87,34 +87,6 @@ function addon:update(elapsed)
 		end
 		ticktack = "|c00ffffff"..ticktack.."|r"
 		
-		-- mail stuff
-		-- variable you have to put inside the text string: mail
-		
-		--[[
-		hasmail = (HasNewMail() or 0);
-		if hasmail > 0 then
-			mail = "|c00FA58F4NEW MAIL|r   /   "
-		else
-			mail = ""
-		end
-		--]]
-		
-		-- fps crap
-		-- variable you have to put inside the text string: fps
-		
-		--[[
-		fps = GetFramerate()
-		fps = "|c00ffffff"..floor(fps).."|r fps   /   "
-		--]]
-		
-		-- latency
-		-- variable you have to put inside the text string: lag
-		
-		--[[
-		lag = select(3, GetNetStats())
-		lag = "|c00ffffff"..lag.."|r ms   /   "
-		--]]
-		
 		-- xp stuff
 		xp_cur = UnitXP("player")
 		xp_max = UnitXPMax("player")
@@ -129,6 +101,7 @@ function addon:update(elapsed)
 		else
 			ep = ""
 		end
+		ep = ""
 		
 		-- reset timer
 		last = 0

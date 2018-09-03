@@ -32,7 +32,10 @@ tip:SetScript("OnEvent", function ()
     local class, cls = UnitClass("mouseover")
     if cls and UnitIsPlayer("mouseover") then
         local playerName = _G["GameTooltipTextLeft" .. 1]
-        playerName:SetText(classColors[cls]..playerName:GetText())
+        local color = classColors[cls]
+        if playerName:GetText() and color then
+            playerName:SetText(color..playerName:GetText())
+        end
     end
 
     -- Move Health bar

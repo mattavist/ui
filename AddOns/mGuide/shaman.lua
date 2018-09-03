@@ -21,6 +21,7 @@ shaman.enhance = function()
 
 	local maelstrom = UnitPower("player")
 	local lightningShield = ns.auraDuration("Lightning Shield", "Player", "HELPFUL") > 1
+	local crashLightning = ns.auraDuration("Crash Lightning", "Player", "HELPFUL") > 1
 	local rockbiterCharges, _, _, _, _ = GetSpellCharges("Rockbiter")
 	--ChatFrame1:AddMessage(currentCharges.."   ".." "..cooldownStart.."   "..cooldownDuration)
 
@@ -44,6 +45,8 @@ shaman.enhance = function()
 		spell = "Flametongue"
 	elseif ns.checkSpell("Stormstrike") then
 		spell = "Stormstrike"
+	elseif ns.checkSpell("Crash Lightning") and crashLightning then
+		spell = "Crash Lightning"
 	elseif ns.checkSpell("Flametongue") then
 		spell = "Flametongue"
 	elseif ns.checkSpell("Sundering") then
@@ -54,7 +57,7 @@ shaman.enhance = function()
 		spell = "Lava Lash"
 	elseif ns.checkSpell("Rockbiter") then
 		spell = "Rockbiter"
-	elseif ns.checkSpell("Lightning Bolt") then
+	else
 		spell = "Lightning Bolt"
 	end
 
