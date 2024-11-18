@@ -8,6 +8,9 @@ local function reshapeMap()
 	mbg:SetPoint("BOTTOMRIGHT", 2, -2)
 	mbg:SetPoint("TOPLEFT", -2, 2)
 	mbg:SetColorTexture(0, 0, 0)
+	MinimapCompassTexture:Hide()
+	MinimapCluster.BorderTop:Hide()
+	MinimapZoneText:Hide()
 end
 
 local function enableMouse()
@@ -40,7 +43,8 @@ local function hideElements()
 	    MinimapZoomOut,
 	    MinimapZoomIn,
 	    MinimapBorder,
-	    GameTimeFrame
+	    GameTimeFrame,
+	    AddonCompartmentFrame,
 	}
 
 	for _, mapFrame in pairs(frames) do
@@ -50,12 +54,10 @@ local function hideElements()
 end
 
 local function tracking()
-	MiniMapTrackingButton:SetAlpha(0)
-	MiniMapTrackingIcon:SetAlpha(0)
-	MiniMapTracking:ClearAllPoints()
-	MiniMapTracking:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 5, -5)
-	MiniMapTracking:SetScale(1)
-	MiniMapTracking:Show()
+	MinimapCluster.Tracking:Hide()
+	MinimapCluster.Tracking:ClearAllPoints()
+	MinimapCluster.Tracking:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 5, -5)
+	MinimapCluster.Tracking:SetScale(1)
 end
 
 local function garrison()
@@ -67,9 +69,9 @@ local function garrison()
 end
 
 local function mail()
-	MiniMapMailFrame:ClearAllPoints()
-	MiniMapMailFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 6, -8)
-	MiniMapMailIcon:SetTexture("Interface\\AddOns\\mTweak\\media\\mail")
+	MinimapCluster.IndicatorFrame:ClearAllPoints()
+	MinimapCluster.IndicatorFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMLEFT", 5, 5)
+	--MinimapCluster.IndicatorFrame:SetTexture("Interface\\AddOns\\mTweak\\media\\mail")
 end
 
 local map = CreateFrame("Frame", nil, UIParent)
@@ -79,20 +81,20 @@ map:SetScript("OnEvent", function()
 	enableMouse()
 	hideElements()
 	tracking()
-	garrison()
+	--garrison()
 	mail()
 end)
 
 Minimap:HookScript("OnEnter", function()
-	MiniMapTrackingButton:SetAlpha(1)
-	MiniMapTrackingIcon:SetAlpha(1)
-	GarrisonLandingPageMinimapButton:SetAlpha(1)
+	MinimapCluster.Tracking:Show()
+	--MiniMapTrackingIcon:SetAlpha(1)
+	--GarrisonLandingPageMinimapButton:SetAlpha(1)
 end)
 
 Minimap:HookScript("OnLeave", function()
 	if not Minimap:IsMouseOver() then
-		MiniMapTrackingButton:SetAlpha(0)
-		MiniMapTrackingIcon:SetAlpha(0)
-		GarrisonLandingPageMinimapButton:SetAlpha(0)
+		MinimapCluster.Tracking:Hide()
+		--MiniMapTrackingIcon:SetAlpha(0)
+		--GarrisonLandingPageMinimapButton:SetAlpha(0)
 	end
 end)

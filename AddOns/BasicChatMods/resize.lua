@@ -8,8 +8,9 @@ BCM.modules[#BCM.modules+1] = function()
 	BCM.chatFuncsPerFrame[#BCM.chatFuncsPerFrame+1] = function(n)
 		local cF = _G[n]
 		--Allow resizing chatframes to whatever size you wish!
-		cF:SetMinResize(100,10)
-		cF:SetMaxResize(0,0)
+		-- cF:SetMinResize(100,10)
+		-- cF:SetMaxResize(0,0)
+		cF:SetResizeBounds(0, 0, 100, 10)
 	end
 end
 

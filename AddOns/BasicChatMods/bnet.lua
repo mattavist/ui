@@ -9,6 +9,7 @@ BCM.modules[#BCM.modules+1] = function()
 
 	local storedName = nil
 	local changeBNetName = function(icon, misc, id, moreMisc, fakeName, tag, colon)
+		if not BNGetFriendInfoByID then return end
 		local _, _, battleTag, _, _, bnetIDGameAccount = BNGetFriendInfoByID(id)
 		local englishClass
 		if bnetIDGameAccount then

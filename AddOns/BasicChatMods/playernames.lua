@@ -88,7 +88,11 @@ BCM.modules[#BCM.modules+1] = function()
 
 	if not bcmDB.nolevel or not bcmDB.noMiscColor then
 		BCM.Events.FRIENDLIST_UPDATE = function()
-			local _, num = GetNumFriends()
+			local _, num = C_FriendList.GetNumFriends()
+			if not num then
+				num = 0
+			end
+
 			for i = 1, num do
 				local n, l, c = GetFriendInfo(i)
 				if nameLevels and n and l and l > 0 then
@@ -100,7 +104,7 @@ BCM.modules[#BCM.modules+1] = function()
 			end
 		end
 		BCM.Events:RegisterEvent("FRIENDLIST_UPDATE")
-		ShowFriends()
+		C_FriendList.ShowFriends()
 
 		if IsInGuild() then
 			BCM.Events.GUILD_ROSTER_UPDATE = function(frame)
@@ -149,9 +153,9 @@ BCM.modules[#BCM.modules+1] = function()
 		if nameColor and not hasColor then
 			--If the displayed name was an in-chat who result, take the data and color it.
 			if not nameColor[name] then
-				local num = GetNumWhoResults()
-				for i=1, num do
-					local n, _, l, _, _, _, c = GetWhoInfo(i)
+				local num = C_FriendList.GetNumWhoResults()
+				for i=1, num or 0 do
+					local n, _, l, _, _, _, c = C_FriendList.GetWhoInfo(i)
 					if n == name and l and l > 0 then
 						if nameLevels then nameLevels[n] = tostring(l) end
 						if nameColor and c then nameColor[n] = BCM:GetColor(c) end

@@ -10,8 +10,8 @@
   local cfg = ns.cfg
 
   local classcolor = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
-  local dominos = IsAddOnLoaded("Dominos")
-  local bartender4 = IsAddOnLoaded("Bartender4")
+  local dominos = nil
+  local bartender4 = nil
 
   if cfg.color.classcolored then
     cfg.color.normal = classcolor
@@ -221,9 +221,15 @@
   local function stylePetButton(bu)
     if not bu or (bu and bu.rabs_styled) then return end
     local name = bu:GetName()
+    if not name then return end
     local ic  = _G[name.."Icon"]
     local fl  = _G[name.."Flash"]
     local nt  = _G[name.."NormalTexture2"]
+
+    if not ic then return end
+    if not fl then return end
+    if not nt then return end
+
     nt:SetAllPoints(bu)
     --applying color
     nt:SetVertexColor(cfg.color.normal.r,cfg.color.normal.g,cfg.color.normal.b,1)
@@ -330,7 +336,7 @@
       stylePetButton(_G["PetActionButton"..i])
     end
     --stancebar buttons
-    for i=1, NUM_STANCE_SLOTS do
+    for i=1, NUM_STANCE_SLOTS or 0 do
       styleStanceButton(_G["StanceButton"..i])
     end
     --possess buttons
@@ -340,9 +346,9 @@
     --extraactionbutton1
     styleExtraActionButton(ExtraActionButton1)
     --spell flyout
-    SpellFlyoutBackgroundEnd:SetTexture(nil)
-    SpellFlyoutHorizontalBackground:SetTexture(nil)
-    SpellFlyoutVerticalBackground:SetTexture(nil)
+    -- SpellFlyoutBackgroundEnd:SetTexture(nil)
+    -- SpellFlyoutHorizontalBackground:SetTexture(nil)
+    -- SpellFlyoutVerticalBackground:SetTexture(nil)
     local function checkForFlyoutButtons(self)
       local NUM_FLYOUT_BUTTONS = 10
       for i = 1, NUM_FLYOUT_BUTTONS do
@@ -367,9 +373,9 @@
     end
 
     --hide the hotkeys if needed
-    if not dominos and not bartender4 and not cfg.hotkeys.show then
-      hooksecurefunc("ActionButton_UpdateHotkeys",  updateHotkey)
-    end
+    -- if not dominos and not bartender4 and not cfg.hotkeys.show then
+    --   hooksecurefunc("ActionButton_UpdateHotkeys", updateHotkey)
+    -- end
 
   end
 

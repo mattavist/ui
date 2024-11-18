@@ -1,5 +1,8 @@
 local mediaPath = "Interface\\media\\"
 
+local mPlayerFrame = oUF_LumenPlayer or PlayerFrame
+local mMainMenuBar = rABS_MainMenuBar or MainMenuBar
+
 local function buttonAlphaHigh()    
     for i = 1, 24 do
         local button = nil
@@ -15,20 +18,20 @@ end
 
 local function hideAll()
     MultiBarBottomLeft:SetAlpha(0)
-    rABS_MainMenuBar:SetAlpha(0)
+    mMainMenuBar:SetAlpha(0)
     BuffFrame:SetAlpha(0)
-    mGuideFrame:SetAlpha(0)
+    if mGuideFrame then mGuideFrame:SetAlpha(0) end
     if UnitHealth("player") == UnitHealthMax("player") then
-        oUF_LumenPlayer:SetAlpha(0)
+        mPlayerFrame:SetAlpha(0)
     end
 end
 
 local function showAll()
     MultiBarBottomLeft:SetAlpha(1)
-    oUF_LumenPlayer:SetAlpha(1)
-    rABS_MainMenuBar:SetAlpha(1)
+    mPlayerFrame:SetAlpha(1)
+    mMainMenuBar:SetAlpha(1)
     BuffFrame:SetAlpha(1)
-    mGuideFrame:SetAlpha(1)
+    if mGuideFrame then mGuideFrame:SetAlpha(1) end
     buttonAlphaHigh()
 end
 
@@ -51,7 +54,7 @@ shower:SetScript("OnEvent", function(self, event, unit, ...)
         return
     elseif event == "UNIT_HEALTH" then
         if unit == "player" and UnitHealth("player") < UnitHealthMax("player") then
-            oUF_LumenPlayer:SetAlpha(1)
+            mPlayerFrame:SetAlpha(1)
         end
     else
         showAll()

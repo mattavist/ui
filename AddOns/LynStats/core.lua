@@ -7,13 +7,13 @@ local addon = CreateFrame("Button", "LynStats", UIParent)
 -- the x-files aka. configuration
 --
 -- frame
-local frame_anchor = "CENTER" -- LEFT, TOPLEFT, TOP, TOPRIGHT, RIGHT, CENTER, BOTTOMRIGHT, BOTTOM, BOTTOMLEFT
+local frame_anchor = "BOTTOM" -- LEFT, TOPLEFT, TOP, TOPRIGHT, RIGHT, CENTER, BOTTOMRIGHT, BOTTOM, BOTTOMLEFT
 local frame_parent = "Minimap"
-local pos_x = -3
-local pos_y = -70
+local pos_x = 0
+local pos_y = -5
 -- text
-local text_anchor = "BOTTOMLEFT"
-local font = "INTERFACE\\ADDONS\\SHAREDMEDIA\\FONTS\\Porky.ttf"
+local text_anchor = "CENTER"
+local font = "INTERFACE\\MEDIA\\Porky.ttf"
 local size = 14
 local addonlist = 70 -- how much addons should be shown?
 local classcolors = true -- true or false
@@ -91,7 +91,9 @@ function addon:update(elapsed)
 		xp_cur = UnitXP("player")
 		xp_max = UnitXPMax("player")
 		xp_rest = GetXPExhaustion("player") or nil
-		if UnitLevel("player") < MAX_PLAYER_LEVEL then
+
+
+		if not IsLevelAtEffectiveMaxLevel(UnitLevel("player")) then
 			ep = "  |c00ffffff"..floor((xp_cur/xp_max)*100).."%|r   /   "
 			if xp_rest ~= nil then	
 				ep = ep.."|c0000ff11"..floor((xp_rest/xp_max)*100).."%|r   /   "
@@ -101,7 +103,6 @@ function addon:update(elapsed)
 		else
 			ep = ""
 		end
-		ep = ""
 		
 		-- reset timer
 		last = 0
@@ -125,10 +126,10 @@ function addon:enter()
 	UpdateAddOnMemoryUsage()
 	GameTooltip:AddDoubleLine(select(3, GetNetStats()).." ms", floor(GetFramerate()).." fps", color.r, color.g, color.b, color.r, color.g, color.b)
 	GameTooltip:AddLine(" ")
-	for i=1, GetNumAddOns(), 1 do
+	for i=1, C_AddOns.GetNumAddOns(), 1 do
 		if (GetAddOnMemoryUsage(i) > 0 ) then
 			memory = GetAddOnMemoryUsage(i)
-			entry = {name = GetAddOnInfo(i), memory = memory}
+			entry = {name = C_AddOns.GetAddOnInfo(i), memory = memory}
 			table.insert(addons, entry)
 			total = total + memory
 		end

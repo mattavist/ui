@@ -1,5 +1,6 @@
-## Interface: 80000
+## Interface: 110005
 ## Title: mTrack
+## IconTexture: 132328
 ##
 ## Author: Mattavist, matavist@gmail.com
 

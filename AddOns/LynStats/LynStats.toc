@@ -1,6 +1,7 @@
-## Interface: 80000
+## Interface: 110005
 ## Title: LynStats
 ## Author: Lyn
 ## Notes: mail, xp, fps, mb usage, time, latency
 ## X-Credits: CML by rdji, evl_Clock by Evl
+## IconTexture: 136226
 core.lua

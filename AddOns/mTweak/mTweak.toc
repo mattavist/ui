@@ -1,7 +1,8 @@
-## Interface: 80000
+## Interface: 110005
 ## Author: Mattavist
 ## Title: mTweak
 ## Notes: Miscellaneous UI tweaks
+## IconTexture: 136048
 
 core.lua
 login.lua

@@ -1,0 +1,5 @@
+## Title: ZaremTooltip
+## Interface: 40400
+## Notes: Simple Tooltip enhancements
+## SavedVariables: ZaremTooltipAnchor
+ZaremTooltip_Cata.lua

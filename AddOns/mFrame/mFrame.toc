@@ -1,10 +1,8 @@
-## Interface: 80000
+## Interface: 110005
 ## Title: mFrame
 ## Author: Mattavist (matavist@gmail.com)
 ##
+## IconTexture: 133004
 ## Edits and some changed behavior for various frames
-## RequiredDeps: Blizzard_ObjectiveTracker, oUF_lumen
 
-bufficon.lua
 combathide.lua
-reposition.lua

@@ -1,244 +1,457 @@
 
-BINDING_HEADER_ADDONUSAGE = "AddonUsage"
+local addon = AddonUsage
 
-local au = AddonUsage
+local settings -- will become savedvar
+local profilingCPU = nil -- becomes true if cpu profiling is enabled
+local updateInfo = true -- also becomes true in ADDON_LOADED, to know whether to look for new addons in GatherUsage
+local addonInfo = {} -- unordered table of all addons and their usage, indexed by addonIndex
+_addonInfo = addonInfo
+-- [addonIndex] = {
+--		name = string, the folder name of the addon
+--		title = string, the display name of the addon (color codes stripped out)
+--		memory = number, memory usage of the addon (in k)
+--		cpu = number, cpu usage of the addon (in ms)
+local displayedList = {} -- ordered list of indexes into addonList of addons to show in the list
+local addonIndexes = {} -- indexed by addon name, the addonIndex of the named addon
+local totals = {
+	memory=0,	-- total memory used by all addons
+	cpu=0, -- total cpu time used by all addons
+	start=0, -- start time when tracking begins
+	duration=0, -- total time since tracking began
+}
 
-au.profiling = GetCVarBool("scriptProfile") -- whether cpu profiling is enabled
+local maxMemValue = 1000 -- memory column will be sized for 1000.0 to start
+local maxCPUValue = 10 -- cpu column will be sized for 100.00 to start
+local updateWidths = true -- first pass will calculate following widths
+local widthMem = 0 -- width of memory column
+local widthCPU = 0 -- width of cpu column
+local widthPercent -- width of percent columns will be fixed to "100%" size
 
-au.list = {} -- the master list of addons, numerically indexed { {"Name",memory,memory%,cpu,cpu%} }
-au.listCache = {} -- cache list of addons, indexed by name, that are already in the above list
+local patternMem = "%.1f"
+local patternCPU = "%.2f"
+local patternPercent = "%d%%"
 
-local sortKey = 2 -- 1=name, 2=memory, 4=cpu
-local sortDir = 1 -- 0=ascending order, 1=descending order
+local sortOrder -- will be the sort order (1=name, 2=mem, 3=cpu; negative for reverse sort)
 
--- this is used by the BuildList function to sort the addons by sortKey and sortDir
-local function sortList(e1,e2)
-	if sortDir==1 then
-		if e1[sortKey] and e2[sortKey] and e1[sortKey]>e2[sortKey] then
-			return true
-		end
-	else
-		if e1[sortKey] and e2[sortKey] and e1[sortKey]<e2[sortKey] then
-			return true
-		end
+local updateTimer = 0 -- elapsed timer for continuous update (play/pause)
+local updateFrequency = 1 -- seconds between updates during continuous updates
+
+local TWW_CLIENT = select(4,GetBuildInfo())>=110000
+
+-- Bindings.xml globals
+BINDING_HEADER_ADDONUSAGE = "Addon Usage"
+BINDING_NAME_ADDONUSAGE_TOGGLE = "Toggle Addon Usage"
+
+function addon:Toggle()
+	addon:SetShown(not addon:IsVisible())
+end
+AddonUsageToggleWindow = addon.Toggle
+
+function addon:OnEvent(event,...)
+	if addon[event] then
+		addon[event](self,...)
 	end
 end
 
---[[ UI bits ]]
+function addon:OnShow()
+	addon.ColumnDividers:SetFrameLevel(addon:GetFrameLevel()+6)
+	addon:UpdateContinuousUpdate()
+	addon:Update()
+end
 
-au:RegisterEvent("PLAYER_LOGIN")
+function addon:Update()
+	if addon:IsVisible() then
+		addon:GatherUsage() -- grab usage data
+		addon:PopulateList() -- generate displayedList of addons
+		addon:UpdateTotals() -- update totals at bottom of window
+	end
+end
 
--- the meat of the addon, populates au.list with loaded addons and their memory(+cpu if enabled) usages
-function au:BuildList()
-	local list = au.list
-	local cache = au.listCache
-	local total = 0
-	-- find any new addons loaded
-	for i=1,GetNumAddOns() do
-		local name = GetAddOnInfo(i)
-		if IsAddOnLoaded(name) then
-			total = total + 1
-			if not cache[name] then
-				tinsert(list,{name})
-				cache[name] = 1
+function addon:ADDON_LOADED()
+	updateInfo = true
+end
+
+function addon:PLAYER_LOGIN()
+
+	if type(AddonUsageSettings)~="table" then
+		AddonUsageSettings = {}
+	end
+	settings = AddonUsageSettings
+
+	profilingCPU = GetCVarBool("scriptProfile")
+	totals.start = GetTime()
+
+	addon.TitleText:SetText("Addon Usage")
+
+	-- create AutoScrollFrame where displayedList will be shown
+	local template = format("AddonUsageListButton%sTemplate",profilingCPU and "WithCPU" or "WithoutCPU")
+	addon.List = AutoScrollFrame:Create(addon,template,displayedList,addon.FillButton)
+	addon.List:SetPoint("TOPLEFT",4,-45)
+	addon.List:SetPoint("BOTTOMRIGHT",-6,33)
+	addon.List:WrapUpdate(nil,addon.PostUpdate)
+
+	-- set up width of percent column
+	widthPercent = addon:GetCellWidth("100%")
+
+	addon.ColumnDividers:SetPoint("TOPLEFT",addon.MemHeader,"BOTTOMLEFT",0,-3)
+	if profilingCPU then
+		addon.ColumnDividers:SetPoint("TOPRIGHT",addon.CPUHeader,"BOTTOMLEFT",1,-3)
+		addon.Totals.Divider:Show()
+	else
+		addon.ColumnDividers:SetPoint("TOPRIGHT",addon.MemHeader,"BOTTOMLEFT",1,-3)
+		addon.ColumnDividers.CPUColumn:Hide()
+		-- remove CPU header if not profiling cpu
+		addon.CPUHeader:Hide()
+		addon.MemHeader:SetPoint("TOPRIGHT",-28,-24)
+		addon.Totals.CPU:Hide()
+		addon.Totals.Mem:SetPoint("RIGHT")
+	end
+	addon.ColumnDividers:SetPoint("BOTTOM",addon.List.frame,"BOTTOM",0,3)
+
+	-- to remove influence of startup initialization on numbers (since we can't guarantee all
+	-- addons' initialization was captured), going to reset 1/4 second after login for a baseline
+	-- (not using first frame since some addons wait until first frame to do their stuff)
+	C_Timer.After(0.25,addon.ResetUsage)
+
+	addon.CPUCheckButton:SetChecked(profilingCPU)
+	addon.CPUCheckButton.Text:SetText("CPU Usage")
+
+	addon:RegisterEvent("ADDON_LOADED")
+
+	SLASH_ADDONUSAGE1 = "/addonusage"
+	SlashCmdList.ADDONUSAGE = addon.Toggle
+
+end
+
+-- resets usage stats
+function addon:ResetUsage()
+	totals.start = GetTime()-0.01 -- back in time a hundredth of a sec to prevent division by zero
+	ResetCPUUsage()
+	collectgarbage()
+	addon:Update()
+end
+
+function addon:GetNumAddOns()
+	if TWW_CLIENT then
+		return C_AddOns.GetNumAddOns()
+	else
+		return GetNumAddOns()
+	end
+end
+
+function addon:IsAddOnLoaded(index)
+	if TWW_CLIENT then
+		return C_AddOns.IsAddOnLoaded(index)
+	else
+		return IsAddOnLoaded(index)
+	end
+end
+
+function addon:GetAddOnInfo(index)
+	if TWW_CLIENT then
+		return C_AddOns.GetAddOnInfo(index)
+	else
+		return GetAddOnInfo(index)
+	end
+end
+
+-- fills addonInfo, addonIndexes and totals from the currently loaded addons and their usage
+function addon:GatherUsage()
+	-- look for any new addons loaded (first run or any load on demand after first run)
+	if updateInfo then
+		for i=1,addon:GetNumAddOns() do
+			if not addonInfo[i] and addon:IsAddOnLoaded(i) then
+				local name,title = addon:GetAddOnInfo(i)
+				title = title:gsub("\124c%x%x%x%x%x%x%x%x",""):gsub("\124r",""):gsub("[<>]","") -- strip color codes from titles
+				addonInfo[i] = {name=name,title=title}
+				addonIndexes[name] = i
 			end
 		end
+		updateInfo = nil
 	end
-	au.summary.count:SetText(format("%d \124cffffd200addons",total))
-	-- gather memory usage
-	UpdateAddOnMemoryUsage() -- this function causes a bit of garbage creation but is so central to the addon it needs to stay
-	-- first run through and populate memoryusage of each addon, tallying a total
-	total = 0
-	for i=1,#list do
-		local mem = GetAddOnMemoryUsage(list[i][1])
-		list[i][2] = mem
-		total = total + mem
-	end
-	-- now go through and populate memory % from totals
-	for i=1,#list do
-		if total>0 then
-			list[i][3] = list[i][2]*100/total
-		else
-			list[i][3] = 0
-		end
-	end
-	local mb = total>10000
-	au.summary.mem:SetText(format("%s%.2f \124cffffd200%s",au.profiling and "" or "\124cffffd200Total:\124r ",mb and total/1000 or total,mb and "MB" or "KB"))
-	if au.profiling then -- repeat above for cpu if profiling enabled
+	-- call update APIs to refresh mem/cpu usage
+	UpdateAddOnMemoryUsage()
+	if profilingCPU then
 		UpdateAddOnCPUUsage()
-		total = 0
-		for i=1,#list do
-			local cpu = GetAddOnCPUUsage(list[i][1])
-			list[i][4] = cpu
-			total = total + cpu
+	end
+	-- and log the values for each addon
+	totals.memory = 0
+	totals.cpu = 0
+	totals.duration = GetTime()-totals.start
+	for addonIndex,info in pairs(addonInfo) do
+		info.memory = GetAddOnMemoryUsage(addonIndex)
+		totals.memory = totals.memory + info.memory
+		if profilingCPU then
+			info.cpu = GetAddOnCPUUsage(addonIndex)
+			totals.cpu = totals.cpu + info.cpu
 		end
-		for i=1,#list do
-			if total>0 then
-				list[i][5] = list[i][4]*100/total
+	end
+	-- now adjust cpu time to ms/s based on totals.start time, if cpu being profiled
+	if profilingCPU then
+		local timePassed = GetTime() - totals.start
+		timePassed = max(timePassed,0.01) -- prevent divide by zero errors
+		totals.cpu = totals.cpu / timePassed
+		for addonIndex,info in pairs(addonInfo) do
+			info.cpu = info.cpu / timePassed
+		end
+	end
+end
+
+-- fills displayedList and sorts it, fills formattedData with results to display
+function addon:PopulateList()
+
+	wipe(displayedList)
+	for addonIndex,info in pairs(addonInfo) do
+		tinsert(displayedList,addonIndex)
+	end
+
+	-- sort list; settings.sortOrder should be one of the following integers:
+	-- 1=name, 2=memory, 3=cpu, -1=reverse name, -2=reverse memory, -3=reverse cpu
+	if type(settings.sortOrder)~="number" then
+		settings.sortOrder = 3 -- if no sort defined, try cpu as default
+	end
+	if abs(settings.sortOrder)==3 and not profilingCPU then
+		settings.sortOrder = 2 -- if cpu sort defined and not profiling cpu, sort by memory
+	end
+	sortOrder = settings.sortOrder
+
+	table.sort(displayedList,addon.SortList)
+
+	-- update the displayed list (this will note max widths too)
+	addon.List:Update()
+
+end
+
+-- table.sort function for the displayedList; e1 and e2 are addon indexes
+function addon.SortList(e1,e2)
+	local info1 = addonInfo[e1]
+	local info2 = addonInfo[e2]
+	-- if sorting by memory
+	if sortOrder==2 or sortOrder==-2 then
+		local mem1 = info1.memory
+		local mem2 = info2.memory
+		if mem1~=mem2 then
+			if sortOrder==2 then
+				return mem2<mem1
 			else
-				list[i][5] = 0
+				return mem1<mem2
 			end
 		end
-		local timeDiff = GetTime()-au.startTime
-		au.summary.cpu:SetText(format("%.2f \124cffffd200ms/sec",timeDiff>0 and total/timeDiff or 0))
 	end
-	table.sort(list,sortList) -- sort data
-	au.scrollFrame.update() -- update scrollframe
-	au:RegisterEvent("ADDON_LOADED")
-end
-
--- finishes the UI bits after login and adjusts width depending on whether scriptProfile cvar enabled
-function au:BuildUI()
-
-	SetPortraitToTexture(au.portrait,"Interface\\Icons\\Achievement_GuildPerk_WorkingOvertime")
-
-	au.profilingCheckButton.text:SetText("Monitor CPU usage")
-	au.autoCheckButton.text:SetText("Realtime updates")
-
-	au.profilingCheckButton:SetChecked(au.profiling)
-
-	-- create hybridscrollframe
-	sortKey = au.profiling and 4 or 2 -- initially sort by cpu if profiling enabled, by memory otherwise
-	au.scrollFrame.update = au.UpdateList
-	au.scrollFrame.stepSize = 40
-	au.scrollFrame.scrollBar.doNotHide = 1
-	HybridScrollFrame_CreateButtons(au.scrollFrame,"AddonUsageListTemplate")
-
-	-- if scriptProfile disabled, narrow window
-	if not au.profiling then
-		au:SetWidth(232)
-		for i=1,#au.scrollFrame.buttons do
-			au.scrollFrame.buttons[i].cpu:Hide() -- hide cpu column
-			au.scrollFrame.buttons[i]:SetWidth(192)
-		end
-		au.sortCPU:Hide() -- hide cpu sort header
-		au.sortMemory:SetWidth(88)
-		au.closeButton:SetWidth(76)
-		au.resetButton:SetWidth(76)
-		au.updateButton:SetWidth(76)
-		au.summary.cpu:Hide()
-		au.summary.mem:ClearAllPoints()
-		au.summary.mem:SetPoint("RIGHT",-8,0)
-	else
-		ResetCPUUsage()
-		au.startTime = GetTime()
-	end
-
-	AddonUsageInset:SetPoint("BOTTOMRIGHT",-6,50)
-end
-
-function au:Toggle()
-	au:SetShown(not au:IsVisible())
-end
-
--- HybridScrollFrame update
-function au:UpdateList()
-	local height = 16
-	local offset = HybridScrollFrame_GetOffset(au.scrollFrame)
-	local buttons = au.scrollFrame.buttons
-	for i=1, #buttons do
-		local index = i + offset
-		local button = buttons[i]
-		button:Hide()
-		if ( index <= #au.list ) then
-			button:SetID(index)
-			button.name:SetWidth(102)
-			button.name:SetText(au.list[index][1])
-			button.mem:SetText(format("%.1fk",au.list[index][2]))
-			button.mem:Show()
-			button.memPercent:SetText(format("%d%%",au.list[index][3]))
-			button.memPercent:Show()
-			if au.profiling then
-				button.cpu:SetText(format("%d%%",au.list[index][5]))
-				button.cpu:Show()
+	-- if sorting by cpu
+	if sortOrder==3 or sortOrder==-3 then
+		local cpu1 = info1.cpu
+		local cpu2 = info2.cpu
+		if cpu1~=cpu2 then
+			if sortOrder==3 then
+				return cpu2<cpu1
+			else
+				return cpu1<cpu2
 			end
-			button:Show()
 		end
 	end
-	HybridScrollFrame_Update(au.scrollFrame, height*#au.list, height)
-end
-
-function au:ListOnEnter()
-	au.testString:SetText(self.name:GetText())
-	if au.testString:GetStringWidth()>100 then
-		self.mem:Hide()
-		self.memPercent:Hide()
-		if au.profiling then
-			self.cpu:Hide()
-		end
-		self.name:SetWidth(au.profiling and 224 or 190)
-	end
-end
-
-function au:ListOnLeave()
-	self.name:SetWidth(102)
-	self.mem:Show()
-	self.memPercent:Show()
-	if au.profiling then
-		self.cpu:Show()
-	end
-end
-
---[[ buttons clicks ]]
-
-function au:ButtonOnClick()
-	if self==au.closeButton then
-		au:Hide()
-	elseif self==au.updateButton then
-		au:BuildList()
-	elseif self==au.resetButton then
-		collectgarbage()
-		if au.profiling then
-			ResetCPUUsage()
-			au.startTime = GetTime()
-		end
-		au:BuildList()
-	end
-end
-
-function au:SortOnClick()
-	local id = self:GetID()
-	if id==sortKey then
-		sortDir = 1-sortDir
-	else
-		sortKey = id
-		sortDir = id==1 and 0 or 1
-	end
-	au:BuildList()
-end
-
-function au:CheckOnClick()
-	if self==au.autoCheckButton then
-		au.timer = 0
-		if self:GetChecked() then
-			au:SetScript("OnUpdate",au.OnUpdate)
+	-- sort by title next
+	local title1 = info1.title
+	local title2 = info2.title
+	if title1~=title2 then
+		if sortOrder>0 then
+			return title1<title2
 		else
-			au:SetScript("OnUpdate",nil)
+			return title2<title1
 		end
-	elseif self==au.profilingCheckButton then
-		local enable = self:GetChecked()
-		-- todo: see if these still cause taint; not that big a deal since seeing one means a reload will probably happen
-		StaticPopupDialogs["ADDONUSAGEPROFILE"] = {
-				text=enable and "CPU monitoring causes overhead that will affect performance while it is enabled.\n\nRemember to turn it off when done testing.\n\nDo you want to turn CPU monitoring on and reload the UI?" or "Turn off CPU monitoring and reload the UI?",
-				button1="Yes", button2="No", timeout=30, whileDead=1, showAlert=enable,
-				OnAccept=function() SetCVar("scriptProfile",enable and 1 or 0) ReloadUI() end,
-				OnCancel=function() AddonUsage.profilingCheckButton:Enable() AddonUsage.profilingCheckButton:SetChecked(not enable) end
-			}
-		au.profilingCheckButton:Disable()
-		StaticPopup_Show("ADDONUSAGEPROFILE")
+	end
+	-- if we reached here two addons shared same title, sort by addon name
+	if sortOrder>0 then
+		return info1.name<info2.name
+	else
+		return info2.name<info1.name
+	end
+end
+
+-- breaks up large numbers by inserting commas for thousands, millions, etc
+local function formatNumber(number,pattern)
+	local isBig = number>=1000
+  number = string.format(pattern,number)
+	if isBig then
+	  local subCount
+	  repeat
+	    number,subCount = number:gsub("^(-?%d+)(%d%d%d)","%1,%2")
+	  until subCount==0
+	end
+  return number
+end
+
+function addon:UpdateTotals()
+	addon.Totals.Mem:SetText(formatNumber(totals.memory,"%.1f \124cffffd200k"))
+	addon.Totals.CPU:SetText(formatNumber(totals.cpu,"%.2f \124cffffd200ms/s"))
+	addon.NameHeader:SetText(format("%d Addons",#displayedList))
+end
+
+
+function addon:FillButton(info)
+	info = addonInfo[info]
+	if info then
+		self.Stripe:SetShown(self.index%2==0)
+		self.Name:SetText(info.title)
+
+		local mem = formatNumber(info.memory,patternMem)
+		self.Mem:SetText(mem)
+		if info.memory > maxMemValue then
+			maxMemValue = info.memory
+			updateWidths = true
+		end
+		local memPercent = format(patternPercent,totals.memory>0 and info.memory*100/totals.memory or 0)
+		self.MemPercent:SetText(fillTotals and "100%" or memPercent)
+		self.MemPercent:SetWidth(widthPercent)
+
+		if profilingCPU then
+			local cpu = formatNumber(info.cpu,patternCPU)
+			self.CPU:SetText(cpu)
+			if info.cpu > maxCPUValue then
+				maxCPUValue = info.cpu
+				updateWidths = true
+			end
+			local cpuPercent = format(patternPercent,totals.cpu>0 and info.cpu*100/totals.cpu or 0)
+			self.CPUPercent:SetText(fillTotals and "100%" or cpuPercent)
+			self.CPUPercent:SetWidth(widthPercent)
+		end
+	end
+end
+
+-- function to run after AutoScrollFrame does an update
+-- adjusts width of all number cells based on their maximum width
+function addon:PostUpdate()
+
+	-- if needed, calculate widthMem and widthCPU
+	if updateWidths then
+		updateWidths = nil
+		-- substituting digits with 0's for a consistent width
+		widthMem = addon:GetCellWidth(formatNumber(maxMemValue,patternMem):gsub("%d","0"))
+		if profilingCPU then
+			widthCPU = addon:GetCellWidth(formatNumber(maxCPUValue,patternCPU):gsub("%d","0"))
+		end
+		-- update width of memory and cpu headers
+		local widthMemColumn = widthMem+24+widthPercent
+		local widthCPUColumn = 0
+		addon.MemHeader:SetWidth(widthMemColumn)
+		addon.Totals.Mem:SetWidth(widthMemColumn-4)
+		if profilingCPU then
+			widthCPUColumn = widthCPU+15+widthPercent
+			addon.CPUHeader:SetWidth(widthCPUColumn)
+			addon.Totals.CPU:SetWidth(widthCPUColumn-4)
+			addon.Totals.Divider:ClearAllPoints()
+			addon.Totals.Divider:SetPoint("RIGHT",-widthCPUColumn-1,0)
+		end
+		addon.Totals:SetWidth(widthMemColumn+widthCPUColumn+4)
+		-- in next frame, after Totals hitrects defined, change minimum width to 200+Totals width
+		C_Timer.After(0,addon.UpdateMinResize)
+	end
+
+	-- update width of list button memory and cpu cells
+	-- being done outside updateWidths because new rows can be created
+	local buttons = addon.List:GetListButtons()
+	for i=1,#buttons do
+		local button = buttons[i]
+		button.Mem:SetWidth(widthMem)
+		if profilingCPU then
+			button.CPU:SetWidth(widthCPU)
+		end
 	end
 
 end
 
--- this runs while the autoCheckButton ("Realtime updates") is checked and the window is shown
-function au:OnUpdate(elapsed)
-	self.timer = self.timer + elapsed
-	if self.timer > 1 then
-		self.timer = 0
-		au:BuildList()
+function addon:UpdateMinResize()
+	-- 200 is the width of the window outside the cpu and memory columns
+	local minWidth = addon.Totals:GetWidth() + 200
+	addon:SetResizeBounds(minWidth,200)
+	if addon:GetWidth()<minWidth then
+		addon:SetWidth(minWidth)
+		addon:SetUserPlaced(true)
 	end
 end
 
-SlashCmdList["ADDONUSAGE"] = au.Toggle
-SLASH_ADDONUSAGE1 = "/addonusage"
-SLASH_ADDONUSAGE2 = "/usage"
+-- returns the width that text would take up in a fontstring
+-- a separate fontstring (WidthTest) is used to get the width because cells are bounded
+-- by size and we need the unbounded width to expand
+function addon:GetCellWidth(text)
+	addon.WidthTest:SetText(text)
+	return addon.WidthTest:GetStringWidth()
+end
+
+-- click of the name/memory/cpu headers to sort list
+function addon:HeaderOnClick()
+	local id = self:GetID()
+	if id == abs(sortOrder) then
+		settings.sortOrder = -sortOrder
+	else
+		settings.sortOrder = id
+	end
+	addon:Update()
+end
+
+function addon:CPUCheckButtonOnClick()
+	local check = addon.CPUCheckButton
+	local enable = check:GetChecked()
+	-- todo: see if these still cause taint; not that big a deal since seeing one means a reload will probably happen
+	StaticPopupDialogs["ADDONUSAGEPROFILE"] = {
+			text = enable and "Do you want to turn on CPU monitoring and reload the UI?\n\nCPU monitoring causes overhead that will slightly affect performance while enabled.\n\nRemember to turn it off when done testing." or "Turn off CPU monitoring and reload the UI?",
+			button1="Yes", button2="No", timeout=30, whileDead=1, showAlert=enable, hideOnEscape=1,
+			OnAccept=function() SetCVar("scriptProfile",enable and 1 or 0) ReloadUI() end,
+			OnCancel=function() check:Enable() check:SetChecked(not enable) end
+		}
+	check:Disable()
+	StaticPopup_Show("ADDONUSAGEPROFILE")
+end
+
+-- this updates the icon on the play button which is cropped from
+-- down is true if the button should be pushed down, false otherwise
+function addon:UpdateButtonIcon(down)
+	local icon = self.Icon
+	local yoff = self==addon.UpdateButton and -1 or 0 -- nudge update icon down a little
+	if down then
+		icon:SetPoint("CENTER",-2,-2+yoff)
+		icon:SetVertexColor(0.5,0.5,0.5)
+	else
+		icon:SetPoint("CENTER",-1,yoff)
+		local color = (self==addon.PlayButton and settings.Play) and 0.8 or 1 -- dim pause icon slightly (its yellow is too bright)
+		icon:SetVertexColor(color,color,color)
+	end
+end
+
+-- click of the play/pause button
+function addon:PlayButtonOnClick()
+	if IsShiftKeyDown() then
+		addon:Update() -- if shift is down just do a one-off update and don't change state
+	else
+		settings.Play = not settings.Play
+		addon.UpdateButtonIcon(addon.PlayButton,false,true)
+		addon:UpdateContinuousUpdate()
+		if settings.Play then
+			addon:Update() -- kick off an immediate update when hitting play
+		end
+	end
+end
+
+-- turns on or off the OnUpdate depending on settings.Play
+function addon:UpdateContinuousUpdate()
+	updateTimer = 0
+	addon:SetScript("OnUpdate",settings.Play and addon.ContinuousUpdate or nil)
+	addon.PlayButton.Icon:SetTexture(settings.Play and "Interface\\TimeManager\\PauseButton" or "Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up")
+end
+
+-- the OnUpdate for the continuous update ("play" button) only defined while settings.Play enabled
+function addon:ContinuousUpdate(elapsed)
+	updateTimer = updateTimer + elapsed
+	if updateTimer > updateFrequency then
+		updateTimer = 0
+		addon:Update()
+	end
+end
+
+-- tooltip of little buttons
+function addon:ButtonOnEnter()
+	addon.MiniTooltip:SetPoint("BOTTOM",self,"TOP",0,-4)
+	addon.MiniTooltip.Text:SetText(self.tooltip)
+	addon.MiniTooltip:SetWidth(addon.MiniTooltip.Text:GetStringWidth()+16)
+	addon.MiniTooltip:Show()
+end

@@ -93,7 +93,12 @@ BCM.modules[#BCM.modules+1] = function()
 		local panel = CreateFrame("Frame", frameName, bcm)
 		panel.name, panel.parent = panelName, name
 		panel:SetScript("OnShow", onShow)
-		InterfaceOptions_AddCategory(panel)
+		if InterfaceOptions_AddCategory then
+			InterfaceOptions_AddCategory(panel)
+		else
+			local category, layout = _G.Settings.RegisterCanvasLayoutCategory(panel, panel.name)
+			_G.Settings.RegisterAddOnCategory(category)
+		end
 	end
 
 	--[[ Slash handler ]]--
@@ -103,7 +108,12 @@ BCM.modules[#BCM.modules+1] = function()
 	--[[ Main Panel ]]--
 	local bcm = CreateFrame("Frame", "BCM", InterfaceOptionsFramePanelContainer)
 	bcm.name = name
-	InterfaceOptions_AddCategory(bcm)
+	if InterfaceOptions_AddCategory then
+		InterfaceOptions_AddCategory(bcm)
+	else
+		local category, layout = _G.Settings.RegisterCanvasLayoutCategory(bcm, bcm.name)
+		_G.Settings.RegisterAddOnCategory(category)
+	end
 	local bcmTitle = bcm:CreateFontString(nil, "ARTWORK", "GameFontNormalHuge")
 	bcmTitle:SetPoint("CENTER", bcm, "TOP", 0, -30)
 	bcmTitle:SetText(name.." v8.0.3") --wowace magic, replaced with tag version

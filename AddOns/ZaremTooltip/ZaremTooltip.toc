@@ -1,0 +1,4 @@
+## Title: ZaremTooltip
+## Interface: 110005
+## Notes: Simple Tooltip enhancements
+ZaremTooltip.lua

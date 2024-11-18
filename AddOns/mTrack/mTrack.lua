@@ -28,6 +28,7 @@ local buffIndex = {
     "Astral Shift",
     "Spirit Walk",
     "Wind Rush",
+    "Burrow",
 
     -- Both
     "Bloodlust",
@@ -99,10 +100,6 @@ local trackedBuffs = {
     
 
     -- Shaman
-    ["Landslide"] = {
-        color = { 171/255, 212/255, 115/255 }, -- Green
-        isTimer = true
-    },
 
     ["Flametongue"] = {
         color = { 255/255, 125/255, 10/255 }, -- Orange
@@ -124,6 +121,11 @@ local trackedBuffs = {
         isTimer = true
     },
 
+    ["Lightning Shield"] = {
+        color = { 245/255, 140/255, 186/255 }, -- Pink
+        isTimer = true
+    },
+
     ["Spirit Walk"] = {
         color = { 0/255, 112/255, 222/255 }, -- Blue
         isTimer = true
@@ -131,6 +133,11 @@ local trackedBuffs = {
 
     ["Wind Rush"] = {
         color = { 0/255, 112/255, 222/255 }, -- Blue
+        isTimer = true
+    },
+
+    ["Burrow"] = {
+        color = { 199/255, 156/255, 110/255 }, -- Brown
         isTimer = true
     },
 }
@@ -171,7 +178,7 @@ local function createBar()
     bar:SetFrameLevel(1)
 
     -- Helper frame for the backdrop
-    local backdrop = CreateFrame("Frame", nil, bar)
+    local backdrop = CreateFrame("Frame", nil, bar, "BackdropTemplate")
     backdrop:SetFrameLevel(0)
     backdrop:SetPoint("TOPLEFT",-2,2)
     backdrop:SetPoint("BOTTOMRIGHT",2,-2)
@@ -202,7 +209,7 @@ local function positionBars()
         info = trackedBuffs[buff]
         if info then
             if info.active then
-                info.bar:SetPoint("TOP", mGuideFrame, "BOTTOM", 0, activeBars * barOffset - 20)
+                info.bar:SetPoint("TOP", Minimap, "BOTTOM", 0, activeBars * barOffset - 20)
                 activeBars = activeBars + 1
             end
         end
@@ -238,23 +245,17 @@ local function updateTimers()
 end
 
 local function getBuff(buff, info)
-    --[[ Used to search by spell name for efficiency, but seems I can't anymore
-    local name, _, _, _, _, duration, expires, _, _, spellID, _, _, _, _, value1, _, _, _, _ = UnitBuff("player", info.spellID)
-
-    -- If buff has a SpellID, make sure we got the correct buff, needed for buffs that share the same name
-    if spellID ~= info.spellID then]]
-
     -- Just iterate through all buffs on player and match the name
     for i=1,40,1 do
-        local name, _, _, _, duration, expires, _, _, _, spellID, _, _, _, _, value1, _, _ = UnitBuff("player", i)
-        
-        if name == buff then
-            return name, duration, expires, value1
+        local aura = C_UnitAuras.GetBuffDataByIndex("player", i)
+        if aura then
+            if aura.name == buff then
+                return aura.name, aura.duration, aura.expirationTime, aura.charges
+            end
         end
     end
-    --end
-    
-    return name, duration, expires, value1
+
+    return nil, nil, nil, nil
 end
 
 -- Every time UNIT_AURA fires collect the information on all tracked buffs

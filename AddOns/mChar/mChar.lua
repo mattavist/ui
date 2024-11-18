@@ -26,10 +26,10 @@ SlashCmdList["TRY"] = function()
 
 	for key, value in pairs(charData) do
 		if value > 30 then
-    		ChatFrame3:AddMessage(key.."  -  "..value.."g")
+    		ChatFrame1:AddMessage(key.."  -  "..value.."g")
     	end
     	total = total + value
     end
-    ChatFrame3:AddMessage("Total  -  "..total.."g")
+    ChatFrame1:AddMessage("Total  -  "..total.."g")
 end
 SLASH_TRY1 = "/d"

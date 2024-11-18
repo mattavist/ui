@@ -1,10 +1,10 @@
 
 ---------------------------------------------------- Some slash commands
 SlashCmdList["FRAME"] = function()
-    ChatFrame1:AddMessage(GetMouseFocus():GetName())
+    ChatFrame1:AddMessage(GetMouseFoci()[1]:GetName())
 end
 SLASH_FRAME1 = "/frame"
-SLASH_FRAME2 = "/gn"
+SLASH_FRAME2 = "/fn"
 
 SlashCmdList["RELOADUI"] = function() ReloadUI() end
 SLASH_RELOADUI1 = "/rl"
@@ -32,11 +32,11 @@ FS_SetFont()
 ------Sells Greys
 local function OnEvent()
 	for bag=0,4 do
-		for slot=0,GetContainerNumSlots(bag) do
-			local link = GetContainerItemLink(bag, slot)
+		for slot=0,C_Container.GetContainerNumSlots(bag) do
+			local link = C_Container.GetContainerItemLink(bag, slot)
 			if link and select(3, GetItemInfo(link)) == 0 then
 				--ShowMerchantSellCursor(1)
-				UseContainerItem(bag, slot)
+				C_Container.UseContainerItem(bag, slot)
 			end
 		end
 	end
