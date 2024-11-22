@@ -14,15 +14,16 @@ BCM.modules[#BCM.modules+1] = function()
 	ChatFrameToggleVoiceMuteButton:Hide() --Hide the voice mute button
 	ChatFrameChannelButton:HookScript("OnShow", hideFunc)
 	ChatFrameChannelButton:Hide() --Hide the voice mute button
+	TextToSpeechButtonFrame:HookScript("OnShow", hideFunc)
+	TextToSpeechButtonFrame:Hide() --Hide the TTS config button
 	if QuickJoinToastButton then
 		QuickJoinToastButton:HookScript("OnShow", hideFunc) --Hide the "Friends Online" count button
 		QuickJoinToastButton:Hide() --Hide the "Friends Online" count button
 	end
 
-	BCM.chatFuncsPerFrame[#BCM.chatFuncsPerFrame+1] = function(n)
+	BCM.chatFuncsPerFrame[#BCM.chatFuncsPerFrame+1] = function(_, n)
 		local btnFrame = _G[n.."ButtonFrame"]
 		btnFrame:HookScript("OnShow", hideFunc) --Hide the up/down arrows
 		btnFrame:Hide() --Hide the up/down arrows
 	end
 end
-

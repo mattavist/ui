@@ -5,8 +5,10 @@ local _, BCM = ...
 BCM.modules[#BCM.modules+1] = function()
 	if bcmDB.BCM_ChatCopy then return end
 
+	local BCMCopyFrame
+
 	local scrollDown = function()
-		BCMCopyScroll:SetVerticalScroll((BCMCopyScroll:GetVerticalScrollRange()) or 0)
+		BCMCopyFrame.scroll:SetVerticalScroll((BCMCopyFrame.scroll:GetVerticalScrollRange()) or 0)
 	end
 
 	--Copying Functions
@@ -23,66 +25,62 @@ BCM.modules[#BCM.modules+1] = function()
 		text = text:gsub("|T[^\\]+\\[^\\]+\\[Uu][Ii]%-[Rr][Aa][Ii][Dd][Tt][Aa][Rr][Gg][Ee][Tt][Ii][Nn][Gg][Ii][Cc][Oo][Nn]_(%d)[^|]+|t", "{rt%1}") -- I like being able to copy raid icons
 		text = text:gsub("|T13700([1-8])[^|]+|t", "{rt%1}") -- I like being able to copy raid icons
 		text = text:gsub("|T[^|]+|t", "") -- Remove any other icons to prevent copying issues
+		text = text:gsub("|K[^|]+|k", BCM.protectedText) -- Remove protected text
 		BCMCopyFrame.box:SetText(text)
 		BCMCopyFrame:Show()
-		C_Timer.After(0.25, scrollDown) -- Scroll to the bottom, we have to delay it unfortunately
+		C_Timer.After(0, scrollDown) -- Scroll to the bottom, we have to delay it unfortunately
 	end
-	local hintFunc = function(frame)
+	local tt = CreateFrame("GameTooltip", "BCMtooltip", UIParent, "GameTooltipTemplate")
+	local hintFuncEnter = function(frame)
 		if bcmDB.noChatCopyTip then return end
 
-		if SHOW_NEWBIE_TIPS == "1" then
-			GameTooltip:AddLine("\n|T135769:20|t"..BCM.CLICKTOCOPY, 1, 0, 0) -- Interface\\Icons\\Spell_ChargePositive
-			GameTooltip:Show()
-		else
-			GameTooltip:SetOwner(frame, "ANCHOR_TOP")
-			GameTooltip:AddLine("|T135769:20|t"..BCM.CLICKTOCOPY, 1, 0, 0) -- Interface\\Icons\\Spell_ChargePositive
-			GameTooltip:Show()
-		end
+		tt:SetOwner(frame, "ANCHOR_TOP")
+		tt:AddLine("|T135769:20|t"..BCM.CLICKTOCOPY, 1, 0, 0) -- Interface\\Icons\\Spell_ChargePositive
+		tt:Show()
+	end
+	local hintFuncLeave = function()
+		if bcmDB.noChatCopyTip then return end
+
+		tt:Hide()
 	end
 
 	--Create Frames/Objects
-	local frame = CreateFrame("Frame", "BCMCopyFrame", UIParent, "BackdropTemplate")
-	frame:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-		tile = true, tileSize = 16, edgeSize = 16,
-		insets = {left = 1, right = 1, top = 1, bottom = 1}}
-	)
-	frame:SetBackdropColor(0,0,0,1)
-	frame:SetWidth(650)
-	frame:SetHeight(500)
-	frame:SetPoint("CENTER", UIParent, "CENTER")
-	frame:Hide()
-	frame:SetFrameStrata("DIALOG")
+	BCMCopyFrame = CreateFrame("Frame", nil, UIParent, "SettingsFrameTemplate")
+	BCMCopyFrame:SetWidth(750)
+	BCMCopyFrame:SetHeight(600)
+	BCMCopyFrame:SetPoint("CENTER", UIParent, "CENTER")
+	BCMCopyFrame:Hide()
+	BCMCopyFrame:SetFrameStrata("DIALOG")
+	BCMCopyFrame.NineSlice.Text:SetText("BasicChatMods")
 
-	local scrollArea = CreateFrame("ScrollFrame", "BCMCopyScroll", frame, "UIPanelScrollFrameTemplate")
-	scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -5)
-	scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 5)
+	local scrollArea = CreateFrame("ScrollFrame", nil, BCMCopyFrame, "ScrollFrameTemplate")
+	scrollArea:SetPoint("TOPLEFT", BCMCopyFrame, "TOPLEFT", 8, -30)
+	scrollArea:SetPoint("BOTTOMRIGHT", BCMCopyFrame, "BOTTOMRIGHT", -25, 5)
 
-	local editBox = CreateFrame("EditBox", nil, frame)
+	local editBox = CreateFrame("EditBox", nil, BCMCopyFrame)
 	editBox:SetMultiLine(true)
-	editBox:SetMaxLetters(99999)
+	editBox:SetMaxLetters(0)
 	editBox:EnableMouse(true)
 	editBox:SetAutoFocus(false)
 	editBox:SetFontObject(ChatFontNormal)
-	editBox:SetWidth(620)
-	editBox:SetHeight(495)
+	editBox:SetWidth(720)
+	editBox:SetHeight(595)
 	editBox:SetScript("OnEscapePressed", function(f) f:GetParent():GetParent():Hide() f:SetText("") end)
 
 	scrollArea:SetScrollChild(editBox)
 
-	local close = CreateFrame("Button", "BCMCloseButton", frame, "UIPanelCloseButton")
-	close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, 25)
-
-	local font = frame:CreateFontString(nil, nil, "GameFontNormal")
+	local font = BCMCopyFrame:CreateFontString(nil, nil, "GameFontNormal")
 	font:Hide()
 
 	BCMCopyFrame.font = font
 	BCMCopyFrame.box = editBox
+	BCMCopyFrame.scroll = scrollArea
 
-	BCM.chatFuncsPerFrame[#BCM.chatFuncsPerFrame+1] = function(n)
+	BCM.chatFuncsPerFrame[#BCM.chatFuncsPerFrame+1] = function(_, n)
 		local tab = _G[n.."Tab"]
 		tab:HookScript("OnClick", copyFunc)
-		tab:HookScript("OnEnter", hintFunc)
+		tab:HookScript("OnEnter", hintFuncEnter)
+		tab:HookScript("OnLeave", hintFuncLeave)
 	end
 end
 

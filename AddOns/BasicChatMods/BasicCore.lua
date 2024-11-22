@@ -2,7 +2,7 @@
 --[[     BCM Core     ]]--
 
 local addonName, BCM = ...
-BCM.chatFrames = 10
+BCM.chatFrames, BCM.chatFrameRefs = 10, {}
 BCM.earlyModules, BCM.modules, BCM.chatFuncs, BCM.chatFuncsPerFrame, BCM.Events = {}, {}, {}, {}, CreateFrame("Frame")
 BCM.Events:SetScript("OnEvent", function(frame, event, ...) if frame[event] then frame[event](frame, ...) end end)
 
@@ -71,18 +71,25 @@ do
 	end
 end
 
-local oldAddMsg = {}
 local tostring = tostring
-local AddMessage = function(frame, text, ...)
-	-- We only hook add message once and run all our module functions in that hook,
-	-- rather than hooking it for every module that needs it
-	if text and text ~= "" then
+local EditMessage = function(self)
+	-- We can't use #self.elements, for some reason a nil get's added to the table at some point which breaks counting
+	local num = self.headIndex
+	if num == 0 then
+		num = self.maxElements
+	end
+	local tbl = self.elements[num]
+	local text = tbl and tbl.message
+	if text then
 		text = tostring(text)
 		for i=1, #BCM.chatFuncs do
-			text = BCM.chatFuncs[i](text, frame)
+			text = BCM.chatFuncs[i](text)
 		end
+		self.elements[num].message = text
 	end
-	return oldAddMsg[frame:GetName()](frame, text, ...)
+end
+local function ReApplyClamp(self)
+	BCM.Events.SetClampRectInsets(self, 0,0,0,0)
 end
 
 BCM.Events.ADDON_LOADED = function(frame, addon)
@@ -121,46 +128,64 @@ BCM.Events.PLAYER_LOGIN = function(frame)
 		local eB = _G[n.."EditBox"]
 		eB:SetAltArrowKeyMode(false)
 
+		local cF = _G[n]
+		BCM.chatFrameRefs[i] = cF
 		if i ~= 2 then --skip combatlog
-			local cF = _G[n]
-			oldAddMsg[n] = cF.AddMessage
-			cF.AddMessage = AddMessage
+			local num = cF.historyBuffer.headIndex
+			if num > 0 then -- Catch up on any lines we missed during the log in process
+				for l = 1, num do
+					local tbl = cF.historyBuffer.elements[l]
+					local text = tbl.message
+					if text and text ~= "" then
+						text = tostring(text)
+						for f=1, #BCM.chatFuncs do
+							text = BCM.chatFuncs[f](text)
+						end
+						cF.historyBuffer.elements[l].message = text
+					end
+				end
+			end
+			hooksecurefunc(cF.historyBuffer, "PushFront", EditMessage)
 		end
 
 		for j=1, #BCM.chatFuncsPerFrame do
-			BCM.chatFuncsPerFrame[j](n)
+			BCM.chatFuncsPerFrame[j](cF, n, i)
 		end
 	end
 
 	--[[ Hook On-Demand Chat Frames: BattlePet Log, Whispers, Etc ]]--
 	hooksecurefunc("FCF_OpenTemporaryWindow", function()
-		for i=11, 20 do
+		for i=(BCM.chatFrames+1), 50 do
 			local n = ("%s%d"):format("ChatFrame", i)
 			local cF = _G[n]
 			if cF then
-				if not oldAddMsg[n] then
-					BCM.chatFrames = i -- Update the chat frame count for config options
+				BCM.chatFrames = i -- Update the chat frame count for config options
+				BCM.chatFrameRefs[i] = cF
 
-					--Allow the chat frame to move to the end of the screen
-					cF:SetClampRectInsets(0,0,0,0)
+				--Allow the chat frame to move to the end of the screen
+				cF:SetClampRectInsets(0,0,0,0)
+				--Need to re-apply it if the base UI changes it
+				hooksecurefunc(cF, "SetClampRectInsets", ReApplyClamp)
 
-					--Allow arrow keys editing in the edit box
-					local eB = _G[n.."EditBox"]
-					eB:SetAltArrowKeyMode(false)
+				--Allow arrow keys editing in the edit box
+				local eB = _G[n.."EditBox"]
+				eB:SetAltArrowKeyMode(false)
 
-					oldAddMsg[n] = cF.AddMessage
-					cF.AddMessage = AddMessage
+				hooksecurefunc(cF.historyBuffer, "PushFront", EditMessage)
 
-					--Fire functions to apply to various frames
-					for j=1, #BCM.chatFuncsPerFrame do
-						BCM.chatFuncsPerFrame[j](n)
-					end
+				--Fire functions to apply to various frames
+				for j=1, #BCM.chatFuncsPerFrame do
+					BCM.chatFuncsPerFrame[j](cF, n, i)
 				end
 			else
 				return -- No frame found, stop looping and back out.
 			end
 		end
 	end)
+
+	if BCM.configModule then
+		BCM.configModule()
+	end
 
 	--[[ Self-Cleanup ]]--
 	BCM.modules = nil
@@ -174,6 +199,8 @@ for i=1, BCM.chatFrames do
 	local cF = _G[("%s%d"):format("ChatFrame", i)]
 	--Allow the chat frame to move to the end of the screen
 	cF:SetClampRectInsets(0,0,0,0)
+	--Need to re-apply it if the base UI changes it
+	hooksecurefunc(cF, "SetClampRectInsets", ReApplyClamp)
 end
 --Clamp the toast frame to screen to prevent it cutting out
 BNToastFrame:SetClampedToScreen(true)

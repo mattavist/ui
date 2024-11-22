@@ -7,9 +7,9 @@ BCM.modules[#BCM.modules+1] = function()
 	if bcmDB.BCM_PlayerNames then --Cleanup vars for disabled modules
 		bcmDB.nolevel, bcmDB.nogroup, bcmDB.noMiscColor = nil, nil, nil
 		if bcmDB.BCM_BNet then bcmDB.playerLBrack, bcmDB.playerRBrack, bcmDB.playerSeparator = nil, nil, nil end
-		-- Turn colors back on if disabling this module (default Blizzard state)
-		if GetCVar("chatClassColorOverride") ~= "0" then
-			SetCVar("chatClassColorOverride", "0")
+		-- Turn colors back off if disabling this module (default Blizzard state)
+		for k in next, getmetatable(ChatTypeInfo).__index do
+			SetChatColorNameByClass(k, false)
 		end
 		return
 	end
@@ -76,13 +76,13 @@ BCM.modules[#BCM.modules+1] = function()
 	end
 
 	if bcmDB.noMiscColor then
-		if GetCVar("chatClassColorOverride") ~= "1" then
-			SetCVar("chatClassColorOverride", "1")
+		for k in next, getmetatable(ChatTypeInfo).__index do
+			SetChatColorNameByClass(k, false)
 		end
 	else
 		nameColor = {}
-		if GetCVar("chatClassColorOverride") ~= "0" then
-			SetCVar("chatClassColorOverride", "0")
+		for k in next, getmetatable(ChatTypeInfo).__index do
+			SetChatColorNameByClass(k, true)
 		end
 	end
 

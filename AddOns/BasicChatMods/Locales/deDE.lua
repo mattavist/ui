@@ -13,7 +13,6 @@ L["BCM_Font"] = "Verändert die Schriftart, Größe und Aussehen deines Chat- & 
 L["BCM_GMOTD"] = "Zeigt erneut die Gildennachricht des Tages im Hauptchatfenster nach 10 Sekunden an."
 L["BCM_Highlight"] = "Spielt einen Sound ab und färbt deinen Namen in Klassenfarbe ein, falls er im Chat erscheint. Du kannst auch eine Abkürzung deines Namens eingeben."
 L["BCM_History"] = "Wähle, wie viele Zeilen Chat dein Chatfenster behält."
-L["BCM_InviteLinks"] = "Sucht nach dem Wort 'invite' und wandelt dieses in einen ALT-Klickbaren Link, der diese Person einlädt, um. Z.B. |cFFFF7256[invite]|r"
 L["BCM_Justify"] = "Richtet den Text der verschiedenen Chatfenster nach links, rechts oder in die Mitte des Chatfensters aus."
 L["BCM_PlayerNames"] = "Fügt den Spielernamen im Chat die Spielerstufe/-gruppe (falls bekannt) hinzu oder entfernt/verändert Klammern. Z.B. [85:|cFFFFFFFFCoolerPriester|r:5]"
 L["BCM_Resize"] = "Erlaubt es dir, die Größe des Chatfensters größer oder kleiner zu machen als das, was Blizzard erlaubt."
@@ -31,7 +30,7 @@ L["CHATLOG"] = "Chat immer aufzeichnen."
 L["CLICKTOCOPY"] = "Shift-Klick, um den Chat zu kopieren."
 L["COLORMISC"] = "Freund-/Gilden-Einloggung in Klassenfarben."
 L["COMBATLOG"] = "Kampflog in Schlachtzugsinstanzen aufzeichnen."
-L["CORE"] = [=[Willkommen bei BasicChatMods, ein einfacher und modularer Ansatz zur Chat-Anpassung. Aufgrund der Art, wie BCM gestaltet ist, könnte ein /reload für manche Änderungen benötigt werden. 
+L["CORE"] = [=[Willkommen bei BasicChatMods, ein einfacher und modularer Ansatz zur Chat-Anpassung. Aufgrund der Art, wie BCM gestaltet ist, könnte ein /reload für manche Änderungen benötigt werden.
 
 Standardmäßig wird dir BCM erlauben, deine Chatfenster an den äußersten Rand des Bildschirms zu ziehen, die verbleibende Anpassung wird in den Modulen von BCM gemacht, welche, je nach Wunsch, aktiviert oder deaktiviert werden können.
 
@@ -54,3 +53,5 @@ L["TRADE"] = "Handel"
 L["WARNING"] = "<<Die Änderungen werden erst nach einem /reload wirksam>>"
 L["WORLDDEFENSE"] = "Weltverteidigung"
 
+--L.protectedText = "<Protected Text>"
+--L.TRADE_SERVICES = "Trade (Services)"

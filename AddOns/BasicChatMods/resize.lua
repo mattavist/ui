@@ -5,12 +5,14 @@ local _, BCM = ...
 BCM.modules[#BCM.modules+1] = function()
 	if bcmDB.BCM_Resize then return end
 
-	BCM.chatFuncsPerFrame[#BCM.chatFuncsPerFrame+1] = function(n)
-		local cF = _G[n]
+	BCM.chatFuncsPerFrame[#BCM.chatFuncsPerFrame+1] = function(cF)
 		--Allow resizing chatframes to whatever size you wish!
-		-- cF:SetMinResize(100,10)
-		-- cF:SetMaxResize(0,0)
-		cF:SetResizeBounds(0, 0, 100, 10)
+		if cF.SetResizeBounds then -- XXX Dragonflight compat
+			cF:SetResizeBounds(100, 10, 0, 0)
+		else
+			cF:SetMinResize(100,10)
+			cF:SetMaxResize(0,0)
+		end
 	end
 end
 

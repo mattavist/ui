@@ -2,16 +2,14 @@
 --[[     Basic Config Module     ]]--
 
 local name, BCM = ...
-BCM.modules[#BCM.modules+1] = function()
-	if bcmDB.noconfig then return end
-
+BCM.configModule = function()
 	--[[-------------------------------
 	-- Core widgets/functions/etc
 	-------------------------------]]--
 
 	local onShow = function(frame)
 		--Don't move recycled widgets when opening the main BCM panel
-		if InterfaceOptionsFramePanelContainer.displayedPanel and InterfaceOptionsFramePanelContainer.displayedPanel.name == name then return end
+		if _G.BCM:IsShown() then return end
 		local panel = frame:GetName()
 
 		local btn = BCMEnableButton
@@ -55,7 +53,7 @@ BCM.modules[#BCM.modules+1] = function()
 			BCM_PlayerSeparator:SetText(bcmDB.playerSeparator)
 		elseif panel == "BCM_ChannelNames" and BCM_ChanName_Input then
 			BCM_ChanName_Input:SetText("1234567890")
-			BCM_ChanName_Input:SetText(bcmDB.replacements[1])
+			BCM_ChanName_Input:SetText(bcmDB.shortNames[1])
 		elseif panel == "BCM_PlayerNames" and BCM_PlayerLevel_Button then
 			BCM_PlayerBrackDesc:SetParent(frame)
 			BCM_PlayerBrackDesc:SetPoint("TOPLEFT", 16, -240)
@@ -91,37 +89,45 @@ BCM.modules[#BCM.modules+1] = function()
 	end
 	local makePanel = function(frameName, bcm, panelName)
 		local panel = CreateFrame("Frame", frameName, bcm)
-		panel.name, panel.parent = panelName, name
+		panel.name, panel.parent = panelName, bcm.name
 		panel:SetScript("OnShow", onShow)
-		if InterfaceOptions_AddCategory then
+		if InterfaceOptions_AddCategory then -- XXX compat
 			InterfaceOptions_AddCategory(panel)
 		else
-			local category, layout = _G.Settings.RegisterCanvasLayoutCategory(panel, panel.name)
-			_G.Settings.RegisterAddOnCategory(category)
+			local subcategory = Settings.RegisterCanvasLayoutSubcategory(bcm.settingsCategory, panel, panelName)
+			Settings.RegisterAddOnCategory(subcategory)
 		end
 	end
-
-	--[[ Slash handler ]]--
-	SlashCmdList[name] = function() InterfaceOptionsFrame_OpenToCategory(name) InterfaceOptionsFrame_OpenToCategory(name) end
-	SLASH_BasicChatMods1 = "/bcm"
 
 	--[[ Main Panel ]]--
 	local bcm = CreateFrame("Frame", "BCM", InterfaceOptionsFramePanelContainer)
 	bcm.name = name
-	if InterfaceOptions_AddCategory then
+	if InterfaceOptions_AddCategory then -- XXX compat
 		InterfaceOptions_AddCategory(bcm)
 	else
-		local category, layout = _G.Settings.RegisterCanvasLayoutCategory(bcm, bcm.name)
-		_G.Settings.RegisterAddOnCategory(category)
+		local category = Settings.RegisterCanvasLayoutCategory(bcm, bcm.name)
+		bcm.settingsCategory = category
+		Settings.RegisterAddOnCategory(category)
 	end
 	local bcmTitle = bcm:CreateFontString(nil, "ARTWORK", "GameFontNormalHuge")
 	bcmTitle:SetPoint("CENTER", bcm, "TOP", 0, -30)
-	bcmTitle:SetText(name.." v8.0.3") --wowace magic, replaced with tag version
+	bcmTitle:SetText(name.." v11.0.2") -- packager magic, replaced with tag version
 	local bcmDesc = bcm:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	bcmDesc:SetPoint("CENTER")
 	bcmDesc:SetText(BCM.CORE)
 	bcmDesc:SetWidth(450)
 	bcmDesc:SetJustifyH("CENTER")
+
+	--[[ Slash handler ]]--
+	SlashCmdList[name] = function()
+		if InterfaceOptionsFrame_OpenToCategory then -- XXX compat
+			InterfaceOptionsFrame_OpenToCategory(name)
+			InterfaceOptionsFrame_OpenToCategory(name)
+		else
+			Settings.OpenToCategory(bcm.settingsCategory.ID)
+		end
+	end
+	SLASH_BasicChatMods1 = "/bcm"
 
 	--[[ The main enable button, enable text, and panel description that all modules use, recycled ]]--
 	local panelDesc = bcm:CreateFontString("BCMPanelDesc", "ARTWORK", "GameFontNormalLarge")
@@ -308,10 +314,10 @@ BCM.modules[#BCM.modules+1] = function()
 				local input = BCM_ChanName_Input
 				input:EnableMouse(true)
 				input:SetText("1234567890") --for some reason the text wont display without calling something long
-				input:SetText(bcmDB.replacements[v.value])
+				input:SetText(bcmDB.shortNames[v.value])
 				input.value = v.value
 			end
-			local tbl = {BCM.GENERAL, BCM.TRADE, BCM.WORLDDEFENSE, BCM.LOCALDEFENSE, BCM.LFG, BCM.GUILDRECRUIT, INSTANCE_CHAT, INSTANCE_CHAT_LEADER, GUILD, PARTY, PARTY_LEADER, gsub(CHAT_PARTY_GUIDE_GET, ".*%[(.*)%].*", "%1"), OFFICER, RAID, RAID_LEADER, RAID_WARNING, BCM.CUSTOMCHANNEL}
+			local tbl = {BCM.GENERAL, BCM.TRADE_SERVICES, BCM.TRADE, BCM.WORLDDEFENSE, BCM.LOCALDEFENSE, BCM.LFG, BCM.GUILDRECRUIT, INSTANCE_CHAT, INSTANCE_CHAT_LEADER, GUILD, PARTY, PARTY_LEADER, gsub(CHAT_PARTY_GUIDE_GET, ".*%[(.*)%].*", "%1"), OFFICER, RAID, RAID_LEADER, RAID_WARNING, BCM.CUSTOMCHANNEL}
 			for i=1, #tbl do
 				info.text = tbl[i]
 				info.value = i
@@ -331,7 +337,7 @@ BCM.modules[#BCM.modules+1] = function()
 		chanNameInput:SetMaxLetters(10)
 		chanNameInput:EnableMouse(false)
 		chanNameInput:SetScript("OnTextChanged", function(frame, changed)
-			if changed then bcmDB.replacements[frame.value] = frame:GetText() end
+			if changed then bcmDB.shortNames[frame.value] = frame:GetText() end
 		end)
 		chanNameInput:SetScript("OnEnterPressed", chanNameInput:GetScript("OnEscapePressed"))
 	end
@@ -461,8 +467,8 @@ BCM.modules[#BCM.modules+1] = function()
 					local cF = _G[format("%s%d", "ChatFrame", i)]
 					local cFE = _G[format("%s%d%s", "ChatFrame", i, "EditBox")]
 					local _, size = cF:GetFont()
-					cF:SetFont(v.value, bcmDB.fontsize or size, bcmDB.fontflag)
-					cFE:SetFont(v.value, bcmDB.fontsize or size, bcmDB.fontflag)
+					cF:SetFont(v.value, bcmDB.fontsize or size, bcmDB.fontflag or "")
+					cFE:SetFont(v.value, bcmDB.fontsize or size, bcmDB.fontflag or "")
 				end
 			end
 			local lsm = LibStub and LibStub("LibSharedMedia-3.0", true)
@@ -505,14 +511,15 @@ BCM.modules[#BCM.modules+1] = function()
 		fontSizeSlider:SetValueStep(1)
 		fontSizeSlider:SetWidth(110)
 		fontSizeSlider:SetScript("OnValueChanged", function(_, v)
+			v = floor(v)
 			BCM_FontSizeText:SetFormattedText(FONT_SIZE.." "..FONT_SIZE_TEMPLATE, v)
 			bcmDB.fontsize = v
 			for i=1, BCM.chatFrames do
 				local cF = _G[format("%s%d", "ChatFrame", i)]
 				local cFE = _G[format("%s%d%s", "ChatFrame", i, "EditBox")]
 				local fName = cF:GetFont()
-				cF:SetFont(bcmDB.fontname or fName, v, bcmDB.fontflag)
-				cFE:SetFont(bcmDB.fontname or fName, v, bcmDB.fontflag)
+				cF:SetFont(bcmDB.fontname or fName, v, bcmDB.fontflag or "")
+				cFE:SetFont(bcmDB.fontname or fName, v, bcmDB.fontflag or "")
 			end
 		end)
 		BCM_FontSizeHigh:SetText(20)
@@ -527,7 +534,7 @@ BCM.modules[#BCM.modules+1] = function()
 		fontFlag.initialize = function()
 			local selected, info = BCM_FontFlagText:GetText(), wipe(BCM.info)
 			info.func = function(v) BCM_FontFlagText:SetText(v:GetText())
-				if v.value == NONE then 
+				if v.value == NONE then
 					bcmDB.fontflag = nil
 				else
 					bcmDB.fontflag = v.value
@@ -536,8 +543,8 @@ BCM.modules[#BCM.modules+1] = function()
 					local cF = _G[format("%s%d", "ChatFrame", i)]
 					local cFE = _G[format("%s%d%s", "ChatFrame", i, "EditBox")]
 					local fName, size = cF:GetFont()
-					cF:SetFont(bcmDB.fontname or fName, bcmDB.fontsize or size, bcmDB.fontflag)
-					cFE:SetFont(bcmDB.fontname or fName, bcmDB.fontsize or size, bcmDB.fontflag)
+					cF:SetFont(bcmDB.fontname or fName, bcmDB.fontsize or size, bcmDB.fontflag or "")
+					cFE:SetFont(bcmDB.fontname or fName, bcmDB.fontsize or size, bcmDB.fontflag or "")
 				end
 			end
 			local tbl = {NONE, "OUTLINE", "THICKOUTLINE", "MONOCHROME"}
@@ -592,6 +599,7 @@ BCM.modules[#BCM.modules+1] = function()
 		chatFrameSlider:SetValue(1)
 		chatFrameSlider:SetValueStep(1)
 		chatFrameSlider:SetScript("OnValueChanged", function(_, v)
+			v = floor(v)
 			local cF = ("ChatFrame%d"):format(v)
 			BCM_History_GetText:SetFormattedText("%s: %s", cF, _G[cF].name)
 			BCM_History_Set:SetValue(bcmDB.lines and bcmDB.lines[cF] or _G[cF]:GetMaxLines())
@@ -608,6 +616,7 @@ BCM.modules[#BCM.modules+1] = function()
 		linesSetSlider:SetValueStep(10)
 		linesSetSlider:SetWidth(200)
 		linesSetSlider:SetScript("OnValueChanged", function(_, v)
+			v = floor(v)
 			BCM_History_SetText:SetFormattedText("%s: %d", HISTORY, v)
 			local cF = ("ChatFrame%d"):format(BCM_History_Get:GetValue())
 			if v == _G[cF]:GetMaxLines() then return end -- No value changed, don't save anything
@@ -632,6 +641,7 @@ BCM.modules[#BCM.modules+1] = function()
 		chatFrameSlider:SetValue(1)
 		chatFrameSlider:SetValueStep(1)
 		chatFrameSlider:SetScript("OnValueChanged", function(_, v)
+			v = floor(v)
 			local cF = ("ChatFrame%d"):format(v)
 			BCM_Justify_GetText:SetFormattedText("%s: %s", cF, _G[cF].name)
 			BCM_Justify_Set:SetValue(bcmDB.justify and ((bcmDB.justify[cF] == "RIGHT" and 3) or (bcmDB.justify[cF] == "CENTER" and 2)) or 1)
@@ -647,6 +657,7 @@ BCM.modules[#BCM.modules+1] = function()
 		justifyPosition:SetValue(bcmDB.justify and ((bcmDB.justify.ChatFrame1 == "RIGHT" and 3) or (bcmDB.justify.ChatFrame1 == "CENTER" and 2)) or 1)
 		justifyPosition:SetValueStep(1)
 		justifyPosition:SetScript("OnValueChanged", function(_, v)
+			v = floor(v)
 			if not bcmDB.justify then bcmDB.justify = {} end
 			local cF = ("ChatFrame%d"):format(BCM_Justify_Get:GetValue())
 			local justify = v == 1 and "LEFT" or v == 2 and "CENTER" or v == 3 and "RIGHT"
