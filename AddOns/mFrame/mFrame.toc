@@ -5,4 +5,7 @@
 ## IconTexture: 133004
 ## Edits and some changed behavior for various frames
 
+login.lua
 combathide.lua
+minimap.lua
+## map.lua

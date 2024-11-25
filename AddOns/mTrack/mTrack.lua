@@ -32,6 +32,11 @@ local buffIndex = {
 
     -- Both
     "Bloodlust",
+
+    -- DK
+    "Death's Advance",
+    "Wraith Walk",
+    "Dark Transformation",
 }
 
 -- DK Purple { 163/255, 48/255, 201/255 }
@@ -97,7 +102,6 @@ local trackedBuffs = {
         isTimer = true
     },
 
-    
 
     -- Shaman
 
@@ -140,6 +144,23 @@ local trackedBuffs = {
         color = { 199/255, 156/255, 110/255 }, -- Brown
         isTimer = true
     },
+
+    -- DK
+    ["Death's Advance"] = {
+        color = { 148/255, 130/255, 201/255 }, -- Purple
+        isTimer = true
+    },
+
+    ["Wraith Walk"] = {
+        color = { 255/255, 255/255, 255/255 }, -- White
+        isTimer = true
+    },
+
+    ["Dark Transformation"] = {
+        color = { 171/255, 212/255, 115/255 }, -- Green
+        isTimer = true
+    },
+
 }
 
 --backdrop table
@@ -247,6 +268,15 @@ end
 local function getBuff(buff, info)
     -- Just iterate through all buffs on player and match the name
     for i=1,40,1 do
+        local aura = C_UnitAuras.GetBuffDataByIndex("pet", i)
+        if aura then
+            if aura.name == buff then
+                return aura.name, aura.duration, aura.expirationTime, aura.charges
+            end
+        end
+    end
+
+    for i=1,40,1 do
         local aura = C_UnitAuras.GetBuffDataByIndex("player", i)
         if aura then
             if aura.name == buff then
@@ -283,7 +313,7 @@ local function updateAuras()
                 info.bar:SetValue(value1)
                 --info.bar.spellValue:SetFormattedText(info.textValue(value1))
             end
-            
+
         elseif info.active then -- destroy frame
             info.active = false
             trackedTimers[buff] = nil
@@ -299,3 +329,4 @@ end
 
 auraUpdater:SetScript("OnEvent", function () updateAuras() end)
 auraUpdater:RegisterEvent("UNIT_AURA", "player")
+auraUpdater:RegisterEvent("UNIT_AURA", "pet")

@@ -1,0 +1,9 @@
+## Interface: 110005
+## Title: mUtil
+## SavedVariables: mCharData
+## Author: Mattavist, matavist@gmail.com
+## IconTexture: 134070
+
+core.lua
+gold.lua
+openmail.lua

@@ -1,7 +1,0 @@
-## Interface: 110005
-## Title: mChar
-## SavedVariables: mCharData
-## Author: Mattavist, matavist@gmail.com
-## IconTexture: 133784
-
-mChar.lua

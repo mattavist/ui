@@ -1,8 +1,0 @@
-## Interface: 110005
-## Title: mMap
-## IconTexture: 1064187
-##
-## Author: Mattavist, matavist@gmail.com
-
-mMinimap.lua
-mWorldMap.lua
