@@ -59,8 +59,8 @@ end
 local function expansion()
 	ExpansionLandingPageMinimapButton:Hide()
 	ExpansionLandingPageMinimapButton:ClearAllPoints()
+	ExpansionLandingPageMinimapButton:SetScale(.75)
 	ExpansionLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", -4, 8)
-	ExpansionLandingPageMinimapButton:SetScale(1)
 	ExpansionLandingPageMinimapButton:Show()
 end
 

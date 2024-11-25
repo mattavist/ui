@@ -171,6 +171,7 @@ function f:OnEnter()
 
     setFrameMover(framesToMove["QueueStatusButton"])
     QueueStatusButton:Show()
+    QueueStatusButton:Hide()
 
     AlertFrame:ClearAllPoints()
     AlertFrame:SetPoint("BOTTOM", 0, 350)
