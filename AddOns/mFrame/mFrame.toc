@@ -6,7 +6,9 @@
 ## Edits and some changed behavior for various frames
 
 login.lua
+## bufficon.lua  Doesn't work
 combathide.lua
+mousehide.lua
 minimap.lua
 ## map.lua
 reposition.lua

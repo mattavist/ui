@@ -1,6 +1,5 @@
 local mediaPath = "Interface\\media\\"
 
--- Small tweaks and register hider/shower
 local addon = CreateFrame("Frame", nil, UIParent)
 addon:RegisterEvent("PLAYER_ENTERING_WORLD")
 addon:SetScript("OnEvent", function(self, event, unit, ...)

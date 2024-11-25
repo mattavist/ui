@@ -91,6 +91,12 @@ local function setFrameMover(frame)
     frame.hooked = true
     local moving
 
+    -- TODO: CONSIDER USING THIS TO PREVENT SUBSEQUENT MOVES
+    -- TODO: INSTEAD OF HOOKING A FUNC?
+    -- local dummy = function() end
+    -- frame.Show = dummy
+
+
     hooksecurefunc(frame.name, frame.func, function(self)
         if moving then
             return

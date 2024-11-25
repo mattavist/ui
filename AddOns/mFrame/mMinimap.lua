@@ -28,15 +28,10 @@ local function hideElements()
 	local dummy = function() end
 
 	local frames = {
-	    --MiniMapMeetingStoneBorder,
 	    TimeManagerClockButton,
 	    MiniMapTrackingBackground,
-	    --MiniMapMeetingStoneFrame,
-	    --MiniMapBattlefieldBorder,
-	    --MiniMapVoiceChatFrame,
 	    MiniMapWorldMapButton,
 	    MinimapZoneTextButton,
-	    --MinimapToggleButton,
 	    MiniMapMailBorder,
 	    MinimapBorderTop,
 	    MinimapNorthTag,
@@ -61,14 +56,6 @@ local function tracking()
 	MinimapCluster.Tracking:SetScale(1.5)
 end
 
-local function garrison()
-	GarrisonLandingPageMinimapButton:SetAlpha(0)
-	GarrisonLandingPageMinimapButton:ClearAllPoints()
-	GarrisonLandingPageMinimapButton:SetPoint("TOPRIGHT", Minimap)
-	GarrisonLandingPageMinimapButton:SetScale(1)
-	GarrisonLandingPageMinimapButton:Show()
-end
-
 local function expansion()
 	ExpansionLandingPageMinimapButton:Hide()
 	ExpansionLandingPageMinimapButton:ClearAllPoints()
@@ -80,7 +67,6 @@ end
 local function mail()
 	MinimapCluster.IndicatorFrame:ClearAllPoints()
 	MinimapCluster.IndicatorFrame:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -5, -5)
-	--MinimapCluster.IndicatorFrame:SetTexture("Interface\\AddOns\\mTweak\\media\\mail")
 end
 
 local map = CreateFrame("Frame", nil, UIParent)
@@ -90,7 +76,6 @@ map:SetScript("OnEvent", function()
 	enableMouse()
 	hideElements()
 	tracking()
-	--garrison()
 	expansion()
 	mail()
 end)
@@ -105,8 +90,5 @@ Minimap:HookScript("OnLeave", function()
 	if not Minimap:IsMouseOver() then
 		MinimapCluster.Tracking:Hide()
 		ExpansionLandingPageMinimapButton:Hide()
-    		QueueStatusButton:ClearAllPoints()
-    		QueueStatusButton:SetPoint("CENTER", Minimap, "BOTTOMLEFT", 0, 0)
-		--GarrisonLandingPageMinimapButton:SetAlpha(0)
 	end
 end)

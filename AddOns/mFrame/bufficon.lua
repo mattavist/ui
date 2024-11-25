@@ -12,11 +12,10 @@ end
 
 function f:OnEvent(event, addon)
     hooksecurefunc("CreateFrame", function(frameType, name, parent, template)
-        if parent then
-            ChatFrame1:AddMessage(parent)
-        end
-        if (template == "BuffButtonTemplate") then
-            --ChatFrame1:AddMessage("This is the message "..variable)
+        ChatFrame1:AddMessage(template)
+
+        if (template == "AuraButtonTemplate") then
+            ChatFrame1:AddMessage("Redrawing some buff ")
             local buff = _G[name]
             local icon = _G[name.."Icon"]
             if buff then
