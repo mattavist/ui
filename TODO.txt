@@ -1,5 +1,3 @@
-* Make R/L Multibars show and hide when mouse overing
-* Move things into reposition.lua
 * Clean up mUtil commands
 * Make world map work
 * Make quest log bigger
