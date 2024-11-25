@@ -41,26 +41,26 @@ Locales\ptBR.lua
 BasicCore.lua
 BasicConfig.lua
 
-history.lua
+## history.lua
 
-AltInvite.lua
-autolog.lua
-bnet.lua
+## AltInvite.lua
+## autolog.lua
+## bnet.lua
 buttons.lua
-channelnames.lua
+## channelnames.lua
 chatcopy.lua
 editbox.lua
 fade.lua
-font.lua
-gmotd.lua
-highlight.lua
-justify.lua
-playernames.lua
+## font.lua
+## gmotd.lua
+## highlight.lua
+## justify.lua
+## playernames.lua
 resize.lua
 scrolldown.lua
-smartgroup.lua
-sticky.lua
-telltarget.lua
-timestamp.lua
-urlcopy.lua
+## smartgroup.lua
+## sticky.lua
+## telltarget.lua
+## timestamp.lua
+## urlcopy.lua
 

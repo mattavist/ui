@@ -24,4 +24,8 @@ addon:SetScript("OnEvent", function(self, event, unit, ...)
     ChatFrame4:SetHeight(250)
     ChatFrame4:SetClampRectInsets(0, 0, 0, 0)
     ChatFrame4:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -12, 12)
+
+
+    QueueStatusButton:ClearAllPoints()
+    QueueStatusButton:SetPoint("CENTER", Minimap, "BOTTOMLEFT", 0, 0)
 end)

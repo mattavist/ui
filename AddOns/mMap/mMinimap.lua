@@ -56,8 +56,9 @@ end
 local function tracking()
 	MinimapCluster.Tracking:Hide()
 	MinimapCluster.Tracking:ClearAllPoints()
-	MinimapCluster.Tracking:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 5, -5)
-	MinimapCluster.Tracking:SetScale(1)
+	MinimapCluster.Tracking:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 3, -3)
+	MinimapCluster.Tracking:SetFrameLevel(Minimap:GetFrameLevel() + 1)
+	MinimapCluster.Tracking:SetScale(1.5)
 end
 
 local function garrison()
@@ -68,9 +69,17 @@ local function garrison()
 	GarrisonLandingPageMinimapButton:Show()
 end
 
+local function expansion()
+	ExpansionLandingPageMinimapButton:Hide()
+	ExpansionLandingPageMinimapButton:ClearAllPoints()
+	ExpansionLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", -4, 8)
+	ExpansionLandingPageMinimapButton:SetScale(1)
+	ExpansionLandingPageMinimapButton:Show()
+end
+
 local function mail()
 	MinimapCluster.IndicatorFrame:ClearAllPoints()
-	MinimapCluster.IndicatorFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMLEFT", 5, 5)
+	MinimapCluster.IndicatorFrame:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -5, -5)
 	--MinimapCluster.IndicatorFrame:SetTexture("Interface\\AddOns\\mTweak\\media\\mail")
 end
 
@@ -82,19 +91,22 @@ map:SetScript("OnEvent", function()
 	hideElements()
 	tracking()
 	--garrison()
+	expansion()
 	mail()
 end)
 
 Minimap:HookScript("OnEnter", function()
 	MinimapCluster.Tracking:Show()
-	--MiniMapTrackingIcon:SetAlpha(1)
+	ExpansionLandingPageMinimapButton:Show()
 	--GarrisonLandingPageMinimapButton:SetAlpha(1)
 end)
 
 Minimap:HookScript("OnLeave", function()
 	if not Minimap:IsMouseOver() then
 		MinimapCluster.Tracking:Hide()
-		--MiniMapTrackingIcon:SetAlpha(0)
+		ExpansionLandingPageMinimapButton:Hide()
+    		QueueStatusButton:ClearAllPoints()
+    		QueueStatusButton:SetPoint("CENTER", Minimap, "BOTTOMLEFT", 0, 0)
 		--GarrisonLandingPageMinimapButton:SetAlpha(0)
 	end
 end)

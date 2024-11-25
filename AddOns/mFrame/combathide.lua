@@ -9,7 +9,7 @@ local function buttonAlphaHigh()
         if i < 13 then
             button = _G["ActionButton"..i]
         else
-            button = _G["MultiBarBottomLeftButton"..i-12]
+            button = _G["MultiBarBottomRightButton"..i-24]
             i = i + 48
         end
         button:SetAlpha(1)
@@ -17,8 +17,9 @@ local function buttonAlphaHigh()
 end
 
 local function hideAll()
-    MultiBarBottomLeft:SetAlpha(0)
     mMainMenuBar:SetAlpha(0)
+    MultiBarBottomLeft:SetAlpha(0)
+    MultiBarBottomRight:SetAlpha(0)
     BuffFrame:SetAlpha(0)
     if mGuideFrame then mGuideFrame:SetAlpha(0) end
     if UnitHealth("player") == UnitHealthMax("player") then
@@ -27,12 +28,13 @@ local function hideAll()
 end
 
 local function showAll()
-    MultiBarBottomLeft:SetAlpha(1)
-    mPlayerFrame:SetAlpha(1)
     mMainMenuBar:SetAlpha(1)
+    MultiBarBottomLeft:SetAlpha(1)
+    MultiBarBottomRight:SetAlpha(1)
+    mPlayerFrame:SetAlpha(1)
     BuffFrame:SetAlpha(1)
     if mGuideFrame then mGuideFrame:SetAlpha(1) end
-    buttonAlphaHigh()
+    --buttonAlphaHigh()
     ChatFrame1:ClearAllPoints()
     ChatFrame1:SetWidth(615)
     ChatFrame1:SetHeight(250)
