@@ -25,6 +25,7 @@ local function FS_SetFont()
 	COMBAT_TEXT_CRIT_MINHEIGHT = fontHeight - 2
 	local _, _, fFlags = CombatTextFont:GetFont()
 	CombatTextFont:SetFont(fontName, fontHeight, fFlags)
+	CombatTextFontOutline:SetFont(fontName, fontHeight, fFlags)
 end
 FS_SetFont()
 
