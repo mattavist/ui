@@ -59,7 +59,8 @@ end
 local function expansion()
 	ExpansionLandingPageMinimapButton:Hide()
 	ExpansionLandingPageMinimapButton:ClearAllPoints()
-	ExpansionLandingPageMinimapButton:SetScale(.75)
+	ExpansionLandingPageMinimapButton:SetHeight(40)
+	ExpansionLandingPageMinimapButton:SetWidth(40)
 	ExpansionLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", -4, 8)
 end
 
@@ -81,9 +82,7 @@ end)
 
 Minimap:HookScript("OnEnter", function()
 	MinimapCluster.Tracking:Show()
-	ExpansionLandingPageMinimapButton:SetScale(.75)
 	ExpansionLandingPageMinimapButton:Show()
-	--GarrisonLandingPageMinimapButton:SetAlpha(1)
 end)
 
 Minimap:HookScript("OnLeave", function()
