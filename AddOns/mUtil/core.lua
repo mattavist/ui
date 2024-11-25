@@ -16,7 +16,7 @@ SLASH_RCSLASH1 = "/rc"
 SetCVar("screenshotQuality", 6)
 
 ---------------------------------------------------- Not Sure
-local fontName = "Interface\\SharedMedia\\fonts\\combatfont.ttf"
+local fontName = "Interface\\SharedMedia\\fonts\\combat_font.ttf"
 local fontHeight = 24
 local function FS_SetFont()
 	DAMAGE_TEXT_FONT = fontName

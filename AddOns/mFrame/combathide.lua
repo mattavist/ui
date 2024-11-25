@@ -35,11 +35,11 @@ local function showAll()
     BuffFrame:SetAlpha(1)
     if mGuideFrame then mGuideFrame:SetAlpha(1) end
     --buttonAlphaHigh()
-    ChatFrame1:ClearAllPoints()
-    ChatFrame1:SetWidth(615)
-    ChatFrame1:SetHeight(250)
-    ChatFrame1:SetClampRectInsets(0, 0, 0, 0)
-    ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 12, 12)
+    -- ChatFrame1:ClearAllPoints()
+    -- ChatFrame1:SetWidth(615)
+    -- ChatFrame1:SetHeight(250)
+    -- ChatFrame1:SetClampRectInsets(0, 0, 0, 0)
+    -- ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 12, 12)
 end
 
 -- Hides when exiting combat or stopping spell cast or losing target when ooc

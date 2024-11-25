@@ -9,3 +9,4 @@ login.lua
 combathide.lua
 minimap.lua
 ## map.lua
+reposition.lua
