@@ -104,7 +104,6 @@ local function setFrameMover(frame)
 
         moving = true
 
-        ChatFrame1:AddMessage("Moving "..frame.name:GetName().." into proper place for "..frame.func)
         frame.name:ClearAllPoints()
         frame.name:SetPoint(frame.frameAnchor, frame.parent, frame.parentAnchor, frame.x, frame.y)
         if frame.height then
