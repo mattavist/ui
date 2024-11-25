@@ -16,14 +16,14 @@ SLASH_RCSLASH1 = "/rc"
 SetCVar("screenshotQuality", 6)
 
 ---------------------------------------------------- Not Sure
-local fontName = "Interface\\AddOns\\SharedMedia\\fonts\\combatfont.ttf"
+local fontName = "Interface\\AddOns\\SharedMedia\\fonts\\Input.ttf"
 local fontHeight = 24
 local function FS_SetFont()
 	DAMAGE_TEXT_FONT = fontName
 	COMBAT_TEXT_HEIGHT = fontHeight
 	COMBAT_TEXT_CRIT_MAXHEIGHT = fontHeight + 2
 	COMBAT_TEXT_CRIT_MINHEIGHT = fontHeight - 2
-	local fName, fHeight, fFlags = CombatTextFont:GetFont()
+	local _, _, fFlags = CombatTextFont:GetFont()
 	CombatTextFont:SetFont(fontName, fontHeight, fFlags)
 end
 FS_SetFont()
