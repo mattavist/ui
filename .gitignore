@@ -1,7 +1,4 @@
 /*
-/Fonts/backup
-*.slug
-!/.gitignore
+!*.ttf
 !/Interface
-!/Fonts/*.ttf
 
