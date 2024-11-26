@@ -6,6 +6,7 @@ local function hideAll()
     MainMenuBar:SetAlpha(0)
     MultiBarBottomLeft:SetAlpha(0)
     MultiBarBottomRight:SetAlpha(0)
+    MultiBar7:SetAlpha(0)
     BuffFrame:SetAlpha(0)
     if mGuideFrame then mGuideFrame:SetAlpha(0) end
     if UnitHealth("player") == UnitHealthMax("player") then
@@ -17,6 +18,7 @@ local function showAll()
     MainMenuBar:SetAlpha(1)
     MultiBarBottomLeft:SetAlpha(1)
     MultiBarBottomRight:SetAlpha(1)
+    MultiBar7:SetAlpha(0)
     mPlayerFrame:SetAlpha(1)
     BuffFrame:SetAlpha(1)
     if mGuideFrame then mGuideFrame:SetAlpha(1) end

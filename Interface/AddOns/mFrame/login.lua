@@ -9,4 +9,6 @@ addon:SetScript("OnEvent", function(self, event, unit, ...)
     ChatFrame2:SetFont(mediaPath.."Asap-Bold.ttf", 15, "OUTLINE")
     ChatFrame3:SetFont(mediaPath.."Asap-Bold.ttf", 15, "OUTLINE")
     ChatFrame4:SetFont(mediaPath.."Asap-Bold.ttf", 15, "OUTLINE")
+
+    PetActionBar:SetAlpha(0)
 end)
