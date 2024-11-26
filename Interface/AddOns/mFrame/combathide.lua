@@ -18,7 +18,7 @@ local function showAll()
     MainMenuBar:SetAlpha(1)
     MultiBarBottomLeft:SetAlpha(1)
     MultiBarBottomRight:SetAlpha(1)
-    MultiBar7:SetAlpha(0)
+    MultiBar7:SetAlpha(1)
     mPlayerFrame:SetAlpha(1)
     BuffFrame:SetAlpha(1)
     if mGuideFrame then mGuideFrame:SetAlpha(1) end
