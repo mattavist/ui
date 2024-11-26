@@ -324,6 +324,10 @@
       styleActionButton(_G["MultiBarBottomRightButton"..i])
       styleActionButton(_G["MultiBarRightButton"..i])
       styleActionButton(_G["MultiBarLeftButton"..i])
+      styleActionButton(_G["MultiBar5Button"..i])
+      styleActionButton(_G["MultiBar6Button"..i])
+      styleActionButton(_G["MultiBar7Button"..i])
+      styleActionButton(_G["PetActionButton"..i])
     end
     for i = 1, 6 do
       styleActionButton(_G["OverrideActionBarButton"..i])
