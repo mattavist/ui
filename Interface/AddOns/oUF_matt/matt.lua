@@ -1,14 +1,9 @@
+local _, ns = ...
+local api, cfg, media = ns.api, ns.cfg, ns.media
+
 local debug = function(msg)
 	DEFAULT_CHAT_FRAME:AddMessage(msg)
 end
-
-local cfg = {
-	FrameSize = { 150, 50 },
-	FrameScale = 1.0,
-	InProgress = "target",
-}
-
-
 
 local generic = function(self)
 	local Health = CreateFrame('StatusBar', nil, self)
@@ -16,6 +11,9 @@ local generic = function(self)
 	Health:SetPoint('TOP')
 	Health:SetPoint('LEFT')
 	Health:SetPoint('RIGHT')
+	Health:SetStatusBarTexture(media.textures.status_texture)
+	Health:SetStatusBarColor(unpack(cfg.colors.health))
+	Health:GetStatusBarTexture():SetHorizTile(false)
 
 	-- Add a background
 	local Background = Health:CreateTexture(nil, 'BACKGROUND')
@@ -37,6 +35,8 @@ local generic = function(self)
 	self.Health = Health
 
 	-- Apply Sizing
+	api:SetBackdrop(self, 2, 2, 2, 2)
+	-- api:CreateDropShadow(self, 6, 6)
 	self:SetSize(unpack(cfg.FrameSize))
 	self:SetScale(cfg.FrameScale)
 end

@@ -4,4 +4,8 @@
 ## Version: 11.0.0
 ## Dependencies: oUF
 
+shared.lua
+config.lua
+media/media.lua
+api.lua
 matt.lua
