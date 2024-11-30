@@ -35,7 +35,8 @@ function tags:CreateNameString(self, point, width)
 	-- if not self.Health or not self.cfg.name.show then return end
 
 	local name = CreateFontstring(self.Health)
-	name:SetPoint(point, self, "TOP" .. point, 4, 0)
+	if point == "LEFT" then x = 4 else x = -4 end
+	name:SetPoint(point, self, "TOP" .. point, x, 0)
 	name:SetJustifyH(point)
 	name:SetWidth(width)
 	name:SetHeight(fontSize)
@@ -47,7 +48,8 @@ function tags:CreateHPPercString(self, point, width)
 	-- if not self.Health or not self.cfg.name.show then return end
 
 	local name = CreateFontstring(self.Health)
-	name:SetPoint(point, self, "TOP" .. point, -4, 0)
+	if point == "LEFT" then x = 4 else x = -4 end
+	name:SetPoint(point, self, "TOP" .. point, x, 0)
 	name:SetJustifyH(point)
 	name:SetWidth(width)
 	name:SetHeight(fontSize)

@@ -1,8 +1,9 @@
 local mediaPath = "Interface\\media\\"
 
-local mPlayerFrame = oUF_LumenPlayer or PlayerFrame
 
 local function hideAll()
+    local mPlayerFrame = oUF_mattPlayer or PlayerFrame
+    local mPetFrame = oUF_mattPet or PetFrame
     MainMenuBar:SetAlpha(0)
     MultiBarBottomLeft:SetAlpha(0)
     MultiBarBottomRight:SetAlpha(0)
@@ -11,15 +12,19 @@ local function hideAll()
     if mGuideFrame then mGuideFrame:SetAlpha(0) end
     if UnitHealth("player") == UnitHealthMax("player") then
         mPlayerFrame:SetAlpha(0)
+        mPetFrame:SetAlpha(0)
     end
 end
 
 local function showAll()
+    local mPlayerFrame = oUF_mattPlayer or PlayerFrame
+    local mPetFrame = oUF_mattPet or PetFrame
     MainMenuBar:SetAlpha(1)
     MultiBarBottomLeft:SetAlpha(1)
     MultiBarBottomRight:SetAlpha(1)
     MultiBar7:SetAlpha(1)
     mPlayerFrame:SetAlpha(1)
+    mPetFrame:SetAlpha(1)
     BuffFrame:SetAlpha(1)
     if mGuideFrame then mGuideFrame:SetAlpha(1) end
 end
@@ -43,7 +48,10 @@ shower:SetScript("OnEvent", function(self, event, unit, ...)
         return
     elseif event == "UNIT_HEALTH" then
         if unit == "player" and UnitHealth("player") < UnitHealthMax("player") then
+            local mPlayerFrame = oUF_mattPlayer or PlayerFrame
+            local mPetFrame = oUF_mattPet or PetFrame
             mPlayerFrame:SetAlpha(1)
+            mPetFrame:SetAlpha(1)
         end
     else
         showAll()

@@ -2,7 +2,6 @@ local _, ns = ...
 local cfg = ns.cfg
 
 
-cfg.InProgress = "pet"
 
 cfg.FrameSize = { 200, 50 }
 cfg.FrameScale = 1.0
@@ -11,36 +10,78 @@ cfg.FrameInset = 2
 cfg.HealthHeight = 20
 cfg.PowerHeight = 5
 cfg.HealthPowerMargin = cfg.FrameInset
-cfg.FrameHeight = cfg.HealthHeight + cfg.PowerHeight + cfg.HealthPowerMargin
+cfg.FullFrameHeight = cfg.HealthHeight + cfg.PowerHeight + cfg.HealthPowerMargin
+
+cfg.PrimaryFrameWidth = 300
+cfg.SecondaryFrameWidth = 150
+cfg.PrimaryFrameX = 50
+cfg.PrimaryFrameY = 225
+cfg.SecondaryFrameX = cfg.PrimaryFrameX + cfg.PrimaryFrameWidth
+cfg.SecondaryFrameY = cfg.PrimaryFrameY - 50
+
+cfg.player = {
+	Position = {
+		"RIGHT",
+		UIParent,
+		"BOTTOM",
+		-cfg.PrimaryFrameX,
+		cfg.PrimaryFrameY,
+	},
+	FrameSize = { cfg.PrimaryFrameWidth, cfg.FullFrameHeight },
+	FrameScale = 1.0,
+	HealthHeight = cfg.HealthHeight,
+	PowerHeight = cfg.PowerHeight,
+	NameSide = "LEFT",
+	HPSide = "RIGHT",
+}
+
+cfg.target = {
+	Position = {
+		"LEFT",
+		UIParent,
+		"BOTTOM",
+		cfg.PrimaryFrameX,
+		cfg.PrimaryFrameY,
+	},
+	FrameSize = { cfg.PrimaryFrameWidth, cfg.FullFrameHeight },
+	FrameScale = 1.0,
+	HealthHeight = cfg.HealthHeight,
+	PowerHeight = cfg.PowerHeight,
+	NameSide = "RIGHT",
+	HPSide = "LEFT",
+}
 
 cfg.pet = {
 	Position = {
 		"LEFT",
 		UIParent,
-		"LEFT",
-		50,
-		-250,
+		"BOTTOM",
+		-cfg.SecondaryFrameX,
+		cfg.SecondaryFrameY,
 	},
-	FrameSize = { 400, cfg.HealthHeight },
+	FrameSize = { cfg.SecondaryFrameWidth, cfg.HealthHeight },
 	FrameScale = 1.0,
 	HealthHeight = cfg.HealthHeight,
 	PowerHeight = 0,
+	NameSide = "LEFT",
+	HPSide = "RIGHT",
 }
 
-cfg.target = {
+cfg.targettarget = {
 	Position = {
-		"CENTER",
+		"RIGHT",
 		UIParent,
-		"CENTER",
-		0,
-		300,
+		"BOTTOM",
+		cfg.SecondaryFrameX,
+		cfg.SecondaryFrameY,
 	},
-	FrameSize = { 400, cfg.FrameHeight },
+	FrameSize = { cfg.SecondaryFrameWidth, cfg.HealthHeight },
 	FrameScale = 1.0,
 	HealthHeight = cfg.HealthHeight,
-	PowerHeight = cfg.PowerHeight,
+	PowerHeight = 0,
+	NameSide = "RIGHT",
+	HPSide = "LEFT",
 }
-
 
 cfg.colors = {
 	backdrop = { 0, 0, 0, 0.9 }, -- Backdrop Color (Some frames might not be affected)

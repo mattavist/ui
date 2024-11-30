@@ -12,10 +12,10 @@ function statusbar:createHealth(self, unit)
 	Health:GetStatusBarTexture():SetHorizTile(false)
 
 	-- Add a background
-	local Background = Health:CreateTexture(nil, 'BACKGROUND')
-	Background:SetAllPoints()
-	Background:SetTexture(1, 1, 1, .5)
-	Background:SetTexture(media.textures.texture_bg)
+	-- local Background = Health:CreateTexture(nil, 'BACKGROUND')
+	-- Background:SetAllPoints()
+	-- Background:SetTexture(1, 1, 1, .5)
+	-- Background:SetTexture(media.textures.texture_bg)
 
 	-- Options
 	Health.colorTapping = true
@@ -31,10 +31,10 @@ function statusbar:createHealth(self, unit)
 	color = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
 
 	-- Make the background darker.
-	Background.multiplier = .5
+	-- Background.multiplier = .5
 
 	-- Register it with oUF
-	Health.bg = Background
+	-- Health.bg = Background
 	self.Health = Health
 end
 
@@ -50,11 +50,11 @@ function statusbar:createPower(self, unit)
 	Power:SetStatusBarTexture(media.textures.status_texture)
 	-- Power:SetStatusBarColor(unpack(cfg.colors.health))
 	Power:GetStatusBarTexture():SetHorizTile(false)
-
-	-- Add a background
-	local Background = Power:CreateTexture(nil, 'BACKGROUND')
-	Background:SetAllPoints(Power)
-	Background:SetTexture(media.textures.texture_bg)
+	--
+	-- -- Add a background
+	-- local Background = Power:CreateTexture(nil, 'BACKGROUND')
+	-- Background:SetAllPoints(Power)
+	-- Background:SetTexture(media.textures.texture_bg)
 
 	-- Options
 	Power.frequentUpdates = true
@@ -65,10 +65,10 @@ function statusbar:createPower(self, unit)
 	Power.colorReaction = false
 
 	-- Make the background darker.
-	Background.multiplier = .5
+	-- Background.multiplier = .5
 
 	-- Register it with oUF
-	Power.bg = Background
+	-- Power.bg = Background
 	self.Power = Power
 end
 
