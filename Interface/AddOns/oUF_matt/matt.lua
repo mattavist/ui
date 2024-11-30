@@ -5,6 +5,58 @@ local debug = function(msg)
 	DEFAULT_CHAT_FRAME:AddMessage(msg)
 end
 
+function api:CreateFontstring(frame, font, size, outline)
+    -- local Text = Castbar:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+    local fs = frame:CreateFontString(nil, "OVERLAY")
+    fs:SetFont(font, size, outline)
+    fs:SetShadowColor(0, 0, 0, 1)
+    fs:SetShadowOffset(1, -1)
+    return fs
+end
+
+oUF.Tags.Methods['matt:name'] = function(unit, realUnit)
+	return UnitName(unit or realUnit)
+end
+
+oUF.Tags.Methods['matt:hpperc'] = function(unit)
+	local min, max = UnitHealth(unit), UnitHealthMax(unit)
+	local percent = floor((min / max) * 100 + 0.5)
+
+	if percent < 100 and percent > 0 then
+	    return percent .. "%"
+	else
+	    return ""
+	end
+end
+
+-- Need to create the event right after defining its func
+oUF.Tags.Events['matt:name'] = 'UNIT_NAME_UPDATE UNIT_CONNECTION UNIT_ENTERING_VEHICLE UNIT_EXITING_VEHICLE'
+oUF.Tags.Events['matt:hpperc'] = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE'
+
+function CreateNameString(self, font, size, outline, point, width)
+    -- if not self.Health or not self.cfg.name.show then return end
+
+    local name = api:CreateFontstring(self.Health, font, size, outline)
+    name:SetPoint(point, self, "TOP"..point, 4, 0)
+    name:SetJustifyH(point)
+    name:SetWidth(width)
+    name:SetHeight(size)
+    self:Tag(name, "[matt:name]")
+    self.Name = name
+end
+
+function CreateHPPercString(self, font, size, outline, point, width)
+    -- if not self.Health or not self.cfg.name.show then return end
+
+    local name = api:CreateFontstring(self.Health, font, size, outline)
+    name:SetPoint(point, self, "TOP"..point, -4, 0)
+    name:SetJustifyH(point)
+    name:SetWidth(width)
+    name:SetHeight(size)
+    self:Tag(name, "[matt:hpperc]")
+    self.Name = name
+end
+
 local createHealth = function(self, unit)
 	local Health = CreateFrame('StatusBar', nil, self)
 	Health:SetHeight(cfg[unit].HealthHeight)
@@ -70,8 +122,19 @@ end
 
 
 local generic = function(self, unit)
+	self:SetSize(unpack(cfg[unit].FrameSize))
+	api:SetBackdrop(self, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset)
+	self:RegisterForClicks("AnyDown")
 	createHealth(self, unit)
 	createPower(self, unit)
+
+	local font = "Fonts\\FRIZQT__.TTF"
+	CreateNameString(self, font, 20, "THINOUTLINE", "LEFT", 200)
+	CreateHPPercString(self, font, 20, "THINOUTLINE", "RIGHT", 200)
+	-- self:Tag(self.Name, "[lum:name]")
+
+	-- self:SetScale(cfg[unit].FrameScale)
+	-- api:CreateDropShadow(self, 6, 6)
 end
 
 
@@ -82,10 +145,6 @@ local UnitSpecific = {
 
 local Shared = function(self, unit)
 	generic(self, unit)
-	self:SetSize(unpack(cfg[unit].FrameSize))
-	-- self:SetScale(cfg[unit].FrameScale)
-	api:SetBackdrop(self, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset)
-	-- api:CreateDropShadow(self, 6, 6)
 
 	if (UnitSpecific[unit]) then
 		UnitSpecific[unit](self)
