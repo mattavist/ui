@@ -21,10 +21,10 @@ cfg.pet = {
 		50,
 		-250,
 	},
-	FrameSize = { 400, cfg.FrameHeight },
+	FrameSize = { 400, cfg.HealthHeight },
 	FrameScale = 1.0,
 	HealthHeight = cfg.HealthHeight,
-	PowerHeight = cfg.PowerHeight,
+	PowerHeight = 0,
 }
 
 cfg.target = {
