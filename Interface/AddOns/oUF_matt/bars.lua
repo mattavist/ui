@@ -49,6 +49,55 @@ function bars:createPower(self, unit)
 	self.Power = Power
 end
 
+local function CheckForSpellInterrupt(self, unit)
+	if unit == "vehicle" then unit = "player" end
+
+	local initialColor = cfg[unit].CastbarColor or cfg.CastbarColor
+	self:SetStatusBarColor(unpack(initialColor))
+	if self.Glowborder then self.Glowborder:Hide() end
+
+	if UnitCanAttack("player", unit) then
+		if self.notInterruptible then
+			self:SetStatusBarColor(unpack(cfg.UninterruptibleCastbarColor))
+		else
+			if self.Glowborder then
+				self.Glowborder:SetBackdropBorderColor(unpack(cfg.InterruptibleCastbarGlowColor))
+				self.Glowborder:Show()
+			end
+		end
+	end
+end
+
+local function onPostCastStart(self, unit)
+	if unit == "vehicle" then
+		unit = "player"
+		-- else
+		-- 	unit = self.__owner.mystyle
+	end
+
+
+	-- Set the castbar unit's initial color
+	self:SetStatusBarColor(unpack(cfg.CastbarColor))
+
+	CheckForSpellInterrupt(self, unit)
+	-- SetHearthstoneBindingLocation(self, unit)
+
+	-- api:StartFadeIn(self)  TODO: Implement this?
+	self.__owner:SetAlpha(1)
+end
+
+local function OnPostCastFail(self, unit)
+	self:SetStatusBarColor(235 / 255, 25 / 255, 25 / 255, 0.8)
+	-- api:StartFadeOut(self)  TODO: Implement this?
+	self.__owner:SetAlpha(0)
+
+	if self.Max then self.Max:Hide() end
+end
+
+local function OnPostCastInterruptible(self, unit)
+	CheckForSpellInterrupt(self, unit)
+end
+
 function bars:CreateCast(self, unit)
 	if not cfg[unit].EnableCastbar then return end
 
@@ -70,7 +119,7 @@ function bars:CreateCast(self, unit)
 	local Time = Castbar:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 	Time:SetTextColor(1, 1, 1)
 	Time:SetShadowOffset(1, -1)
-	Time:SetFont(cfg.CastbarFont, 12, "THINOUTLINE")
+	Time:SetFont(cfg.CastbarFont, cfg.CastbarFontSize, "THINOUTLINE")
 	if unit == "target" then
 		Time:SetPoint('LEFT', Castbar)
 	else
@@ -81,7 +130,7 @@ function bars:CreateCast(self, unit)
 	local Text = Castbar:CreateFontString(nil, 'OVERLAY')
 	Text:SetTextColor(1, 1, 1)
 	Text:SetShadowOffset(1, -1)
-	Text:SetFont(cfg.CastbarFont, 12, "THINOUTLINE")
+	Text:SetFont(cfg.CastbarFont, cfg.CastbarFontSize, "THINOUTLINE")
 	Text:SetPoint('CENTER', Castbar)
 
 	-- Add Shield
@@ -91,6 +140,15 @@ function bars:CreateCast(self, unit)
 
 	-- Add safezone
 	local SafeZone = Castbar:CreateTexture(nil, 'OVERLAY')
+
+
+	-- Non Interruptable glow
+	api:SetGlowBorder(Castbar)
+	Castbar.Glowborder:SetPoint("TOPLEFT", Castbar, "TOPLEFT", -6, 6)
+
+	Castbar.PostCastStart = onPostCastStart
+	Castbar.PostCastFail = OnPostCastFail
+	Castbar.PostCastInterruptible = OnPostCastInterruptible
 
 	-- Register it with oUF
 	Castbar.bg = Background

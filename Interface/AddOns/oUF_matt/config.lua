@@ -21,8 +21,15 @@ cfg.SecondaryFrameY = cfg.PrimaryFrameY - 50
 
 cfg.CastbarOffsetY = 100
 cfg.CastbarFont = "Fonts\\FRIZQT__.TTF"
+cfg.CastbarFontSize = 12
+cfg.CastbarColor = { 235 / 255, 25 / 255, 25 / 255 }  -- TODO: Add rest of units
+cfg.UninterruptibleCastbarColor = {0.4, 0.4, 0.4}
+cfg.InterruptibleCastbarGlowColor = {25 / 255, 200 / 255, 255 / 255, 1}
 
-
+-- TODO: Anchor things to PRD:
+-- yourFrame:SetPoint("CENTER", C_NamePlate.GetNamePlateForUnit("player"), "CENTER", 0, 0)
+-- Would need to watch for events that change nameplates and re-SetPoint when that happens
+-- because not guaranteed to always have a specific nameplate instance
 cfg.player = {
 	Position = {
 		"RIGHT",
@@ -38,6 +45,7 @@ cfg.player = {
 	NameSide = "LEFT",
 	HPSide = "RIGHT",
 	EnableCastbar = true,
+	CastbarColor = {5 / 255, 107 / 255, 246 / 255},
 }
 
 cfg.target = {
@@ -55,6 +63,7 @@ cfg.target = {
 	NameSide = "RIGHT",
 	HPSide = "LEFT",
 	EnableCastbar = true,
+	CastbarColor = {235 / 255, 25 / 255, 25 / 255},
 }
 
 cfg.pet = {
