@@ -19,6 +19,10 @@ cfg.PrimaryFrameY = 225
 cfg.SecondaryFrameX = cfg.PrimaryFrameX + cfg.PrimaryFrameWidth
 cfg.SecondaryFrameY = cfg.PrimaryFrameY - 50
 
+cfg.CastbarOffsetY = 100
+cfg.CastbarFont = "Fonts\\FRIZQT__.TTF"
+
+
 cfg.player = {
 	Position = {
 		"RIGHT",
@@ -33,6 +37,7 @@ cfg.player = {
 	PowerHeight = cfg.PowerHeight,
 	NameSide = "LEFT",
 	HPSide = "RIGHT",
+	EnableCastbar = true,
 }
 
 cfg.target = {
@@ -49,6 +54,7 @@ cfg.target = {
 	PowerHeight = cfg.PowerHeight,
 	NameSide = "RIGHT",
 	HPSide = "LEFT",
+	EnableCastbar = true,
 }
 
 cfg.pet = {
@@ -63,8 +69,8 @@ cfg.pet = {
 	FrameScale = 1.0,
 	HealthHeight = cfg.HealthHeight,
 	PowerHeight = 0,
-	NameSide = "LEFT",
-	HPSide = "RIGHT",
+	NameSide = nil,
+	HPSide = nil,
 }
 
 cfg.targettarget = {
@@ -80,7 +86,7 @@ cfg.targettarget = {
 	HealthHeight = cfg.HealthHeight,
 	PowerHeight = 0,
 	NameSide = "RIGHT",
-	HPSide = "LEFT",
+	HPSide = nil,
 }
 
 cfg.colors = {

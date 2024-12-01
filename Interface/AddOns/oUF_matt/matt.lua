@@ -1,5 +1,5 @@
 local _, ns = ...
-local api, cfg, tags, statusbar = ns.api, ns.cfg, ns.tags, ns.statusbar
+local api, cfg, tags, bars = ns.api, ns.cfg, ns.tags, ns.bars
 
 cfg.InProgress = "player"
 
@@ -12,8 +12,9 @@ local generic = function(self, unit)
 	api:SetBackdrop(self, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset)
 	self:RegisterForClicks("AnyDown")
 
-	statusbar:createHealth(self, unit)
-	statusbar:createPower(self, unit)
+	bars:createHealth(self, unit)
+	bars:createPower(self, unit)
+	bars:CreateCast(self, unit)
 
 	tags:CreateNameString(self, cfg[unit].NameSide, 200)
 	tags:CreateHPPercString(self, cfg[unit].HPSide, 200)
@@ -43,6 +44,6 @@ oUF:Factory(function(self)
 	self:SetActiveStyle("matt")
 	self:Spawn("player"):SetPoint(unpack(cfg.player.Position))
 	self:Spawn("pet"):SetPoint(unpack(cfg.pet.Position))
-	-- self:Spawn("target"):SetPoint(unpack(cfg.target.Position))
+	self:Spawn("target"):SetPoint(unpack(cfg.target.Position))
 	self:Spawn("targettarget"):SetPoint(unpack(cfg.targettarget.Position))
 end)

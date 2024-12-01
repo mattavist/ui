@@ -32,7 +32,7 @@ end
 oUF.Tags.Events['matt:hpperc'] = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE'
 
 function tags:CreateNameString(self, point, width)
-	-- if not self.Health or not self.cfg.name.show then return end
+	if not point then return end
 
 	local name = CreateFontstring(self.Health)
 	if point == "LEFT" then x = 4 else x = -4 end
@@ -45,7 +45,7 @@ function tags:CreateNameString(self, point, width)
 end
 
 function tags:CreateHPPercString(self, point, width)
-	-- if not self.Health or not self.cfg.name.show then return end
+	if not point then return end
 
 	local name = CreateFontstring(self.Health)
 	if point == "LEFT" then x = 4 else x = -4 end

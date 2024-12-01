@@ -7,7 +7,7 @@
 shared.lua
 config.lua
 media/media.lua
-statusbar.lua
+bars.lua
 tags.lua
 api.lua
 matt.lua
