@@ -25,6 +25,14 @@ cfg.CastbarFontSize = 12
 cfg.CastbarColor = { 235 / 255, 25 / 255, 25 / 255 }  -- TODO: Add rest of units
 cfg.UninterruptibleCastbarColor = {0.4, 0.4, 0.4}
 cfg.InterruptibleCastbarGlowColor = {25 / 255, 200 / 255, 255 / 255, 1}
+cfg.CastbarTimeToHold = 0.75
+cfg.CastbarFader = {
+    fadeInAlpha = 1,
+    fadeInDuration = 0.1,
+    fadeOutAlpha = 0,
+    fadeOutDuration = 0.3,
+    fadeOutDelay = 0.5
+}
 
 -- TODO: Anchor things to PRD:
 -- yourFrame:SetPoint("CENTER", C_NamePlate.GetNamePlateForUnit("player"), "CENTER", 0, 0)

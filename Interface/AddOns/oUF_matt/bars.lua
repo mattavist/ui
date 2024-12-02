@@ -71,27 +71,18 @@ end
 local function onPostCastStart(self, unit)
 	if unit == "vehicle" then
 		unit = "player"
-		-- else
-		-- 	unit = self.__owner.mystyle
 	end
-
 
 	-- Set the castbar unit's initial color
 	self:SetStatusBarColor(unpack(cfg.CastbarColor))
-
 	CheckForSpellInterrupt(self, unit)
-	-- SetHearthstoneBindingLocation(self, unit)
-
-	-- api:StartFadeIn(self)  TODO: Implement this?
-	self.__owner:SetAlpha(1)
+	api:StartFadeIn(self)
 end
 
 local function OnPostCastFail(self, unit)
 	self:SetStatusBarColor(235 / 255, 25 / 255, 25 / 255, 0.8)
-	-- api:StartFadeOut(self)  TODO: Implement this?
-	self.__owner:SetAlpha(0)
-
 	if self.Max then self.Max:Hide() end
+	api:StartFadeOut(self)
 end
 
 local function OnPostCastInterruptible(self, unit)
@@ -106,6 +97,8 @@ function bars:CreateCast(self, unit)
 	Castbar:SetSize(cfg.PrimaryFrameWidth, 20)
 	Castbar:SetPoint("LEFT", self, "LEFT", 0, cfg.CastbarOffsetY)
 	Castbar:SetStatusBarTexture(media.textures.status_texture)
+	Castbar:SetFrameStrata("HIGH")
+	Castbar:SetToplevel(true)
 	Castbar:GetStatusBarTexture():SetHorizTile(false)
 	api:SetBackdrop(Castbar, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset)
 
@@ -138,9 +131,10 @@ function bars:CreateCast(self, unit)
 	Shield:SetSize(20, 20)
 	Shield:SetPoint('CENTER', Castbar)
 
-	-- Add safezone
-	local SafeZone = Castbar:CreateTexture(nil, 'OVERLAY')
-
+	-- Add safezone (latency display)
+	if unit == "player" then
+		Castbar.SafeZone = Castbar:CreateTexture(nil, 'OVERLAY')
+	end
 
 	-- Non Interruptable glow
 	api:SetGlowBorder(Castbar)
@@ -150,6 +144,9 @@ function bars:CreateCast(self, unit)
 	Castbar.PostCastFail = OnPostCastFail
 	Castbar.PostCastInterruptible = OnPostCastInterruptible
 
+	api:CreateFaderAnimation(Castbar)
+	Castbar.faderConfig = cfg.CastbarFader
+
 	-- Register it with oUF
 	Castbar.bg = Background
 	Castbar.Spark = Spark
@@ -157,6 +154,6 @@ function bars:CreateCast(self, unit)
 	Castbar.Text = Text
 	Castbar.Icon = Icon
 	Castbar.Shield = Shield
-	Castbar.SafeZone = SafeZone
+	Castbar.timeToHold = cfg.CastbarTimeToHold
 	self.Castbar = Castbar
 end
