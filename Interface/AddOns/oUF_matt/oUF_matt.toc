@@ -6,6 +6,7 @@
 
 shared.lua
 config.lua
+util.lua
 media/media.lua
 bars.lua
 tags.lua

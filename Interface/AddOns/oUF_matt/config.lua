@@ -14,6 +14,7 @@ cfg.FullFrameHeight = cfg.HealthHeight + cfg.PowerHeight + cfg.HealthPowerMargin
 
 cfg.PrimaryFrameWidth = 300
 cfg.SecondaryFrameWidth = 150
+cfg.PartyFrameWidth = 225
 cfg.PrimaryFrameX = 50
 cfg.PrimaryFrameY = 225
 cfg.SecondaryFrameX = cfg.PrimaryFrameX + cfg.PrimaryFrameWidth
@@ -102,6 +103,23 @@ cfg.targettarget = {
 	FrameScale = 1.0,
 	HealthHeight = cfg.HealthHeight,
 	PowerHeight = 0,
+	NameSide = "RIGHT",
+	HPSide = nil,
+}
+
+cfg.party = {
+	Position = {
+		"BOTTOMRIGHT",
+		UIParent,
+		"BOTTOMLEFT",
+		600,
+		400,
+	},
+	FrameSize = { cfg.PartyFrameWidth, cfg.FullFrameHeight },
+	FrameOffsetY = -20,
+	FrameScale = 1.0,
+	HealthHeight = cfg.HealthHeight,
+	PowerHeight = cfg.PowerHeight,
 	NameSide = "RIGHT",
 	HPSide = nil,
 }
