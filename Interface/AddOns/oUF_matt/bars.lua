@@ -1,6 +1,43 @@
 local _, ns = ...
 local cfg, media, bars, api = ns.cfg, ns.media, ns.bars, ns.api
 
+-- Group Role Indicator
+local function UpdateRoleIcon(self, event)
+	local lfdrole = self.GroupRoleIndicator
+
+	local role = UnitGroupRolesAssigned(self.unit)
+	-- Show roles when testing
+	if role == "NONE" and cfg.units.party.forceRole then
+		local rnd = random(1, 3)
+		role = rnd == 1 and "TANK" or
+		    (rnd == 2 and "HEALER" or (rnd == 3 and "DAMAGER"))
+	end
+
+	if UnitIsConnected(self.unit) and role ~= "NONE" then
+		lfdrole:SetTexture(media.roleIconTextures[role])
+		lfdrole:SetVertexColor(unpack(media.roleIconColor[role]))
+	else
+		lfdrole:Hide()
+	end
+end
+
+function bars:CreateGroupRoleIndicator(self, unit)
+	-- TODO: Get this from self.cfg instead
+	if unit ~= "party" then return end
+
+	local GroupRoleIndicator = self.Health:CreateTexture(nil, "OVERLAY")
+	GroupRoleIndicator:SetPoint("LEFT", self, -10, 0)
+	GroupRoleIndicator:SetSize(23, 23)
+	GroupRoleIndicator:SetAlpha(1)
+	--
+	-- TODO: Can choose different icons, see ouf/elements/grouproleindicator.lua:Update
+	-- GroupRoleIndicator.Override = UpdateRoleIcon
+	-- self:RegisterEvent("UNIT_CONNECTION", UpdateRoleIcon)
+
+	return GroupRoleIndicator
+end
+
+-- Health Prediction
 local function createHealthPrediction(self)
 	if not self.Health then return end
 	if not self.cfg.HealthPrediction then return end

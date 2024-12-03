@@ -16,9 +16,7 @@ local generic = function(self, unit)
 
 	tags:CreateNameString(self, self.cfg.NameSide, self.cfg.FontSize, self.cfg.FrameSize[1] - 15)
 	tags:CreateHPPercString(self, self.cfg.HPSide, self.cfg.FontSize, 200)
-
-	-- self:SetScale(self.cfg.FrameScale)
-	-- api:CreateDropShadow(self, 6, 6)
+	bars:CreateGroupRoleIndicator(self, unit)
 end
 
 local partySpecific = function()

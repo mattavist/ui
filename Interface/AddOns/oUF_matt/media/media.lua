@@ -10,14 +10,27 @@ media.colors = {
 
 local mediaPath = "Interface\\AddOns\\oUF_matt\\media\\"
 media.textures = {
-    status_texture = mediaPath.."statusbar",
-    bg_texture = mediaPath.."texture_bg",
-    aura_border = mediaPath.."aura_border",
-    button_border = mediaPath.."button_border",
-    white_square = mediaPath.."white",
-    glow_texture = mediaPath.."glow",
-    damager_texture = mediaPath.."damager",
-    healer_texture = mediaPath.."healer",
-    tank_texture = mediaPath.."tank",
-    debuff_texture = mediaPath.."debuff_highlight",
+	status_texture = mediaPath .. "statusbar",
+	bg_texture = mediaPath .. "texture_bg",
+	aura_border = mediaPath .. "aura_border",
+	button_border = mediaPath .. "button_border",
+	white_square = mediaPath .. "white",
+	glow_texture = mediaPath .. "glow",
+	damager_texture = mediaPath .. "damager",
+	healer_texture = mediaPath .. "healer",
+	tank_texture = mediaPath .. "tank",
+	debuff_texture = mediaPath .. "debuff_highlight",
+}
+
+
+media.roleIconTextures = {
+	TANK = media.textures.tank_texture,
+	HEALER = media.textures.healer_texture,
+	DAMAGER = media.textures.damager_texture
+}
+
+media.roleIconColor = {
+	TANK = { 0 / 255, 175 / 255, 255 / 255 },
+	HEALER = { 0 / 255, 255 / 255, 100 / 255 },
+	DAMAGER = { 225 / 255, 0 / 255, 25 / 255 }
 }
