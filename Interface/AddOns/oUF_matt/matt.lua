@@ -12,8 +12,8 @@ local generic = function(self, unit)
 	bars:createPower(self, unit)
 	bars:CreateCast(self, unit)
 
-	tags:CreateNameString(self, cfg[unit].NameSide, 200)
-	tags:CreateHPPercString(self, cfg[unit].HPSide, 200)
+	tags:CreateNameString(self, cfg[unit].NameSide, cfg[unit].FontSize, cfg[unit].FrameSize[1] - 15)
+	tags:CreateHPPercString(self, cfg[unit].HPSide, cfg[unit].FontSize, 200)
 
 	-- self:SetScale(cfg[unit].FrameScale)
 	-- api:CreateDropShadow(self, 6, 6)

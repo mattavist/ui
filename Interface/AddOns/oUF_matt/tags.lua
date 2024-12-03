@@ -2,10 +2,9 @@ local _, ns = ...
 local tags = ns.tags
 
 local font = "Fonts\\FRIZQT__.TTF"
-local fontSize = 20
 local fontOutline = "THINOUTLINE"
 
-function CreateFontstring(frame)
+function CreateFontstring(frame, fontSize)
 	-- local Text = Castbar:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
 	local fs = frame:CreateFontString(nil, "OVERLAY")
 	fs:SetFont(font, fontSize, fontOutline)
@@ -31,10 +30,10 @@ oUF.Tags.Methods['matt:hpperc'] = function(unit)
 end
 oUF.Tags.Events['matt:hpperc'] = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE'
 
-function tags:CreateNameString(self, point, width)
+function tags:CreateNameString(self, point, fontSize, width)
 	if not point then return end
 
-	local name = CreateFontstring(self.Health)
+	local name = CreateFontstring(self.Health, fontSize)
 	if point == "LEFT" then x = 4 else x = -4 end
 	name:SetPoint(point, self, "TOP" .. point, x, 0)
 	name:SetJustifyH(point)
@@ -44,10 +43,10 @@ function tags:CreateNameString(self, point, width)
 	self.Name = name
 end
 
-function tags:CreateHPPercString(self, point, width)
+function tags:CreateHPPercString(self, point, fontSize, width)
 	if not point then return end
 
-	local name = CreateFontstring(self.Health)
+	local name = CreateFontstring(self.Health, fontSize)
 	if point == "LEFT" then x = 4 else x = -4 end
 	name:SetPoint(point, self, "TOP" .. point, x, 0)
 	name:SetJustifyH(point)

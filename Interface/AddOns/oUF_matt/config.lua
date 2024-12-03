@@ -19,6 +19,7 @@ cfg.PrimaryFrameX = 50
 cfg.PrimaryFrameY = 225
 cfg.SecondaryFrameX = cfg.PrimaryFrameX + cfg.PrimaryFrameWidth
 cfg.SecondaryFrameY = cfg.PrimaryFrameY - 50
+cfg.FontSize = 20
 
 cfg.CastbarOffsetY = 100
 cfg.CastbarFont = "Fonts\\FRIZQT__.TTF"
@@ -55,6 +56,7 @@ cfg.player = {
 	HPSide = "RIGHT",
 	EnableCastbar = true,
 	CastbarColor = {5 / 255, 107 / 255, 246 / 255},
+	FontSize = cfg.FontSize,
 }
 
 cfg.target = {
@@ -73,6 +75,7 @@ cfg.target = {
 	HPSide = "LEFT",
 	EnableCastbar = true,
 	CastbarColor = {235 / 255, 25 / 255, 25 / 255},
+	FontSize = cfg.FontSize,
 }
 
 cfg.pet = {
@@ -105,6 +108,7 @@ cfg.targettarget = {
 	PowerHeight = 0,
 	NameSide = "RIGHT",
 	HPSide = nil,
+	FontSize = cfg.FontSize - 6,
 }
 
 cfg.party = {
@@ -112,16 +116,17 @@ cfg.party = {
 		"BOTTOMRIGHT",
 		UIParent,
 		"BOTTOMLEFT",
-		600,
+		500,
 		400,
 	},
-	FrameSize = { cfg.PartyFrameWidth, cfg.FullFrameHeight },
-	FrameOffsetY = -20,
+	FrameSize = { cfg.PartyFrameWidth, cfg.HealthHeight },
+	FrameOffsetY = 40 + cfg.HealthHeight,
 	FrameScale = 1.0,
-	HealthHeight = cfg.HealthHeight,
-	PowerHeight = cfg.PowerHeight,
+	HealthHeight = cfg.HealthHeight - 5,
+	PowerHeight = cfg.PowerHeight - 2,
 	NameSide = "RIGHT",
 	HPSide = nil,
+	FontSize = cfg.FontSize - 6,
 }
 
 cfg.colors = {
