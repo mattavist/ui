@@ -58,7 +58,7 @@ cfg.player = {
 	EnableCastbar = true,
 	CastbarColor = { 5 / 255, 107 / 255, 246 / 255 },
 	FontSize = cfg.FontSize,
-	HealPrediction = true,
+	HealthPrediction = true,
 }
 
 cfg.target = {

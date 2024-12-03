@@ -18,5 +18,6 @@ media.textures = {
     glow_texture = mediaPath.."glow",
     damager_texture = mediaPath.."damager",
     healer_texture = mediaPath.."healer",
-    tank_texture = mediaPath.."tank"
+    tank_texture = mediaPath.."tank",
+    debuff_texture = mediaPath.."debuff_highlight",
 }

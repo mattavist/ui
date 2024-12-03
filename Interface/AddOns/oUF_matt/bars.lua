@@ -3,6 +3,7 @@ local cfg, media, bars, api = ns.cfg, ns.media, ns.bars, ns.api
 
 local function createHealthPrediction(self)
 	if not self.Health then return end
+	if not self.cfg.HealthPrediction then return end
 
 	-- Position and size
 	local myBar = CreateFrame('StatusBar', nil, self.Health)
@@ -51,8 +52,7 @@ local function createHealthPrediction(self)
 	overHealAbsorb:SetPoint('RIGHT', self.Health, 'LEFT')
 	overHealAbsorb:SetWidth(10)
 
-	-- Register with oUF
-	self.HealthPrediction = {
+	return {
 		myBar = myBar,
 		otherBar = otherBar,
 		absorbBar = absorbBar,
@@ -64,13 +64,20 @@ local function createHealthPrediction(self)
 end
 
 function bars:createHealth(self, unit)
+	local TempLoss = CreateFrame('StatusBar', nil, self)
+	TempLoss:SetReverseFill(true)
+	TempLoss:SetHeight(self.cfg.HealthHeight)
+	TempLoss:SetPoint('TOP')
+	TempLoss:SetPoint('LEFT')
+	TempLoss:SetPoint('RIGHT')
+	TempLoss:SetStatusBarTexture(media.textures.debuff_texture)
+	TempLoss:GetStatusBarTexture():SetHorizTile(true)
+
 	local Health = CreateFrame('StatusBar', nil, self)
-	Health:SetHeight(self.cfg.HealthHeight)
-	Health:SetPoint('TOP')
-	Health:SetPoint('LEFT')
-	Health:SetPoint('RIGHT')
+	Health:SetPoint("LEFT")
+	Health:SetPoint('TOPRIGHT', TempLoss:GetStatusBarTexture(), 'TOPLEFT')
+	Health:SetPoint('BOTTOMRIGHT', TempLoss:GetStatusBarTexture(), 'BOTTOMLEFT')
 	Health:SetStatusBarTexture(media.textures.status_texture)
-	Health:SetStatusBarColor(unpack(cfg.colors.health))
 	Health:GetStatusBarTexture():SetHorizTile(false)
 
 	-- Options
@@ -84,13 +91,10 @@ function bars:createHealth(self, unit)
 	end
 	Health.colorReaction = true
 	Health.colorHealth = true
-	color = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
 
+	Health.TempLoss = TempLoss
 	self.Health = Health
-	if self.cfg.HealPrediction then
-		DEFAULT_CHAT_FRAME:AddMessage(unit .. " creating prediction")
-		createHealthPrediction(self)
-	end
+	self.HealthPrediction = createHealthPrediction(self)
 end
 
 function bars:createPower(self, unit)

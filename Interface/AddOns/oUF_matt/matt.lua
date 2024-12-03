@@ -1,21 +1,11 @@
 local _, ns = ...
 local api, cfg, tags, bars, util = ns.api, ns.cfg, ns.tags, ns.bars, ns.util
 
-cfg.debugEnabled = true
+cfg.debugEnabled = false
 local generic = function(self, unit)
 	self.cfg = cfg[unit]
 
 	util:debug("Creating " .. unit .. " frame")
-	if self.cfg then
-		util:debug("matt: cfg is not nil for " .. unit)
-		if self.cfg.CastbarColor then
-			util:debug("matt: first color is " .. self.cfg.CastbarColor[1])
-		else
-			util:debug("  matt: first color is nil")
-		end
-	else
-		util:debug("matt: cfg is nil for " .. unit)
-	end
 	self:SetSize(unpack(self.cfg.FrameSize))
 	api:SetBackdrop(self, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset)
 	self:RegisterForClicks("AnyDown")
