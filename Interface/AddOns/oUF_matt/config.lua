@@ -1,7 +1,8 @@
 local _, ns = ...
 local cfg = ns.cfg
 
-
+-- TODO: Create a default table, then copy and modify instance
+-- https://stackoverflow.com/questions/640642/how-do-you-copy-a-lua-table-by-value
 
 cfg.FrameSize = { 200, 50 }
 cfg.FrameScale = 1.0
@@ -24,16 +25,16 @@ cfg.FontSize = 20
 cfg.CastbarOffsetY = 100
 cfg.CastbarFont = "Fonts\\FRIZQT__.TTF"
 cfg.CastbarFontSize = 12
-cfg.CastbarColor = { 235 / 255, 25 / 255, 25 / 255 }  -- TODO: Add rest of units
-cfg.UninterruptibleCastbarColor = {0.4, 0.4, 0.4}
-cfg.InterruptibleCastbarGlowColor = {25 / 255, 200 / 255, 255 / 255, 1}
+cfg.CastbarColor = { 235 / 255, 25 / 255, 25 / 255 } -- TODO: Add rest of units
+cfg.UninterruptibleCastbarColor = { 0.4, 0.4, 0.4 }
+cfg.InterruptibleCastbarGlowColor = { 25 / 255, 200 / 255, 255 / 255, 1 }
 cfg.CastbarTimeToHold = 0.75
 cfg.CastbarFader = {
-    fadeInAlpha = 1,
-    fadeInDuration = 0.1,
-    fadeOutAlpha = 0,
-    fadeOutDuration = 0.3,
-    fadeOutDelay = 0.5
+	fadeInAlpha = 1,
+	fadeInDuration = 0.1,
+	fadeOutAlpha = 0,
+	fadeOutDuration = 0.3,
+	fadeOutDelay = 0.5
 }
 
 -- TODO: Anchor things to PRD:
@@ -43,7 +44,7 @@ cfg.CastbarFader = {
 cfg.player = {
 	Position = {
 		"RIGHT",
-		UIParent,
+		WorldFrame,
 		"BOTTOM",
 		-cfg.PrimaryFrameX,
 		cfg.PrimaryFrameY,
@@ -55,14 +56,15 @@ cfg.player = {
 	NameSide = "LEFT",
 	HPSide = "RIGHT",
 	EnableCastbar = true,
-	CastbarColor = {5 / 255, 107 / 255, 246 / 255},
+	CastbarColor = { 5 / 255, 107 / 255, 246 / 255 },
 	FontSize = cfg.FontSize,
+	HealPrediction = true,
 }
 
 cfg.target = {
 	Position = {
 		"LEFT",
-		UIParent,
+		WorldFrame,
 		"BOTTOM",
 		cfg.PrimaryFrameX,
 		cfg.PrimaryFrameY,
@@ -74,14 +76,15 @@ cfg.target = {
 	NameSide = "RIGHT",
 	HPSide = "LEFT",
 	EnableCastbar = true,
-	CastbarColor = {235 / 255, 25 / 255, 25 / 255},
+	CastbarColor = { 235 / 255, 25 / 255, 25 / 255 },
 	FontSize = cfg.FontSize,
+	HealPrediction = true,
 }
 
 cfg.pet = {
 	Position = {
 		"LEFT",
-		UIParent,
+		WorldFrame,
 		"BOTTOM",
 		-cfg.SecondaryFrameX,
 		cfg.SecondaryFrameY,
@@ -97,7 +100,7 @@ cfg.pet = {
 cfg.targettarget = {
 	Position = {
 		"RIGHT",
-		UIParent,
+		WorldFrame,
 		"BOTTOM",
 		cfg.SecondaryFrameX,
 		cfg.SecondaryFrameY,
@@ -114,7 +117,7 @@ cfg.targettarget = {
 cfg.party = {
 	Position = {
 		"BOTTOMRIGHT",
-		UIParent,
+		WorldFrame,
 		"BOTTOMLEFT",
 		500,
 		400,
@@ -127,6 +130,7 @@ cfg.party = {
 	NameSide = "RIGHT",
 	HPSide = nil,
 	FontSize = cfg.FontSize - 6,
+	HealPrediction = true,
 }
 
 cfg.colors = {

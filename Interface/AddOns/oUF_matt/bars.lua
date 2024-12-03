@@ -1,9 +1,71 @@
 local _, ns = ...
 local cfg, media, bars, api = ns.cfg, ns.media, ns.bars, ns.api
 
+local function createHealthPrediction(self)
+	if not self.Health then return end
+
+	-- Position and size
+	local myBar = CreateFrame('StatusBar', nil, self.Health)
+	myBar:SetPoint('TOP')
+	myBar:SetPoint('BOTTOM')
+	myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+	myBar:SetWidth(self.cfg.FrameSize[1])
+	myBar:SetStatusBarTexture(media.textures.status_texture)
+	myBar:SetStatusBarColor(125 / 255, 255 / 255, 50 / 255, .4)
+
+	local otherBar = CreateFrame('StatusBar', nil, self.Health)
+	otherBar:SetPoint('TOP')
+	otherBar:SetPoint('BOTTOM')
+	otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+	otherBar:SetWidth(self.cfg.FrameSize[1])
+	otherBar:SetStatusBarTexture(media.textures.status_texture)
+	otherBar:SetStatusBarColor(100 / 255, 235 / 255, 200 / 255, .4)
+
+	local absorbBar = CreateFrame('StatusBar', nil, self.Health)
+	absorbBar:SetPoint('TOP')
+	absorbBar:SetPoint('BOTTOM')
+	absorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+	absorbBar:SetWidth(self.cfg.FrameSize[1])
+	absorbBar:SetStatusBarTexture(media.textures.status_texture)
+	absorbBar:SetStatusBarColor(18053 / 255, 255 / 255, 205 / 255, .35)
+
+
+	local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
+	healAbsorbBar:SetPoint('TOP')
+	healAbsorbBar:SetPoint('BOTTOM')
+	healAbsorbBar:SetPoint('RIGHT', self.Health:GetStatusBarTexture())
+	healAbsorbBar:SetWidth(self.cfg.FrameSize[1])
+	healAbsorbBar:SetReverseFill(true)
+	healAbsorbBar:SetStatusBarTexture(media.textures.status_texture)
+	healAbsorbBar:SetStatusBarColor(183 / 255, 244 / 255, 255 / 255, .35)
+
+	local overAbsorb = self.Health:CreateTexture(nil, "OVERLAY")
+	overAbsorb:SetPoint('TOP')
+	overAbsorb:SetPoint('BOTTOM')
+	overAbsorb:SetPoint('LEFT', self.Health, 'RIGHT')
+	overAbsorb:SetWidth(10)
+
+	local overHealAbsorb = self.Health:CreateTexture(nil, "OVERLAY")
+	overHealAbsorb:SetPoint('TOP')
+	overHealAbsorb:SetPoint('BOTTOM')
+	overHealAbsorb:SetPoint('RIGHT', self.Health, 'LEFT')
+	overHealAbsorb:SetWidth(10)
+
+	-- Register with oUF
+	self.HealthPrediction = {
+		myBar = myBar,
+		otherBar = otherBar,
+		absorbBar = absorbBar,
+		healAbsorbBar = healAbsorbBar,
+		overAbsorb = overAbsorb,
+		overHealAbsorb = overHealAbsorb,
+		maxOverflow = 1.05,
+	}
+end
+
 function bars:createHealth(self, unit)
 	local Health = CreateFrame('StatusBar', nil, self)
-	Health:SetHeight(cfg[unit].HealthHeight)
+	Health:SetHeight(self.cfg.HealthHeight)
 	Health:SetPoint('TOP')
 	Health:SetPoint('LEFT')
 	Health:SetPoint('RIGHT')
@@ -25,13 +87,17 @@ function bars:createHealth(self, unit)
 	color = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
 
 	self.Health = Health
+	if self.cfg.HealPrediction then
+		DEFAULT_CHAT_FRAME:AddMessage(unit .. " creating prediction")
+		createHealthPrediction(self)
+	end
 end
 
 function bars:createPower(self, unit)
-	if cfg[unit].PowerHeight == 0 then return end
+	if self.cfg.PowerHeight == 0 then return end
 
 	local Power = CreateFrame('StatusBar', nil, self)
-	Power:SetHeight(cfg[unit].PowerHeight)
+	Power:SetHeight(self.cfg.PowerHeight)
 	Power:SetPoint('BOTTOM')
 	Power:SetPoint('LEFT')
 	Power:SetPoint('RIGHT')
@@ -52,7 +118,12 @@ end
 local function CheckForSpellInterrupt(self, unit)
 	if unit == "vehicle" then unit = "player" end
 
-	local initialColor = cfg[unit].CastbarColor or cfg.CastbarColor
+	local owner = self.__owner
+	local initialColor = cfg.CastbarColor
+	if owner.cfg and owner.cfg.CastbarColor then
+		initialColor = owner.cfg.CastbarColor
+	end
+
 	self:SetStatusBarColor(unpack(initialColor))
 	if self.Glowborder then self.Glowborder:Hide() end
 
@@ -90,7 +161,7 @@ local function OnPostCastInterruptible(self, unit)
 end
 
 function bars:CreateCast(self, unit)
-	if not cfg[unit].EnableCastbar then return end
+	if not self.cfg.EnableCastbar then return end
 
 	-- Position and size
 	local Castbar = CreateFrame('StatusBar', nil, UIParent)
