@@ -1,0 +1,19 @@
+## Interface: 110005
+## Author: mattavist
+## Version: 110005.01
+## Title: mBlizzard
+## Notes: Blizzard frame adjustments, shamelessly stolen from zork
+## IconTexture: Interface\AddOns\rLib\assets\logo-64
+## RequiredDeps: rLib
+
+combathide.lua
+junk.lua
+keyhide.lua
+login.lua
+minimap.lua
+mousehide.lua
+## chat.lua
+## nameplate.lua
+## vignette.lua
+reposition.lua
+util.lua

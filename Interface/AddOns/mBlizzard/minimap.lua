@@ -2,7 +2,7 @@ local function reshapeMap()
 	Minimap:ClearAllPoints()
 	Minimap:SetScale(1.0)
 	Minimap:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -12, -12)
-	Minimap:SetMaskTexture("Interface\\AddOns\\mFrame\\mask.blp")
+	Minimap:SetMaskTexture("Interface\\media\\mask.blp")
 
 	local mbg = Minimap:CreateTexture(nil, "BACKGROUND")
 	mbg:SetPoint("BOTTOMRIGHT", 2, -2)
@@ -89,7 +89,5 @@ Minimap:HookScript("OnLeave", function()
 	if not Minimap:IsMouseOver() then
 		MinimapCluster.Tracking:Hide()
 		ExpansionLandingPageMinimapButton:Hide()
-    		-- QueueStatusButton:ClearAllPoints()
-    		-- QueueStatusButton:SetPoint("CENTER", Minimap, "BOTTOMLEFT", 0, 0)
 	end
 end)
