@@ -42,6 +42,7 @@ cfg.CastbarFader = {
 -- Would need to watch for events that change nameplates and re-SetPoint when that happens
 -- because not guaranteed to always have a specific nameplate instance
 cfg.player = {
+	UnitName = "player",
 	Position = {
 		"RIGHT",
 		WorldFrame,
@@ -62,6 +63,7 @@ cfg.player = {
 }
 
 cfg.target = {
+	UnitName = "target",
 	Position = {
 		"LEFT",
 		WorldFrame,
@@ -82,6 +84,7 @@ cfg.target = {
 }
 
 cfg.pet = {
+	UnitName = "pet",
 	Position = {
 		"LEFT",
 		WorldFrame,
@@ -115,6 +118,7 @@ cfg.targettarget = {
 }
 
 cfg.party = {
+	UnitName = "party",
 	Position = {
 		"BOTTOMRIGHT",
 		WorldFrame,

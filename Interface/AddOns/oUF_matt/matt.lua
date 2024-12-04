@@ -10,13 +10,13 @@ local generic = function(self, unit)
 	api:SetBackdrop(self, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset)
 	self:RegisterForClicks("AnyDown")
 
-	bars:createHealth(self, unit)
-	bars:createPower(self, unit)
-	bars:CreateCast(self, unit)
+	bars:createHealth(self)
+	bars:createPower(self)
+	bars:CreateCast(self)
 
 	tags:CreateNameString(self, self.cfg.NameSide, self.cfg.FontSize, self.cfg.FrameSize[1] - 15)
 	tags:CreateHPPercString(self, self.cfg.HPSide, self.cfg.FontSize, 200)
-	bars:CreateGroupRoleIndicator(self, unit)
+	bars:CreateGroupRoleIndicator(self)
 end
 
 local partySpecific = function()

@@ -21,9 +21,8 @@ local function UpdateRoleIcon(self, event)
 	end
 end
 
-function bars:CreateGroupRoleIndicator(self, unit)
-	-- TODO: Get this from self.cfg instead
-	if unit ~= "party" then return end
+function bars:CreateGroupRoleIndicator(self)
+	if self.cfg.UnitName ~= "party" then return end
 
 	local GroupRoleIndicator = self.Health:CreateTexture(nil, "OVERLAY")
 	GroupRoleIndicator:SetPoint("LEFT", self, -10, 0)
@@ -100,7 +99,7 @@ local function createHealthPrediction(self)
 	}
 end
 
-function bars:createHealth(self, unit)
+function bars:createHealth(self)
 	local TempLoss = CreateFrame('StatusBar', nil, self)
 	TempLoss:SetReverseFill(true)
 	TempLoss:SetHeight(self.cfg.HealthHeight)
@@ -120,7 +119,7 @@ function bars:createHealth(self, unit)
 	-- Options
 	Health.colorTapping = true
 	Health.colorDisconnected = true
-	if unit == "pet" then
+	if self.cfg.UnitName == "pet" then
 		Health.colorClassPet = true
 		Health.colorClass = false
 	else
@@ -134,7 +133,7 @@ function bars:createHealth(self, unit)
 	self.HealthPrediction = createHealthPrediction(self)
 end
 
-function bars:createPower(self, unit)
+function bars:createPower(self)
 	if self.cfg.PowerHeight == 0 then return end
 
 	local Power = CreateFrame('StatusBar', nil, self)
@@ -156,52 +155,52 @@ function bars:createPower(self, unit)
 	self.Power = Power
 end
 
-local function CheckForSpellInterrupt(self, unit)
+local function CheckForSpellInterrupt(castbar)
+	local unit = castbar.__owner.cfg.UnitName
 	if unit == "vehicle" then unit = "player" end
 
-	local owner = self.__owner
+	local owner = castbar.__owner
 	local initialColor = cfg.CastbarColor
 	if owner.cfg and owner.cfg.CastbarColor then
 		initialColor = owner.cfg.CastbarColor
 	end
 
-	self:SetStatusBarColor(unpack(initialColor))
-	if self.Glowborder then self.Glowborder:Hide() end
+	castbar:SetStatusBarColor(unpack(initialColor))
+	if castbar.Glowborder then castbar.Glowborder:Hide() end
 
 	if UnitCanAttack("player", unit) then
-		if self.notInterruptible then
-			self:SetStatusBarColor(unpack(cfg.UninterruptibleCastbarColor))
+		if castbar.notInterruptible then
+			castbar:SetStatusBarColor(unpack(cfg.UninterruptibleCastbarColor))
 		else
-			if self.Glowborder then
-				self.Glowborder:SetBackdropBorderColor(unpack(cfg.InterruptibleCastbarGlowColor))
-				self.Glowborder:Show()
+			if castbar.Glowborder then
+				castbar.Glowborder:SetBackdropBorderColor(unpack(cfg.InterruptibleCastbarGlowColor))
+				castbar.Glowborder:Show()
 			end
 		end
 	end
 end
 
-local function onPostCastStart(self, unit)
-	if unit == "vehicle" then
-		unit = "player"
-	end
+local function onPostCastStart(castbar)
+	local unit = castbar.__owner.cfg.UnitName
+	if unit == "vehicle" then unit = "player" end
 
 	-- Set the castbar unit's initial color
-	self:SetStatusBarColor(unpack(cfg.CastbarColor))
-	CheckForSpellInterrupt(self, unit)
-	api:StartFadeIn(self)
+	castbar:SetStatusBarColor(unpack(cfg.CastbarColor))
+	CheckForSpellInterrupt(castbar, unit)
+	api:StartFadeIn(castbar)
 end
 
-local function OnPostCastFail(self, unit)
-	self:SetStatusBarColor(235 / 255, 25 / 255, 25 / 255, 0.8)
-	if self.Max then self.Max:Hide() end
-	api:StartFadeOut(self)
+local function OnPostCastFail(castbar)
+	castbar:SetStatusBarColor(235 / 255, 25 / 255, 25 / 255, 0.8)
+	if castbar.Max then castbar.Max:Hide() end
+	api:StartFadeOut(castbar)
 end
 
-local function OnPostCastInterruptible(self, unit)
-	CheckForSpellInterrupt(self, unit)
+local function OnPostCastInterruptible(castbar)
+	CheckForSpellInterrupt(castbar, castbar.__owner.cfg.UnitName)
 end
 
-function bars:CreateCast(self, unit)
+function bars:CreateCast(self)
 	if not self.cfg.EnableCastbar then return end
 
 	-- Position and size
@@ -225,7 +224,7 @@ function bars:CreateCast(self, unit)
 	Time:SetTextColor(1, 1, 1)
 	Time:SetShadowOffset(1, -1)
 	Time:SetFont(cfg.CastbarFont, cfg.CastbarFontSize, "THINOUTLINE")
-	if unit == "target" then
+	if self.cfg.UnitName == "target" then
 		Time:SetPoint('LEFT', Castbar)
 	else
 		Time:SetPoint('RIGHT', Castbar)
@@ -244,7 +243,7 @@ function bars:CreateCast(self, unit)
 	Shield:SetPoint('CENTER', Castbar)
 
 	-- Add safezone (latency display)
-	if unit == "player" then
+	if self.cfg.UnitName == "player" then
 		Castbar.SafeZone = Castbar:CreateTexture(nil, 'OVERLAY')
 	end
 
