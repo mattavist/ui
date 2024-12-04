@@ -160,7 +160,7 @@ local function CheckForSpellInterrupt(castbar)
 	if unit == "vehicle" then unit = "player" end
 
 	local owner = castbar.__owner
-	local initialColor = cfg.CastbarColor
+	local initialColor = cfg.Castbar.Color
 	if owner.cfg and owner.cfg.CastbarColor then
 		initialColor = owner.cfg.CastbarColor
 	end
@@ -170,10 +170,10 @@ local function CheckForSpellInterrupt(castbar)
 
 	if UnitCanAttack("player", unit) then
 		if castbar.notInterruptible then
-			castbar:SetStatusBarColor(unpack(cfg.UninterruptibleCastbarColor))
+			castbar:SetStatusBarColor(unpack(cfg.Castbar.UninterruptibleColor))
 		else
 			if castbar.Glowborder then
-				castbar.Glowborder:SetBackdropBorderColor(unpack(cfg.InterruptibleCastbarGlowColor))
+				castbar.Glowborder:SetBackdropBorderColor(unpack(cfg.Castbar.InterruptibleGlowColor))
 				castbar.Glowborder:Show()
 			end
 		end
@@ -185,7 +185,7 @@ local function onPostCastStart(castbar)
 	if unit == "vehicle" then unit = "player" end
 
 	-- Set the castbar unit's initial color
-	castbar:SetStatusBarColor(unpack(cfg.CastbarColor))
+	castbar:SetStatusBarColor(unpack(cfg.Castbar.Color))
 	CheckForSpellInterrupt(castbar, unit)
 	api:StartFadeIn(castbar)
 end
@@ -206,7 +206,7 @@ function bars:CreateCast(frame)
 	-- Position and size
 	local Castbar = CreateFrame('StatusBar', nil, UIParent)
 	Castbar:SetSize(cfg.PrimaryFrameWidth, 20)
-	Castbar:SetPoint("LEFT", frame, "LEFT", 0, cfg.CastbarOffsetY)
+	Castbar:SetPoint("LEFT", frame, "LEFT", 0, cfg.Castbar.OffsetY)
 	Castbar:SetStatusBarTexture(media.textures.status_texture)
 	Castbar:SetFrameStrata("HIGH")
 	Castbar:SetToplevel(true)
@@ -223,7 +223,7 @@ function bars:CreateCast(frame)
 	local Time = Castbar:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 	Time:SetTextColor(1, 1, 1)
 	Time:SetShadowOffset(1, -1)
-	Time:SetFont(cfg.CastbarFont, cfg.CastbarFontSize, "THINOUTLINE")
+	Time:SetFont(cfg.Castbar.Font, cfg.Castbar.FontSize, "THINOUTLINE")
 	if frame.cfg.UnitName == "target" then
 		Time:SetPoint('LEFT', Castbar)
 	else
@@ -234,7 +234,7 @@ function bars:CreateCast(frame)
 	local Text = Castbar:CreateFontString(nil, 'OVERLAY')
 	Text:SetTextColor(1, 1, 1)
 	Text:SetShadowOffset(1, -1)
-	Text:SetFont(cfg.CastbarFont, cfg.CastbarFontSize, "THINOUTLINE")
+	Text:SetFont(cfg.Castbar.Font, cfg.Castbar.FontSize, "THINOUTLINE")
 	Text:SetPoint('CENTER', Castbar)
 
 	-- Add Shield
@@ -256,7 +256,7 @@ function bars:CreateCast(frame)
 	Castbar.PostCastInterruptible = OnPostCastInterruptible
 
 	api:CreateFaderAnimation(Castbar)
-	Castbar.faderConfig = cfg.CastbarFader
+	Castbar.faderConfig = cfg.Castbar.Fader
 
 	-- Register it with oUF
 	Castbar.bg = Background
@@ -265,6 +265,6 @@ function bars:CreateCast(frame)
 	Castbar.Text = Text
 	Castbar.Icon = Icon
 	Castbar.Shield = Shield
-	Castbar.timeToHold = cfg.CastbarTimeToHold
+	Castbar.timeToHold = cfg.Castbar.TimeToHold
 	frame.Castbar = Castbar
 end

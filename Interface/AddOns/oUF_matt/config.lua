@@ -22,19 +22,21 @@ cfg.SecondaryFrameX = cfg.PrimaryFrameX + cfg.PrimaryFrameWidth
 cfg.SecondaryFrameY = cfg.PrimaryFrameY - 50
 cfg.FontSize = 20
 
-cfg.CastbarOffsetY = 100
-cfg.CastbarFont = "Fonts\\FRIZQT__.TTF"
-cfg.CastbarFontSize = 12
-cfg.CastbarColor = { 235 / 255, 25 / 255, 25 / 255 } -- TODO: Add rest of units
-cfg.UninterruptibleCastbarColor = { 0.4, 0.4, 0.4 }
-cfg.InterruptibleCastbarGlowColor = { 25 / 255, 200 / 255, 255 / 255, 1 }
-cfg.CastbarTimeToHold = 0.75
-cfg.CastbarFader = {
-	fadeInAlpha = 1,
-	fadeInDuration = 0.1,
-	fadeOutAlpha = 0,
-	fadeOutDuration = 0.3,
-	fadeOutDelay = 0.5
+cfg.Castbar = {
+	OffsetY = 100,
+	Font = "Fonts\\FRIZQT__.TTF",
+	FontSize = 12,
+	Color = { 235 / 255, 25 / 255, 25 / 255 }, -- TODO: Add rest of units
+	UninterruptibleColor = { 0.4, 0.4, 0.4 },
+	InterruptibleGlowColor = { 25 / 255, 200 / 255, 255 / 255, 1 },
+	TimeToHold = 0.75,
+	Fader = {
+		fadeInAlpha = 1,
+		fadeInDuration = 0.1,
+		fadeOutAlpha = 0,
+		fadeOutDuration = 0.3,
+		fadeOutDelay = 0.5,
+	},
 }
 
 -- TODO: Anchor things to PRD:
