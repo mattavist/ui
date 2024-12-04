@@ -12,7 +12,7 @@ keyhide.lua
 login.lua
 minimap.lua
 mousehide.lua
-## chat.lua
+chat.lua
 ## nameplate.lua
 ## vignette.lua
 reposition.lua

@@ -1,30 +1,6 @@
 local f = CreateFrame("Frame")
 
 local framesToMove = {
-    ["ChatFrame1"] = {
-        name = ChatFrame1,
-        func = "Show",  -- Better func available?
-        secondaryFunc = "SetPoint",
-        frameAnchor = "BOTTOMLEFT",
-        parent = UIParent,
-        parentAnchor = "BOTTOMLEFT",
-        x = 12,
-        y = 12,
-        height = 250,
-        width = 615
-    },
-    ["ChatFrame4"] = {
-        name = ChatFrame4,
-        func = "Show",  -- Better func available?
-        secondaryFunc = "SetPoint",
-        frameAnchor = "BOTTOMRIGHT",
-        parent = UIParent,
-        parentAnchor = "BOTTOMRIGHT",
-        x = -12,
-        y = 12,
-        height = 250,
-        width = 615
-    },
     ["QueueStatusButton"] = {
         name = QueueStatusButton,
         func = "Show",  -- Better func available?
@@ -96,13 +72,7 @@ local function setFrameMover(frame)
 end
 
 function f:OnEnter()
-    setFrameMover(framesToMove["ChatFrame1"])
-    setFrameMover(framesToMove["ChatFrame4"])
     setFrameMover(framesToMove["QueueStatusButton"])
-
-    -- AlertFrame:ClearAllPoints()
-    -- AlertFrame:SetPoint("BOTTOM", 0, 350)
-
     f:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
