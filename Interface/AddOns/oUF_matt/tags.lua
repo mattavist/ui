@@ -30,28 +30,28 @@ oUF.Tags.Methods['matt:hpperc'] = function(unit)
 end
 oUF.Tags.Events['matt:hpperc'] = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE'
 
-function tags:CreateNameString(self, point, fontSize, width)
+function tags:CreateNameString(frame, point, fontSize, width)
 	if not point then return end
 
-	local name = CreateFontstring(self.Health, fontSize)
+	local name = CreateFontstring(frame.Health, fontSize)
 	if point == "LEFT" then x = 4 else x = -4 end
-	name:SetPoint(point, self, "TOP" .. point, x, 0)
+	name:SetPoint(point, frame, "TOP" .. point, x, 0)
 	name:SetJustifyH(point)
 	name:SetWidth(width)
 	name:SetHeight(fontSize)
-	self:Tag(name, "[matt:name]")
-	self.Name = name
+	frame:Tag(name, "[matt:name]")
+	frame.Name = name
 end
 
-function tags:CreateHPPercString(self, point, fontSize, width)
+function tags:CreateHPPercString(frame, point, fontSize, width)
 	if not point then return end
 
-	local name = CreateFontstring(self.Health, fontSize)
+	local name = CreateFontstring(frame.Health, fontSize)
 	if point == "LEFT" then x = 4 else x = -4 end
-	name:SetPoint(point, self, "TOP" .. point, x, 0)
+	name:SetPoint(point, frame, "TOP" .. point, x, 0)
 	name:SetJustifyH(point)
 	name:SetWidth(width)
 	name:SetHeight(fontSize)
-	self:Tag(name, "[matt:hpperc]")
-	self.Name = name
+	frame:Tag(name, "[matt:hpperc]")
+	frame.Name = name
 end

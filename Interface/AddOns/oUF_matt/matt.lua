@@ -2,21 +2,21 @@ local _, ns = ...
 local api, cfg, tags, bars, util = ns.api, ns.cfg, ns.tags, ns.bars, ns.util
 
 cfg.debugEnabled = false
-local generic = function(self, unit)
-	self.cfg = cfg[unit]
+local generic = function(frame, unit)
+	frame.cfg = cfg[unit]
 
 	util:debug("Creating " .. unit .. " frame")
-	self:SetSize(unpack(self.cfg.FrameSize))
-	api:SetBackdrop(self, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset)
-	self:RegisterForClicks("AnyDown")
+	frame:SetSize(unpack(frame.cfg.FrameSize))
+	api:SetBackdrop(frame, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset, cfg.FrameInset)
+	frame:RegisterForClicks("AnyDown")
 
-	bars:createHealth(self)
-	bars:createPower(self)
-	bars:CreateCast(self)
+	bars:createHealth(frame)
+	bars:createPower(frame)
+	bars:CreateCast(frame)
 
-	tags:CreateNameString(self, self.cfg.NameSide, self.cfg.FontSize, self.cfg.FrameSize[1] - 15)
-	tags:CreateHPPercString(self, self.cfg.HPSide, self.cfg.FontSize, 200)
-	bars:CreateGroupRoleIndicator(self)
+	tags:CreateNameString(frame, frame.cfg.NameSide, frame.cfg.FontSize, frame.cfg.FrameSize[1] - 15)
+	tags:CreateHPPercString(frame, frame.cfg.HPSide, frame.cfg.FontSize, 200)
+	bars:CreateGroupRoleIndicator(frame)
 end
 
 local partySpecific = function()
@@ -41,8 +41,8 @@ end
 -- 	party = function(self) partySpecific end,
 -- }
 
-local Shared = function(self, unit)
-	generic(self, unit)
+local Shared = function(frame, unit)
+	generic(frame, unit)
 
 	-- Currently useless
 	-- if (UnitSpecific[unit]) then

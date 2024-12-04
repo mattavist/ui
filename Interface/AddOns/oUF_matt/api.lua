@@ -31,11 +31,11 @@ function api:SetBackdrop(self, insetLeft, insetRight, insetTop, insetBottom,
 end
 
 -- Create Glow Border
-function api:SetGlowBorder(self)
-    local glow = CreateFrame("Frame", nil, self, "BackdropTemplate")
+function api:SetGlowBorder(frame)
+    local glow = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     glow:SetFrameLevel(0)
-    glow:SetPoint("TOPLEFT", self, "TOPLEFT", -6, 6)
-    glow:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 6, -6)
+    glow:SetPoint("TOPLEFT", frame, "TOPLEFT", -6, 6)
+    glow:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 6, -6)
     glow:SetBackdrop({
         bgFile = media.textures.white_square,
         edgeFile = media.textures.glow_texture,
@@ -47,14 +47,14 @@ function api:SetGlowBorder(self)
     glow:SetBackdropColor(0, 0, 0, 0)
     glow:SetBackdropBorderColor(0, 0, 0, 1)
 
-    self.Glowborder = glow
+    frame.Glowborder = glow
 end
 
 -- Fading
-local function FaderOnFinished(self) self.__owner:SetAlpha(self.finAlpha) end
+local function FaderOnFinished(frame) frame.__owner:SetAlpha(frame.finAlpha) end
 
-local function FaderOnUpdate(self)
-    self.__owner:SetAlpha(self.__animFrame:GetAlpha())
+local function FaderOnUpdate(frame)
+    frame.__owner:SetAlpha(frame.__animFrame:GetAlpha())
 end
 
 function api:StartFadeIn(frame)

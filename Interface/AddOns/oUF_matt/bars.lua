@@ -21,11 +21,11 @@ local function UpdateRoleIcon(self, event)
 	end
 end
 
-function bars:CreateGroupRoleIndicator(self)
-	if self.cfg.UnitName ~= "party" then return end
+function bars:CreateGroupRoleIndicator(frame)
+	if frame.cfg.UnitName ~= "party" then return end
 
-	local GroupRoleIndicator = self.Health:CreateTexture(nil, "OVERLAY")
-	GroupRoleIndicator:SetPoint("LEFT", self, -10, 0)
+	local GroupRoleIndicator = frame.Health:CreateTexture(nil, "OVERLAY")
+	GroupRoleIndicator:SetPoint("LEFT", frame, -10, 0)
 	GroupRoleIndicator:SetSize(23, 23)
 	GroupRoleIndicator:SetAlpha(1)
 	--
@@ -37,55 +37,55 @@ function bars:CreateGroupRoleIndicator(self)
 end
 
 -- Health Prediction
-local function createHealthPrediction(self)
-	if not self.Health then return end
-	if not self.cfg.HealthPrediction then return end
+local function createHealthPrediction(frame)
+	if not frame.Health then return end
+	if not frame.cfg.HealthPrediction then return end
 
 	-- Position and size
-	local myBar = CreateFrame('StatusBar', nil, self.Health)
+	local myBar = CreateFrame('StatusBar', nil, frame.Health)
 	myBar:SetPoint('TOP')
 	myBar:SetPoint('BOTTOM')
-	myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-	myBar:SetWidth(self.cfg.FrameSize[1])
+	myBar:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
+	myBar:SetWidth(frame.cfg.FrameSize[1])
 	myBar:SetStatusBarTexture(media.textures.status_texture)
 	myBar:SetStatusBarColor(125 / 255, 255 / 255, 50 / 255, .4)
 
-	local otherBar = CreateFrame('StatusBar', nil, self.Health)
+	local otherBar = CreateFrame('StatusBar', nil, frame.Health)
 	otherBar:SetPoint('TOP')
 	otherBar:SetPoint('BOTTOM')
-	otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-	otherBar:SetWidth(self.cfg.FrameSize[1])
+	otherBar:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
+	otherBar:SetWidth(frame.cfg.FrameSize[1])
 	otherBar:SetStatusBarTexture(media.textures.status_texture)
 	otherBar:SetStatusBarColor(100 / 255, 235 / 255, 200 / 255, .4)
 
-	local absorbBar = CreateFrame('StatusBar', nil, self.Health)
+	local absorbBar = CreateFrame('StatusBar', nil, frame.Health)
 	absorbBar:SetPoint('TOP')
 	absorbBar:SetPoint('BOTTOM')
-	absorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-	absorbBar:SetWidth(self.cfg.FrameSize[1])
+	absorbBar:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
+	absorbBar:SetWidth(frame.cfg.FrameSize[1])
 	absorbBar:SetStatusBarTexture(media.textures.status_texture)
 	absorbBar:SetStatusBarColor(18053 / 255, 255 / 255, 205 / 255, .35)
 
 
-	local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
+	local healAbsorbBar = CreateFrame('StatusBar', nil, frame.Health)
 	healAbsorbBar:SetPoint('TOP')
 	healAbsorbBar:SetPoint('BOTTOM')
-	healAbsorbBar:SetPoint('RIGHT', self.Health:GetStatusBarTexture())
-	healAbsorbBar:SetWidth(self.cfg.FrameSize[1])
+	healAbsorbBar:SetPoint('RIGHT', frame.Health:GetStatusBarTexture())
+	healAbsorbBar:SetWidth(frame.cfg.FrameSize[1])
 	healAbsorbBar:SetReverseFill(true)
 	healAbsorbBar:SetStatusBarTexture(media.textures.status_texture)
 	healAbsorbBar:SetStatusBarColor(183 / 255, 244 / 255, 255 / 255, .35)
 
-	local overAbsorb = self.Health:CreateTexture(nil, "OVERLAY")
+	local overAbsorb = frame.Health:CreateTexture(nil, "OVERLAY")
 	overAbsorb:SetPoint('TOP')
 	overAbsorb:SetPoint('BOTTOM')
-	overAbsorb:SetPoint('LEFT', self.Health, 'RIGHT')
+	overAbsorb:SetPoint('LEFT', frame.Health, 'RIGHT')
 	overAbsorb:SetWidth(10)
 
-	local overHealAbsorb = self.Health:CreateTexture(nil, "OVERLAY")
+	local overHealAbsorb = frame.Health:CreateTexture(nil, "OVERLAY")
 	overHealAbsorb:SetPoint('TOP')
 	overHealAbsorb:SetPoint('BOTTOM')
-	overHealAbsorb:SetPoint('RIGHT', self.Health, 'LEFT')
+	overHealAbsorb:SetPoint('RIGHT', frame.Health, 'LEFT')
 	overHealAbsorb:SetWidth(10)
 
 	return {
@@ -99,17 +99,17 @@ local function createHealthPrediction(self)
 	}
 end
 
-function bars:createHealth(self)
-	local TempLoss = CreateFrame('StatusBar', nil, self)
+function bars:createHealth(frame)
+	local TempLoss = CreateFrame('StatusBar', nil, frame)
 	TempLoss:SetReverseFill(true)
-	TempLoss:SetHeight(self.cfg.HealthHeight)
+	TempLoss:SetHeight(frame.cfg.HealthHeight)
 	TempLoss:SetPoint('TOP')
 	TempLoss:SetPoint('LEFT')
 	TempLoss:SetPoint('RIGHT')
 	TempLoss:SetStatusBarTexture(media.textures.debuff_texture)
 	TempLoss:GetStatusBarTexture():SetHorizTile(true)
 
-	local Health = CreateFrame('StatusBar', nil, self)
+	local Health = CreateFrame('StatusBar', nil, frame)
 	Health:SetPoint("LEFT")
 	Health:SetPoint('TOPRIGHT', TempLoss:GetStatusBarTexture(), 'TOPLEFT')
 	Health:SetPoint('BOTTOMRIGHT', TempLoss:GetStatusBarTexture(), 'BOTTOMLEFT')
@@ -119,7 +119,7 @@ function bars:createHealth(self)
 	-- Options
 	Health.colorTapping = true
 	Health.colorDisconnected = true
-	if self.cfg.UnitName == "pet" then
+	if frame.cfg.UnitName == "pet" then
 		Health.colorClassPet = true
 		Health.colorClass = false
 	else
@@ -129,15 +129,15 @@ function bars:createHealth(self)
 	Health.colorHealth = true
 
 	Health.TempLoss = TempLoss
-	self.Health = Health
-	self.HealthPrediction = createHealthPrediction(self)
+	frame.Health = Health
+	frame.HealthPrediction = createHealthPrediction(frame)
 end
 
-function bars:createPower(self)
-	if self.cfg.PowerHeight == 0 then return end
+function bars:createPower(frame)
+	if frame.cfg.PowerHeight == 0 then return end
 
-	local Power = CreateFrame('StatusBar', nil, self)
-	Power:SetHeight(self.cfg.PowerHeight)
+	local Power = CreateFrame('StatusBar', nil, frame)
+	Power:SetHeight(frame.cfg.PowerHeight)
 	Power:SetPoint('BOTTOM')
 	Power:SetPoint('LEFT')
 	Power:SetPoint('RIGHT')
@@ -152,7 +152,7 @@ function bars:createPower(self)
 	Power.colorClass = false
 	Power.colorReaction = false
 
-	self.Power = Power
+	frame.Power = Power
 end
 
 local function CheckForSpellInterrupt(castbar)
@@ -200,13 +200,13 @@ local function OnPostCastInterruptible(castbar)
 	CheckForSpellInterrupt(castbar, castbar.__owner.cfg.UnitName)
 end
 
-function bars:CreateCast(self)
-	if not self.cfg.EnableCastbar then return end
+function bars:CreateCast(frame)
+	if not frame.cfg.EnableCastbar then return end
 
 	-- Position and size
 	local Castbar = CreateFrame('StatusBar', nil, UIParent)
 	Castbar:SetSize(cfg.PrimaryFrameWidth, 20)
-	Castbar:SetPoint("LEFT", self, "LEFT", 0, cfg.CastbarOffsetY)
+	Castbar:SetPoint("LEFT", frame, "LEFT", 0, cfg.CastbarOffsetY)
 	Castbar:SetStatusBarTexture(media.textures.status_texture)
 	Castbar:SetFrameStrata("HIGH")
 	Castbar:SetToplevel(true)
@@ -224,7 +224,7 @@ function bars:CreateCast(self)
 	Time:SetTextColor(1, 1, 1)
 	Time:SetShadowOffset(1, -1)
 	Time:SetFont(cfg.CastbarFont, cfg.CastbarFontSize, "THINOUTLINE")
-	if self.cfg.UnitName == "target" then
+	if frame.cfg.UnitName == "target" then
 		Time:SetPoint('LEFT', Castbar)
 	else
 		Time:SetPoint('RIGHT', Castbar)
@@ -243,7 +243,7 @@ function bars:CreateCast(self)
 	Shield:SetPoint('CENTER', Castbar)
 
 	-- Add safezone (latency display)
-	if self.cfg.UnitName == "player" then
+	if frame.cfg.UnitName == "player" then
 		Castbar.SafeZone = Castbar:CreateTexture(nil, 'OVERLAY')
 	end
 
@@ -266,5 +266,5 @@ function bars:CreateCast(self)
 	Castbar.Icon = Icon
 	Castbar.Shield = Shield
 	Castbar.timeToHold = cfg.CastbarTimeToHold
-	self.Castbar = Castbar
+	frame.Castbar = Castbar
 end
