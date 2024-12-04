@@ -25,8 +25,6 @@ local function setFrameMover(frame)
     -- TODO: INSTEAD OF HOOKING A FUNC?
     -- local dummy = function() end
     -- frame.Show = dummy
-
-
     hooksecurefunc(frame.name, frame.func, function(self)
         if moving then
             return

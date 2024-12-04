@@ -14,8 +14,8 @@ CHAT_FRAME_TAB_SELECTED_MOUSEOVER_ALPHA = 1
 CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0
 CHAT_FRAME_TAB_ALERTING_MOUSEOVER_ALPHA = 1
 CHAT_FRAME_TAB_ALERTING_NOMOUSE_ALPHA = 1
-CHAT_FRAME_WIDTH = 615
-CHAT_FRAME_HEIGHT = 250
+CHAT_FRAME_SIZE = {615, 250}
+CHAT_FRAME_INSET = 12
 
 local helper = CreateFrame("Frame")
 
@@ -32,21 +32,14 @@ local faderConfig = {
 local editBoxFocusAlpha = 1
 local editBoxAlpha = 0
 
+local ChatFramePosition = {
+    ChatFrame1 = {"BOTTOMLEFT", CHAT_FRAME_INSET, CHAT_FRAME_INSET},
+    ChatFrame4 = {"BOTTOMRIGHT", -CHAT_FRAME_INSET, CHAT_FRAME_INSET},
+}
+
 -----------------------------
 -- Functions
 -----------------------------
-
-local function SetChatFrame1()
-  ChatFrame1:ClearAllPoints()
-  ChatFrame1:SetSize(CHAT_FRAME_WIDTH, CHAT_FRAME_HEIGHT)
-  ChatFrame1:SetPoint("BOTTOMLEFT", 12, 12)
-end
-
-local function SetChatFrame4()
-  ChatFrame4:ClearAllPoints()
-  ChatFrame4:SetSize(CHAT_FRAME_WIDTH, CHAT_FRAME_HEIGHT)
-  ChatFrame4:SetPoint("BOTTOMRIGHT", -12, 12)
-end
 
 local function ApplyClamp(chatframe)
   helper.SetClampRectInsets(chatframe,0,0,0,0)
@@ -77,20 +70,27 @@ local backdrop_tab = {
     },
 }
 
-local function ApplyHide(tab)
-  tab:Hide()
+local function ApplyHide(tab, alpha)
+  if alpha > .4 and alpha < 1 then return end
+
+  if alpha == .4 then
+    alpha = 0
+  end
+
+  helper.SetAlpha(tab, alpha)
 end
 
 
 --SkinChat
 local function SkinChat()
-  -- TODO: Create a backdrop for the 
   for i = 1, NUM_CHAT_WINDOWS do
     local chatframe = _G["ChatFrame"..i]
     if not chatframe then return end
+
     chatframe:SetClampRectInsets(0,0,0,0)
     hooksecurefunc(chatframe, "SetClampRectInsets", ApplyClamp)
     hooksecurefunc(_G["ChatFrame"..i.."Tab"], "SetAlpha", ApplyHide)
+
     local name = chatframe:GetName()
     _G[name.."ButtonFrame"]:Hide()
     _G[name.."EditBox"]:SetAltArrowKeyMode(false)
@@ -103,20 +103,24 @@ local function SkinChat()
     _G[name.."EditBoxLeft"]:SetAlpha(editBoxAlpha)
     _G[name.."EditBoxMid"]:SetAlpha(editBoxAlpha)
     _G[name.."EditBoxRight"]:SetAlpha(editBoxAlpha)
+    _G[name.."Tab"]:SetAlpha(0)
+
     local Background = CreateFrame("Frame", nil, _G[name.."EditBox"], "BackdropTemplate")
-    -- local Background = _G[name.."EditBox"]:CreateTexture(nil, 'BACKGROUND')
     Background:SetAllPoints()
-    -- Background:SetTexture(1, 1, 1, 1)
     Background:SetBackdrop(backdrop_tab)
     Background:SetBackdropColor(0,0,0,1)
     Background:SetBackdropBorderColor(0,0,0,0)
     Background:SetFrameLevel(0)
+
+    local position = ChatFramePosition[name]
+    if position then
+      chatframe:ClearAllPoints()
+      chatframe:SetSize(unpack(CHAT_FRAME_SIZE))
+      chatframe:SetPoint(unpack(position))
+    end
   end
 
   TextToSpeechButtonFrame:Hide()
-  SetChatFrame1()
-  SetChatFrame4()
-  ChatFrame4Tab:SetAlpha(0)
   UpdateToastPosition()
   rLib:CreateFrameFader(QuickJoinToastButton, faderConfig)
 end
