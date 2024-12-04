@@ -1,15 +1,10 @@
-local mediaPath = "Interface\\media\\"
-
--- TODO: Table of frames
 FramesToHandle = {}
 FramesToHandleByHealth = {}
 
 local function setAlpha(frame, alpha)
     if frame then
-        DEFAULT_CHAT_FRAME:AddMessage("Handling"..frame:GetName())
         frame:SetAlpha(alpha)
     end
-
 end
 
 local function hideAll()
@@ -53,10 +48,9 @@ shower:SetScript("OnEvent", function(self, event, unit, ...)
         return
     elseif event == "UNIT_HEALTH" then
         if unit == "player" and UnitHealth("player") < UnitHealthMax("player") then
-            local mPlayerFrame = oUF_mattPlayer or PlayerFrame
-            local mPetFrame = oUF_mattPet or PetFrame
-            mPlayerFrame:SetAlpha(1)
-            mPetFrame:SetAlpha(1)
+            for _, frame in pairs(FramesToHandleByHealth) do
+                setAlpha(frame, 1)
+            end
         end
     else
         showAll()
@@ -80,7 +74,6 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD")
 addon:SetScript("OnEvent", function(self, event, unit, ...)
     FramesToHandleByHealth = {
         oUF_mattPlayer or PlayerFrame,
-        oUF_mattPet or PetFrame,
     }
 
     FramesToHandle = {
@@ -90,6 +83,7 @@ addon:SetScript("OnEvent", function(self, event, unit, ...)
         MultiBar7,
         BuffFrame,
         mGuideFrame,
+        oUF_mattPet or PetFrame,
     }
     addon:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
