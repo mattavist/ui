@@ -1,32 +1,37 @@
 local mediaPath = "Interface\\media\\"
 
+-- TODO: Table of frames
+FramesToHandle = {}
+FramesToHandleByHealth = {}
+
+local function setAlpha(frame, alpha)
+    if frame then
+        DEFAULT_CHAT_FRAME:AddMessage("Handling"..frame:GetName())
+        frame:SetAlpha(alpha)
+    end
+
+end
 
 local function hideAll()
-    local mPlayerFrame = oUF_mattPlayer or PlayerFrame
-    local mPetFrame = oUF_mattPet or PetFrame
-    MainMenuBar:SetAlpha(0)
-    MultiBarBottomLeft:SetAlpha(0)
-    MultiBarBottomRight:SetAlpha(0)
-    MultiBar7:SetAlpha(0)
-    BuffFrame:SetAlpha(0)
-    if mGuideFrame then mGuideFrame:SetAlpha(0) end
+    for _, frame in pairs(FramesToHandle) do
+        setAlpha(frame, 0)
+    end
+
     if UnitHealth("player") == UnitHealthMax("player") then
-        mPlayerFrame:SetAlpha(0)
-        mPetFrame:SetAlpha(0)
+        for _, frame in pairs(FramesToHandleByHealth) do
+            setAlpha(frame, 0)
+        end
     end
 end
 
 local function showAll()
-    local mPlayerFrame = oUF_mattPlayer or PlayerFrame
-    local mPetFrame = oUF_mattPet or PetFrame
-    MainMenuBar:SetAlpha(1)
-    MultiBarBottomLeft:SetAlpha(1)
-    MultiBarBottomRight:SetAlpha(1)
-    MultiBar7:SetAlpha(1)
-    mPlayerFrame:SetAlpha(1)
-    mPetFrame:SetAlpha(1)
-    BuffFrame:SetAlpha(1)
-    if mGuideFrame then mGuideFrame:SetAlpha(1) end
+    for _, frame in pairs(FramesToHandle) do
+        setAlpha(frame, 1)
+    end
+
+    for _, frame in pairs(FramesToHandleByHealth) do
+        setAlpha(frame, 1)
+    end
 end
 
 -- Hides when exiting combat or stopping spell cast or losing target when ooc
@@ -73,6 +78,19 @@ end)
 local addon = CreateFrame("Frame", nil, UIParent)
 addon:RegisterEvent("PLAYER_ENTERING_WORLD")
 addon:SetScript("OnEvent", function(self, event, unit, ...)
+    FramesToHandleByHealth = {
+        oUF_mattPlayer or PlayerFrame,
+        oUF_mattPet or PetFrame,
+    }
+
+    FramesToHandle = {
+        MainMenuBar,
+        MultiBarBottomLeft,
+        MultiBarBottomRight,
+        MultiBar7,
+        BuffFrame,
+        mGuideFrame,
+    }
     addon:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
     hider:RegisterEvent("PLAYER_REGEN_ENABLED")

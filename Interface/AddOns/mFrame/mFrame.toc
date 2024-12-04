@@ -4,6 +4,7 @@
 ##
 ## IconTexture: 133004
 ## Edits and some changed behavior for various frames
+## RequiredDeps: rLib
 
 login.lua
 ## bufficon.lua  Doesn't work

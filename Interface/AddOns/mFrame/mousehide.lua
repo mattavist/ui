@@ -1,24 +1,24 @@
-local buttonSize = 47
+-- NOTE: Need to disable this module to move the bars
+
 local padding = 20
-local numRows = 12
-local numCols = 2
+local faderConfig = {
+  fadeInAlpha = 1,
+  fadeInDuration = 0.3,
+  fadeInSmooth = "OUT",
+  fadeOutAlpha = 0,
+  fadeOutDuration = 0.3,
+  fadeOutSmooth = "OUT",
+  fadeOutDelay = 0,
+}
 
--- Sidebars
+-- Create a frame to hold both bars
 local MultiBarHolder = CreateFrame("Frame", "MultiBarHolder", UIParent, "SecureHandlerStateTemplate")
-MultiBarHolder:SetWidth(buttonSize * numCols + padding * 2)
-MultiBarHolder:SetHeight(buttonSize * numRows + padding * 2)
-MultiBarHolder:SetPoint("TOPLEFT", MultiBarLeft, "TOPLEFT", padding * -1, padding)
+MultiBarHolder:SetPoint("TOPLEFT", MultiBarLeft, "TOPLEFT", -padding, padding)
+MultiBarHolder:SetPoint("BOTTOMRIGHT", MultiBarRight, "BOTTOMRIGHT", padding, -padding)
 
+-- Parent the bars to the holder
 MultiBarLeft:SetParent(MultiBarHolder)
 MultiBarRight:SetParent(MultiBarHolder)
-MultiBarHolder:SetAlpha(0)
 
-MultiBarHolder:HookScript("OnEnter", function()
-	MultiBarHolder:SetAlpha(1)
-end)
-
-MultiBarHolder:HookScript("OnLeave", function()
-	if not MultiBarHolder:IsMouseOver() then
-		MultiBarHolder:SetAlpha(0)
-	end
-end)
+-- Create the mouseover fader
+rLib:CreateFrameFader(MultiBarHolder, faderConfig)

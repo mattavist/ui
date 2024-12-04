@@ -1,47 +1,6 @@
 local f = CreateFrame("Frame")
-local s = CreateFrame("Frame")
 
 local framesToMove = {
-    ["ObjectiveTrackerFrame"] = {
-        name = ObjectiveTrackerFrame,
-        func = "SetPoint",
-        frameAnchor = "TOPLEFT",
-        parent = UIParent,
-        parentAnchor = "TOPLEFT",
-        x = 30,
-        y = 25,
-        height = 500
-    },
-    ["AlertFrame"] = {
-        name = AlertFrame,
-        func = "SetParent",
-        frameAnchor = "TOP",
-        parent = UIParent,
-        parentAnchor = "BOTTOM",
-        x = 0,
-        y = 600,
-        height = nil
-    },
-    ["TalkingHeadFrame"] = {
-        name = TalkingHeadFrame,
-        func = "TalkingHeadFrame_PlayCurrent",
-        frameAnchor = "TOP",
-        parent = WorldFrame,
-        parentAnchor = "CENTER",
-        x = 300,
-        y = -300,
-        height = 300
-    },
-    ["ArcheologyDigsiteProgressBar"] = {
-        name = {ArcheologyDigsiteProgressBar},
-        func = "ArcheologyDigsiteProgressBar_OnUpdate",
-        frameAnchor = "BOTTOM",
-        parent = WorldFrame,
-        parentAnchor = "BOTTOM",
-        x = 0,
-        y = 50,
-        height = nil
-    },
     ["ChatFrame1"] = {
         name = ChatFrame1,
         func = "Show",  -- Better func available?
@@ -75,13 +34,8 @@ local framesToMove = {
         parentAnchor = "BOTTOMLEFT",
         x = 0,
         y = 0,
+        setParent = true,
     },
-}
-
-local framesToHide = {
-    MicroMenu,
-    BagsBar,
-    MainStatusTrackingBarContainer,
 }
 
 local function setFrameMover(frame)
@@ -134,55 +88,24 @@ local function setFrameMover(frame)
             moving = nil
         end)
     end
-end
 
-local function hideFrames()
-    for _, frame in pairs(framesToHide) do
-        frame:Hide()
+    if frame.name.setParent then
+        frame.name:SetParent(frame.parent)
     end
-end
-
-function s:OnAddon(event, addon)
-    -- Move Talking Head Frame to top of screen
-    if addon == "Blizzard_TalkingHeadUI" then
-        hooksecurefunc("TalkingHeadFrame_PlayCurrent", function()
-            AlertFrame:ClearAllPoints()
-            AlertFrame:SetPoint("BOTTOM", 0, 350)
-            TalkingHeadFrame:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", -10, 650)
-            TalkingHeadFrame.ignoreFramePositionManager = true
-        end)
-
-    -- Move Digsite Progress to Bottom of screen
-    elseif addon == "Blizzard_ArchaeologyUI" then
-        hooksecurefunc("ArcheologyDigsiteProgressBar_OnUpdate", function()
-            ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", WorldFrame, "BOTTOM", 0, 50)
-            ArcheologyDigsiteProgressBar.ignoreFramePositionManager = true
-        end)
-    end
+    frame.name:Show()
 end
 
 function f:OnEnter()
-    setFrameMover(framesToMove["ObjectiveTrackerFrame"])
-
     setFrameMover(framesToMove["ChatFrame1"])
-    ChatFrame1:Show()
     setFrameMover(framesToMove["ChatFrame4"])
-    ChatFrame4:Show()
-
     setFrameMover(framesToMove["QueueStatusButton"])
-    QueueStatusButton:Show()
-    QueueStatusButton:Hide()
 
-    AlertFrame:ClearAllPoints()
-    AlertFrame:SetPoint("BOTTOM", 0, 350)
+    -- AlertFrame:ClearAllPoints()
+    -- AlertFrame:SetPoint("BOTTOM", 0, 350)
 
-    hideFrames()
     f:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    s:SetScript("OnEvent", s.OnAddon)
-    s:RegisterEvent("ADDON_LOADED")
 end
 
 
 f:SetScript("OnEvent", f.OnEnter)
-s:SetScript("OnEvent", s.OnAddon)
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
