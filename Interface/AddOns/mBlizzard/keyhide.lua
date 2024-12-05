@@ -27,12 +27,12 @@ local function AdjustBlizzardFrames()
   -- Left/Right MultiBar handled by mousehide.lua
 
   -- Show/Hide on Ctrl
-  local modifier = "ctrl"
-  RegisterStateDriver(BagsBar, "visibility", "[mod:"..modifier.."] show; hide")
-  RegisterStateDriver(MicroMenuContainer, "visibility", "[mod:"..modifier.."] show; hide")
-  RegisterStateDriver(MicroButtonAndBagsBar, "visibility", "[mod:"..modifier.."] show; hide")
-  RegisterStateDriver(MainStatusTrackingBarContainer, "visibility", "[mod:"..modifier.."] show; hide")
-  RegisterStateDriver(ObjectiveTrackerFrame, "visibility", "[mod:"..modifier.."] show; hide")
+  local modifier = "[mod:ctrl,nomod:shift] show; hide"
+  RegisterStateDriver(BagsBar, "visibility", modifier)
+  RegisterStateDriver(MicroMenuContainer, "visibility", modifier)
+  RegisterStateDriver(MicroButtonAndBagsBar, "visibility", modifier)
+  RegisterStateDriver(MainStatusTrackingBarContainer, "visibility", modifier)
+  RegisterStateDriver(ObjectiveTrackerFrame, "visibility", modifier)
 
   --hide bufframe by clicking the button
   -- if BuffFrame.CollapseAndExpandButton:GetChecked() then
