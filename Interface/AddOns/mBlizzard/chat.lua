@@ -41,6 +41,11 @@ local ChatFramePosition = {
 -- Functions
 -----------------------------
 
+local function SetChatFrame1Position()
+  ChatFrame1:ClearAllPoints()
+  ChatFrame1:SetPoint(unpack(ChatFramePosition["ChatFrame1"]))
+end
+
 local function ApplyClamp(chatframe)
   helper.SetClampRectInsets(chatframe,0,0,0,0)
   if chatframe == ChatFrame1 then
