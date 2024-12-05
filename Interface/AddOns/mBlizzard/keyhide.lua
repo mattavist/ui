@@ -27,7 +27,7 @@ local function AdjustBlizzardFrames()
   -- Left/Right MultiBar handled by mousehide.lua
 
   -- Show/Hide on Ctrl
-  local modifier = "[mod:ctrl,nomod:shift] show; hide"
+  local modifier = "[mod:alt] show; hide"
   RegisterStateDriver(BagsBar, "visibility", modifier)
   RegisterStateDriver(MicroMenuContainer, "visibility", modifier)
   RegisterStateDriver(MicroButtonAndBagsBar, "visibility", modifier)
