@@ -6,6 +6,7 @@
 -----------------------------
 
 local A, L = ...
+local helper = CreateFrame("Frame")
 
 local faderConfig = {
   fadeInAlpha = 1,
@@ -20,19 +21,28 @@ local faderConfig = {
 -----------------------------
 -- Functions
 -----------------------------
+local function registerAltHandler(self)
+  local settings = "[mod:alt] show; hide"
+  RegisterStateDriver(self, "visibility", settings)
+
+  self.Show = function(self)
+    if IsAltKeyDown() then
+      helper.Show(self)
+    end
+  end
+end
 
 --AdjustBlizzardFrames
 local function AdjustBlizzardFrames()
   -- PlayerFrame handled by combathide.lua
   -- Left/Right MultiBar handled by mousehide.lua
 
-  -- Show/Hide on Ctrl
-  local modifier = "[mod:alt] show; hide"
-  RegisterStateDriver(BagsBar, "visibility", modifier)
-  RegisterStateDriver(MicroMenuContainer, "visibility", modifier)
-  RegisterStateDriver(MicroButtonAndBagsBar, "visibility", modifier)
-  RegisterStateDriver(MainStatusTrackingBarContainer, "visibility", modifier)
-  RegisterStateDriver(ObjectiveTrackerFrame, "visibility", modifier)
+  -- Show/Hide on Alt
+  registerAltHandler(BagsBar)
+  registerAltHandler(MicroMenuContainer)
+  registerAltHandler(MicroButtonAndBagsBar)
+  registerAltHandler(MainStatusTrackingBarContainer)
+  registerAltHandler(ObjectiveTrackerFrame)
 
   --hide bufframe by clicking the button
   -- if BuffFrame.CollapseAndExpandButton:GetChecked() then
